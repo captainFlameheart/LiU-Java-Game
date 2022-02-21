@@ -7,6 +7,7 @@ public interface TimeStepper
 {
     /**
      * Advances time by the given amount
+     *
      * @param deltaTime	The amount of time that should be advanced
      */
     void tick(double deltaTime);

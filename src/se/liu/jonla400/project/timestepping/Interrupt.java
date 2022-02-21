@@ -12,6 +12,7 @@ public class Interrupt
     /**
      * Creates a time step interrupt that occurs at the given time from
      * the start of the time step and performs the given routine
+     *
      * @param time The time from the start of the time step
      * @param routine The routine to be performed
      */

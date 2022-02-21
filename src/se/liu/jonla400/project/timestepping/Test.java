@@ -19,9 +19,11 @@ public class Test
 	final double timeStepDeltaTime = 1;
 	final int timeSteps = 15;
 
+	final int maxSubTimeSteps = 10;
 	TimeStepper timeStepper = new InterruptableTimeStepper(
 		point,
-		new InterruptGeneratorQueue(leftBoundary, rightBoundary)
+		new InterruptGeneratorQueue(leftBoundary, rightBoundary),
+		maxSubTimeSteps
 	);
 
 	for (int i = 0; i < timeSteps; i++) {

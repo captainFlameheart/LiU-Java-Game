@@ -14,6 +14,7 @@ public class InterruptGeneratorQueue implements InterruptGenerator
 
     /**
      * Creates a new group of interrupt generators
+     *
      * @param generators The interrupt generators in this group
      */
     public InterruptGeneratorQueue(InterruptGenerator... generators) {
@@ -23,6 +24,7 @@ public class InterruptGeneratorQueue implements InterruptGenerator
     /**
      * Generates the earliest interrupt from the group of
      * generators, if any
+     *
      * @param timeLeft The time left of the time step
      * @return The earliest interrupt, if any
      */
