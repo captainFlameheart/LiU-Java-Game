@@ -1,7 +1,5 @@
 package se.liu.jonla400.math;
 
-import java.util.Vector;
-
 /**
  * Represents a 2D vector
  */
@@ -352,6 +350,10 @@ public class Vector2D
      */
     public double dot(final Vector2D other) {
 	return (x * other.x) + (y * other.y);
+    }
+
+    @Override public String toString() {
+	return "Vector2D{" + "x=" + x + ", y=" + y + ", angle=" + getAngle() + ", magnitude=" + getMagnitude() + '}';
     }
 
     public static enum RotationDirection
