@@ -6,7 +6,7 @@ import java.util.Optional;
 
 /**
  * Represents a group of time step interrupt generators, where the earliest
- * interrupt generated from these will be next interrupt (if any).
+ * interrupt generated from these will be the next interrupt (if any).
  */
 public class InterruptGeneratorQueue implements InterruptGenerator
 {

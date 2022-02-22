@@ -33,7 +33,8 @@ public class Interrupt
     }
 
     /**
-     * Performs the routine of this time step interrupt
+     * Performs the routine of this time step interrupt, which changes the outcome
+     * of the rest of the time step
      * @param timeLeft The amount of time left in the time step
      */
     public void performRoutine(final double timeLeft) {
