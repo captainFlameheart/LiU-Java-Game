@@ -2,16 +2,17 @@ package se.liu.jonla400.project.timestepping;
 
 import java.util.Optional;
 
+/**
+ * Tests time stepping with interrupts.
+ * Moves a point between two boundaries for
+ * a number of time steps. Time step interrupts
+ * occur when the point collides with the boundaries.
+ * The position and velocity of the point is
+ * printed to the console at key moments
+ */
 public class Test
 {
     public static void main(String[] args) {
-	// Tests time stepping with interrupts.
-	// Moves a point between two boundaries for
-	// a number of time steps. Time step interrupts
-	// occur when the point collides with the boundaries.
-	// The position and velocity of the point is
-	// printed to the console at key moments
-
 	final Point point = new Point(0, 1);
 	final Boundary leftBoundary = new Boundary(-2.5, point);
 	final Boundary rightBoundary = new Boundary(2.5, point);
