@@ -1,4 +1,4 @@
-package se.liu.jonla400.math;
+package se.liu.jonla400.project.math;
 
 /**
  * Represents a 2D vector that supports typical vector operations.

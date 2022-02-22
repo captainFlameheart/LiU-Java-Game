@@ -1,4 +1,4 @@
-package se.liu.jonla400.physics;
+package se.liu.jonla400.project.physics;
 
 import se.liu.jonla400.project.timestepping.TimeStepper;
 

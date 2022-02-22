@@ -1,6 +1,6 @@
-package se.liu.jonla400.physics;
+package se.liu.jonla400.project.physics;
 
-import se.liu.jonla400.math.Vector2D;
+import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.timestepping.TimeStepper;
 
 /**
