@@ -283,5 +283,8 @@ public class PointMass implements TimeStepper
 
 	final Vector2D deltaPos = vel.multiply(deltaTime);
 	pos.addLocally(deltaPos);
+
+	final double deltaAngle = angularVel * deltaTime;
+	angle += deltaAngle;
     }
 }
