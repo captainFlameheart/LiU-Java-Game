@@ -271,6 +271,10 @@ public class PointMass implements TimeStepper
      * @param deltaTime	The amount of time during which to move
      */
     @Override public void tick(final double deltaTime) {
+	if (deltaTime < 0) {
+	    throw new IllegalArgumentException("Negative delta time: " + deltaTime);
+	}
+
 	final Vector2D deltaPos = vel.multiply(deltaTime);
 	pos.addLocally(deltaPos);
     }
