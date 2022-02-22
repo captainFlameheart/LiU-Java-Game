@@ -21,6 +21,10 @@ public class InterruptableTimeStepper implements TimeStepper
      * @param maxSubTimeSteps The maximum number of sub time stepping before interrupts are ignored
      */
     public InterruptableTimeStepper(final TimeStepper subTimeStepper, final InterruptGenerator interruptGenerator, final int maxTickIterations) {
+	if (maxTickIterations < 0) {
+	    throw new IllegalArgumentException("Negative maximum tick iterations: " + maxTickIterations);
+	}
+
 	this.subTimeStepper = subTimeStepper;
 	this.interruptGenerator = interruptGenerator;
 	this.maxSubTimeSteps = maxTickIterations;
