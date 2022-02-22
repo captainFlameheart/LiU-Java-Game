@@ -86,6 +86,9 @@ public class PointMass implements TimeStepper
      * @param mass The mass
      */
     public void setMass(final double mass) {
+	if (mass <= 0) {
+	    throw new IllegalArgumentException("Non-positive mass: " + mass);
+	}
 	this.mass = mass;
     }
 
@@ -142,6 +145,9 @@ public class PointMass implements TimeStepper
      * @param angularMass The angular mass
      */
     public void setAngularMass(final double angularMass) {
+	if (angularMass <= 0) {
+	    throw new IllegalArgumentException("Non-positive angular mass: " + angularMass);
+	}
 	this.angularMass = angularMass;
     }
 
