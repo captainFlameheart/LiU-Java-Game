@@ -1,25 +1,20 @@
 package se.liu.jonla400.math;
 
 /**
- * Represents a 2D vector
+ * Represents a 2D vector that supports typical vector operations.
+ * Some of these operations act on the vector object itself, changing
+ * its underlying data. Other operations do not change the vector
+ * that is operated upon. These operations instead returns a new vector
+ * as the result.
  */
 public class Vector2D
 {
     private double x;
     private double y;
 
-    private Vector2D(final double x, final double y) {
+    private Vector2D(double x, double y) {
 	this.x = x;
 	this.y = y;
-    }
-
-    /**
-     * Creates a zero vector
-     *
-     * @return The created vector
-     */
-    public static Vector2D zero() {
-	return new Vector2D(0, 0);
     }
 
     /**
@@ -29,8 +24,17 @@ public class Vector2D
      * @param y The y component of the vector
      * @return The created vector
      */
-    public static Vector2D cartesian(final double x, final double y) {
+    public static Vector2D createCartesianVector(final double x, final double y) {
 	return new Vector2D(x, y);
+    }
+
+    /**
+     * Creates a zero vector
+     *
+     * @return The created vector
+     */
+    public static Vector2D createZeroVector() {
+	return createCartesianVector(0, 0);
     }
 
     /**
@@ -40,8 +44,8 @@ public class Vector2D
      * @param magnitude The magnitude of the vector
      * @return The created vector
      */
-    public static Vector2D polar(final double angle, final double magnitude) {
-	Vector2D result = unitFromAngle(angle);
+    public static Vector2D createPolarVector(final double angle, final double magnitude) {
+	Vector2D result = createUnitVector(angle);
 	result.multiplyLocally(magnitude);
 	return result;
     }
@@ -52,8 +56,8 @@ public class Vector2D
      * @param angle The angle of the vector
      * @return The created vector
      */
-    public static Vector2D unitFromAngle(final double angle) {
-	return new Vector2D(Math.cos(angle), Math.sin(angle));
+    public static Vector2D createUnitVector(final double angle) {
+	return createCartesianVector(Math.cos(angle), Math.sin(angle));
     }
 
     /**
@@ -62,7 +66,7 @@ public class Vector2D
      * @return A copy of this vector
      */
     public Vector2D copy() {
-	return new Vector2D(x, y);
+	return createCartesianVector(x, y);
     }
 
     /**
@@ -128,8 +132,8 @@ public class Vector2D
      * @param x The x component
      * @param y The y component
      */
-    public void setCartesian(final double x, final double y) {
-	set(cartesian(x, y));
+    public void setCartesianCoordinates(final double x, final double y) {
+	set(createCartesianVector(x, y));
     }
 
     /**
@@ -138,8 +142,8 @@ public class Vector2D
      * @param angle The angle
      * @param magnitude The magnitude
      */
-    public void setPolar(final double angle, final double magnitude) {
-	set(polar(angle, magnitude));
+    public void setPolarCoordinates(final double angle, final double magnitude) {
+	set(createPolarVector(angle, magnitude));
     }
 
     /**
@@ -187,7 +191,7 @@ public class Vector2D
      * @return The result of the addition
      */
     public Vector2D add(final Vector2D other) {
-	return new Vector2D(x + other.x, y + other.y);
+	return createCartesianVector(x + other.x, y + other.y);
     }
 
     /**
@@ -206,7 +210,7 @@ public class Vector2D
      * @return The result of the subtraction
      */
     public Vector2D subtract(final Vector2D other) {
-	return new Vector2D(x - other.x, y - other.y);
+	return createCartesianVector(x - other.x, y - other.y);
     }
 
     /**
@@ -225,7 +229,7 @@ public class Vector2D
      * @return The result of the multiplication
      */
     public Vector2D multiply(final double scalar) {
-	return new Vector2D(x * scalar, y * scalar);
+	return createCartesianVector(x * scalar, y * scalar);
     }
 
     /**
@@ -299,7 +303,7 @@ public class Vector2D
     public Vector2D rotate90Degrees(final RotationDirection direction) {
 	final double newY = direction.sign * x;
 	final double newX = -direction.sign * y;
-	return new Vector2D(newX, newY);
+	return createCartesianVector(newX, newY);
     }
 
     /**
@@ -326,7 +330,7 @@ public class Vector2D
 
 	final double newX = x * cosDeltaAngle - y * sinDeltaAngle;
 	final double newY = x * sinDeltaAngle + y * cosDeltaAngle;
-	return new Vector2D(newX, newY);
+	return createCartesianVector(newX, newY);
     }
 
     /**
