@@ -356,6 +356,24 @@ public class Vector2D
 	return (x * other.x) + (y * other.y);
     }
 
+    /**
+     * Assumes that this vector and the input vector are defining 3D
+     * vectors with z-components implicitly set to 0. The cross product
+     * of these 3D vectors will be normal to the plane containing them,
+     * which implies that both the x- and y-coordinate of the cross product
+     * are 0. This method returns the z-coordinate of the cross product.
+     *
+     * In this 2D interpretation of the cross product, it is defined as
+     * (x1 * y2) - (y1 * x2) where (x1, y1) and (x2, y2) are two vectors
+     *
+     * @param other The other vector to perform the cross product with
+     * @return The z-component of the implicit 3D cross product
+     * @see <a href="https://stackoverflow.com/questions/243945/calculating-a-2d-vectors-cross-product">wikipedia</a>
+     */
+    public double cross(final Vector2D other) {
+	return (x * other.y) - (y * other.x);
+    }
+
     @Override public String toString() {
 	return "Vector2D{" + "x=" + x + ", y=" + y + ", angle=" + getAngle() + ", magnitude=" + getMagnitude() + '}';
     }
