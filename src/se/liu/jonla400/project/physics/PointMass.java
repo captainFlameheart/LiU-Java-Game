@@ -266,8 +266,8 @@ public class PointMass implements TimeStepper
 	applyImpulse(impulse);
 
 	// Change the angular velocity since the impulse is offset from the center
-	// of this point mass
-	final double angularImpulse = offset.cross(impulse);
+	// of this point mass.
+	final double angularImpulse = offset.cross(impulse); // See the definition of torque https://en.wikipedia.org/wiki/Torque
 	applyAngularImpulse(angularImpulse);
     }
 
