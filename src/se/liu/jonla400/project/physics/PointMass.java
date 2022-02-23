@@ -22,7 +22,7 @@ public class PointMass implements TimeStepper
     private double angularMass;
 
     /**
-     * Create a still point mass with a position and angle of zero and
+     * Creates a still point mass with a position and angle of zero and
      * a mass and angular mass of 1
      */
     public PointMass() {
