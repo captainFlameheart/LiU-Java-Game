@@ -8,7 +8,7 @@ import se.liu.jonla400.project.timestepping.TimeStepper;
  * A point mass also has a mass and an angular mass (rotational inertia)
  * which in this case control how ineffective impulses are at changing
  * the velocity and the angular velocity respectively. A point mass does
- * not know about collisions. It also doesn't have any knowledgea about acceleration.
+ * not know about collisions. It also doesn't have any knowledge about acceleration.
  * It only knows about position, velocity, mass and their angular counterparts.
  */
 public class PointMass implements TimeStepper

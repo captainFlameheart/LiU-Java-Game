@@ -2,8 +2,6 @@ package se.liu.jonla400.project.physics;
 
 import se.liu.jonla400.project.timestepping.TimeStepper;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;

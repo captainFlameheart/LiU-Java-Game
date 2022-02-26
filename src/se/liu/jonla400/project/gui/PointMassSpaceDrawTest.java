@@ -8,6 +8,9 @@ import se.liu.jonla400.project.math.Interval;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Animates and draws a point mass space
+ */
 public class PointMassSpaceDrawTest
 {
     public static void main(String[] args) {
