@@ -2,8 +2,11 @@ package se.liu.jonla400.project.physics;
 
 import se.liu.jonla400.project.timestepping.TimeStepper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -12,7 +15,7 @@ import java.util.List;
  * adding and removing point masses, as well as time stepping which causes
  * each point mass to move for a given time. This class does not know about collisions.
  */
-public class PointMassSpace implements TimeStepper
+public class PointMassSpace implements Iterable<PointMass>, TimeStepper
 {
     private List<PointMass> pointMasses;
 
@@ -43,6 +46,10 @@ public class PointMassSpace implements TimeStepper
 	pointMasses.remove(pointMass);
     }
 
+    @Override public Iterator<PointMass> iterator() {
+	return pointMasses.iterator();
+    }
+
     /**
      * Advances time by moving each point mass in this space
      *
@@ -57,4 +64,5 @@ public class PointMassSpace implements TimeStepper
 	    pointMass.tick(deltaTime);
 	}
     }
+
 }
