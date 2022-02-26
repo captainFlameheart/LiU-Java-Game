@@ -2,7 +2,7 @@ package se.liu.jonla400.project.math;
 
 /**
  * Represents an interval with a start and an end value. No restriction is
- * put in place whether the the start value precedes the end value or not.
+ * put in place whether the start value precedes the end value or not.
  */
 public class Interval
 {
@@ -107,5 +107,9 @@ public class Interval
     public double mapValueToOtherInterval(final double value, final Interval otherInterval) {
 	final double normalizedValue = performInverseLerp(value);
 	return otherInterval.performLerp(normalizedValue);
+    }
+
+    @Override public String toString() {
+	return "Interval{" + "start=" + start + ", end=" + end + '}';
     }
 }

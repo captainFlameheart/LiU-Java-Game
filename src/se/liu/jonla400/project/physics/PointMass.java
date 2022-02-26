@@ -22,8 +22,10 @@ public class PointMass implements TimeStepper
     private double angularMass;
 
     /**
-     * Creates a still point mass with a position and angle of zero and
-     * a mass and angular mass of 1
+     * Creates a point mass with default values. These default values are
+     * left unspecified in order to minimize the risk of external code being
+     * dependent on the default values since the values can change at a later time.
+     * To control the values, use the setter-methods after creating this point mass.
      */
     public PointMass() {
 	pos = Vector2D.createZeroVector();
@@ -36,7 +38,7 @@ public class PointMass implements TimeStepper
     }
 
     /**
-     * Get a copy of the position
+     * Gets a copy of the position
      *
      * @return The copy of the position
      */
@@ -45,7 +47,7 @@ public class PointMass implements TimeStepper
     }
 
     /**
-     * Set the position to a copy of another position
+     * Sets the position to a copy of another position
      *
      * @param pos The position to copy
      */
@@ -54,7 +56,7 @@ public class PointMass implements TimeStepper
     }
 
     /**
-     * Get a copy of the velocity
+     * Gets a copy of the velocity
      *
      * @return The copy of the velocity
      */
@@ -63,7 +65,7 @@ public class PointMass implements TimeStepper
     }
 
     /**
-     * Set the velocity to a copy of another velocity
+     * Sets the velocity to a copy of another velocity
      *
      * @param vel The velocity to copy
      */
@@ -72,7 +74,7 @@ public class PointMass implements TimeStepper
     }
 
     /**
-     * Get the mass
+     * Gets the mass
      *
      * @return The mass
      */
@@ -81,7 +83,7 @@ public class PointMass implements TimeStepper
     }
 
     /**
-     * Set the mass
+     * Sets the mass
      *
      * @param mass The mass
      */
@@ -91,7 +93,6 @@ public class PointMass implements TimeStepper
 	}
 	this.mass = mass;
     }
-
 
     /**
      * Get the angle
@@ -288,14 +289,14 @@ public class PointMass implements TimeStepper
      * respectively.
      *
      * @param offset The offset from the position of this point mass
-     * @param impulse The impulse to apply
+     * @param impulse The impulse to apply at the offset
      */
     public void applyOffsetImpulse(final Vector2D offset, final Vector2D impulse) {
 	// Change the velocity
 	applyImpulse(impulse);
 
 	// Change the angular velocity since the impulse is offset from the center
-	// of this point mass.
+	// of this point mass
 	final double angularImpulse = offset.cross(impulse); // See the definition of torque https://en.wikipedia.org/wiki/Torque
 	applyAngularImpulse(angularImpulse);
     }
@@ -315,5 +316,10 @@ public class PointMass implements TimeStepper
 
 	final double deltaAngle = angularVel * deltaTime;
 	angle += deltaAngle;
+    }
+
+    @Override public String toString() {
+	return "PointMass{" + "pos=" + pos + ", vel=" + vel + ", mass=" + mass + ", angle=" + angle + ", angularVel=" + angularVel +
+	       ", angularMass=" + angularMass + '}';
     }
 }
