@@ -3,7 +3,7 @@ package se.liu.jonla400.project.gui;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.PointMass;
 import se.liu.jonla400.project.physics.PointMassSpace;
-import se.liu.jonla400.project.temp.Interval;
+import se.liu.jonla400.project.math.Interval;
 
 import javax.swing.*;
 import java.awt.*;
