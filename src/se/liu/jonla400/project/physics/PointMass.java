@@ -228,6 +228,35 @@ public class PointMass implements TimeStepper
     }
 
     /**
+     * Gets the orbiting velocity at the given offset from the position of this point mass.
+     * The orbiting velocity depends only on the angular velocity and the given offset, but
+     * not on the "translational" velocity.
+     *
+     * @param offset The offset from the position of this point mass
+     * @return The orbiting velocity at that offset
+     */
+    public Vector2D getCircularVelAt(final Vector2D offset) {
+	// The magnitude of the velocity at the offset is ||offset|| * angularVel
+	// The direction of the velocity at the offset is perpendicular to the offset
+
+	final Vector2D offsetPerp = offset.rotate90Degrees(Vector2D.RotationDirection.X_TO_Y);
+	return offsetPerp.multiply(angularVel);
+    }
+
+    /**
+     * Gets the velocity at the given offset from the position of this point mass.
+     * This velocity depends on the "translational" velocity, the angular velocity and
+     * the given offset.
+     *
+     * @param offset The offset from the position of this point mass
+     * @return The velocity at that offset
+     */
+    public Vector2D getVelAt(final Vector2D offset) {
+	final Vector2D circularVel = getCircularVelAt(offset);
+	return vel.add(circularVel);
+    }
+
+    /**
      * Changes the velocity of this point mass by applying a centered impulse.
      * The mass determines how ineffective the impulse is at changing the velocity.
      *
