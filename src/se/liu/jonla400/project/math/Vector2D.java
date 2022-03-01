@@ -378,6 +378,9 @@ public class Vector2D
 	return "Vector2D{" + "x=" + x + ", y=" + y + ", angle=" + getAngle() + ", magnitude=" + getMagnitude() + '}';
     }
 
+    /**
+     * Represents a rotation direction for 90 degree rotations
+     */
     public static enum RotationDirection
     {
 	/**
