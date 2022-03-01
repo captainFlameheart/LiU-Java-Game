@@ -76,7 +76,7 @@ public class PointMassSpaceDrawer extends JComponent
 
 	// Set the correct color and stroke
 	g.setColor(Color.BLACK);
-	g.setStroke(new BasicStroke(0.1f));
+	g.setStroke(new BasicStroke(0.05f));
 
 	// Draw each point mass onto the graphics object at their positions. The graphics
 	// object has been transformed so that the point masses will show up at the correct
@@ -120,7 +120,7 @@ public class PointMassSpaceDrawer extends JComponent
 	// Get the information needed to draw the point mass
 	final Vector2D pos = pointMass.getPos();
 	final double angle = pointMass.getAngle();
-	final double lineLength = 1;
+	final double lineLength = 0.3;
 
 	// Place the origin at the position of the point mass
 	g.translate(pos.getX(), pos.getY());

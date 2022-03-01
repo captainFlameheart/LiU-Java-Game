@@ -4,6 +4,9 @@ import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.PointMass;
 import se.liu.jonla400.project.physics.PointMassSpace;
 import se.liu.jonla400.project.math.Interval;
+import se.liu.jonla400.project.physics.constraints.ActiveVelocityConstraint;
+import se.liu.jonla400.project.physics.constraints.IterativeVelocityConstrainer;
+import se.liu.jonla400.project.physics.constraints.types.Pin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,9 +26,9 @@ public class PointMassSpaceDrawTest
 
 	// Create point masses
 	final PointMass pointMassA = new PointMass();
-	pointMassA.setPos(Vector2D.createCartesianVector(0, 0));
-	pointMassA.setVel(Vector2D.createPolarVector(0.4 * Math.PI, 12));
-	pointMassA.setAngularVel(0.2 * Math.PI);
+	pointMassA.setPos(Vector2D.createCartesianVector(4, 5));
+	//pointMassA.setVel(Vector2D.createPolarVector(0.4 * Math.PI, 12));
+	//pointMassA.setAngularVel(0.2 * Math.PI);
 
 	final PointMass pointMassB = new PointMass();
 	pointMassB.setPos(Vector2D.createCartesianVector(10, 0));
@@ -35,6 +38,13 @@ public class PointMassSpaceDrawTest
 	// Add point masses
 	pointMassSpace.addPointMass(pointMassA);
 	pointMassSpace.addPointMass(pointMassB);
+
+	// Create constraints
+	final Vector2D localPoint = Vector2D.createCartesianVector(1, 0);
+	final Vector2D globalPoint = pointMassA.convertLocalPointToGlobalPoint(localPoint);
+	final Pin pin = new Pin(pointMassA, localPoint, globalPoint);
+
+	final IterativeVelocityConstrainer iterativeVelConstrainer = new IterativeVelocityConstrainer(10, pin);
 
 	// Create a frame
 	final JFrame frame = new JFrame("Test");
@@ -63,6 +73,9 @@ public class PointMassSpaceDrawTest
 		vel.addLocally(gravityDeltaVelPerTick);
 		pointMass.setVel(vel);
 	    }
+
+	    ActiveVelocityConstraint activeVelConstraint = iterativeVelConstrainer.initActiveVelConstraint(deltaTimeSeconds);
+	    activeVelConstraint.updateSolution();
 	    pointMassSpace.tick(deltaTimeSeconds);
 	    pointMassSpaceDrawer.repaint();
 	});

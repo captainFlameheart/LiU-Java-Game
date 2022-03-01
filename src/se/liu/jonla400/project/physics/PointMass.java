@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.physics;
 
+import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.timestepping.TimeStepper;
 
@@ -255,6 +256,40 @@ public class PointMass implements TimeStepper
     public Vector2D getVelAt(final Vector2D offset) {
 	final Vector2D circularVel = getCircularVelAt(offset);
 	return vel.add(circularVel);
+    }
+
+    /**
+     * Gets a 2 by 2 matrix representing the inverted mass at the given offset from
+     * the position of this point mass.
+     *
+     * Mathematical explanation:
+     *
+     * Let J be an arbitrary column vector of length 2 representing an impulse applied at the given
+     * offset, where J[0] is the x-coordinate and J[1] is the y-coordinate of the impulse
+     *
+     * Let Δv be a column vector representing the change in velocity at the given offset after the
+     * impulse J has been applied, where Δv[0] is the x-coordinate and Δv[1] is the y-coordinate of
+     * the change in velocity.
+     *
+     * This method returns a 2-by-2 matrix M such that M * J = Δv where * denotes matrix multiplication
+     *
+     * @param offset The offset from the position of this point mass
+     * @return The inverse of the mass at that offset
+     */
+    public Matrix22 getInvMassAt(final Vector2D offset) {
+	// See derivation in report
+
+	final double invMass = 1 / mass;
+	final double invAngularMass = 1 / angularMass;
+
+	final double offsetX = offset.getX();
+	final double offsetY = offset.getY();
+
+	final double commonValue = -offsetX * offsetY * invAngularMass;
+	return new Matrix22(new double[][]{
+		{invMass + offsetY * offsetY * invAngularMass, commonValue},
+		{commonValue, invMass + offsetX * offsetX * invAngularMass}
+	});
     }
 
     /**
