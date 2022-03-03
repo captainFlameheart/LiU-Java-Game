@@ -71,16 +71,9 @@ public class PointMassSpaceDrawer extends JComponent
 	AffineTransform oldTransform = g.getTransform();
 	// Transform the graphics object so that drawing the point masses onto
 	// the graphics object at their positions will display them to the screen
-	// at the correct positions according to the start and end x- and y-coordinates.
+	// at the correct positions according to the start and end x- and y-coordinates
 	transformGraphicsToShowRegion(g);
-
-	// Set the correct color and stroke
-	g.setColor(Color.BLACK);
-	g.setStroke(new BasicStroke(0.05f));
-
-	// Draw each point mass onto the graphics object at their positions. The graphics
-	// object has been transformed so that the point masses will show up at the correct
-	// positions on the screen.
+	// Draw each point mass onto the graphics object at their positions
 	for (PointMass pointMass : pointMassSpace) {
 	    drawPointMass(pointMass, g);
 	}
@@ -129,9 +122,12 @@ public class PointMassSpaceDrawer extends JComponent
 	// Scale the graphics to the length of the lines to be drawn
 	g.scale(lineLength, lineLength);
 
-	// Draw two lines, one for the local x-axis of the point mass...
+	g.setStroke(new BasicStroke(0.1f));
+	// Draw two lines, one for the local x-
+	g.setColor(Color.RED);
 	g.drawLine(0, 0, 1, 0);
 	// and the other for the local y-axis of the point mass
+	g.setColor(Color.BLUE);
 	g.drawLine(0, 0, 0, 1);
 
 	// Reset the saved transform

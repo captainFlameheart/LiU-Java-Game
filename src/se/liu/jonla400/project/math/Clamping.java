@@ -1,5 +1,9 @@
 package se.liu.jonla400.project.math;
 
+/**
+ * A utility class that contains static methods for clamping values. This class cannot
+ * be instantiated.
+ */
 public class Clamping
 {
     private Clamping() {

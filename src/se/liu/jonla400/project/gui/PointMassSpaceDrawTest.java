@@ -6,7 +6,10 @@ import se.liu.jonla400.project.physics.PointMassSpace;
 import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.physics.constraints.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.constraints.IterativeVelocityConstrainer;
+import se.liu.jonla400.project.physics.constraints.types.AngularFrictionApplier;
+import se.liu.jonla400.project.physics.constraints.types.FrictionApplier;
 import se.liu.jonla400.project.physics.constraints.types.Pin;
+import se.liu.jonla400.project.physics.constraints.types.TranslationalFrictionApplier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,26 +29,22 @@ public class PointMassSpaceDrawTest
 
 	// Create point masses
 	final PointMass pointMassA = new PointMass();
-	pointMassA.setPos(Vector2D.createCartesianVector(5, 5));
-	//pointMassA.setVel(Vector2D.createPolarVector(0.4 * Math.PI, 12));
-	//pointMassA.setAngularVel(0.2 * Math.PI);
-
-	final PointMass pointMassB = new PointMass();
-	pointMassB.setPos(Vector2D.createCartesianVector(10, 0));
-	pointMassB.setVel(Vector2D.createPolarVector(0.6 * Math.PI, 12));
-	pointMassB.setAngularVel(0.2 * Math.PI);
+	pointMassA.setPos(Vector2D.createCartesianVector(1, 5));
+	pointMassA.setVel(Vector2D.createCartesianVector(5, 0));
+	pointMassA.setAngularVel(5);
 
 	// Add point masses
 	pointMassSpace.addPointMass(pointMassA);
-	pointMassSpace.addPointMass(pointMassB);
 
 	// Create constraints
-	final Vector2D localPoint = Vector2D.createCartesianVector(0,1);
-	final Vector2D globalPoint = pointMassA.convertLocalPointToGlobalPoint(localPoint).add(Vector2D.createCartesianVector(-4, 0));
-	final Pin pin = new Pin(pointMassA, localPoint, globalPoint);
-	pin.setPosCorrectionFraction(0.5);
+	final double maxFrictionForce = 3;
+	final double maxFrictionTorque = 3;
+	final FrictionApplier frictionApplier = new FrictionApplier(pointMassA, maxFrictionForce, maxFrictionTorque);
 
-	final IterativeVelocityConstrainer iterativeVelConstrainer = new IterativeVelocityConstrainer(10, pin);
+	final int velConstraintIterations = 10;
+	final IterativeVelocityConstrainer iterativeVelConstrainer = new IterativeVelocityConstrainer(
+		velConstraintIterations, frictionApplier
+	);
 
 	// Create a frame
 	final JFrame frame = new JFrame("Test");
@@ -65,7 +64,7 @@ public class PointMassSpaceDrawTest
 	final int deltaTimeMilliseconds = 1000 / tickRate;
 	final double deltaTimeSeconds = 1.0 / tickRate;
 
-	final Vector2D gravityAcceleration = Vector2D.createCartesianVector(0, -9.82);
+	final Vector2D gravityAcceleration = Vector2D.createCartesianVector(0, 0);
 	final Vector2D gravityDeltaVelPerTick = gravityAcceleration.multiply(deltaTimeSeconds);
 
 	Timer clockTimer = new Timer(deltaTimeMilliseconds, e -> {
