@@ -1,15 +1,12 @@
 package se.liu.jonla400.project.gui;
 
+import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.PointMass;
 import se.liu.jonla400.project.physics.PointMassSpace;
-import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.physics.constraints.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.constraints.IterativeVelocityConstrainer;
-import se.liu.jonla400.project.physics.constraints.types.AngularFrictionApplier;
 import se.liu.jonla400.project.physics.constraints.types.FrictionApplier;
-import se.liu.jonla400.project.physics.constraints.types.Pin;
-import se.liu.jonla400.project.physics.constraints.types.TranslationalFrictionApplier;
 
 import javax.swing.*;
 import java.awt.*;

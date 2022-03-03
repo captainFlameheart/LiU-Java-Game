@@ -41,7 +41,7 @@ public class TranslationalFrictionApplier implements VelocityConstrainer
 
 	return new ActiveVelocityConstraint()
 	{
-	    Vector2D impulse = Vector2D.createZeroVector();
+	    private Vector2D impulse = Vector2D.createZeroVector();
 
 	    @Override public void updateSolution() {
 		final Vector2D targetDeltaVel = pointMass.getVel().negate(); // We want to stop the point mass...

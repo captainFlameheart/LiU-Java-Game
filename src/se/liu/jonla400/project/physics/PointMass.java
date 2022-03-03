@@ -241,8 +241,8 @@ public class PointMass implements TimeStepper
 	// The magnitude of the velocity at the offset is ||offset|| * angularVel
 	// The direction of the velocity at the offset is perpendicular to the offset
 
-	final Vector2D offsetPerp = offset.rotate90Degrees(Vector2D.RotationDirection.X_TO_Y);
-	return offsetPerp.multiply(angularVel);
+	final Vector2D perpendicularOffset = offset.rotate90Degrees(Vector2D.RotationDirection.X_TO_Y);
+	return perpendicularOffset.multiply(angularVel);
     }
 
     /**

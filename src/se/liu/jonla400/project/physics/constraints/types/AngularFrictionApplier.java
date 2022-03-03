@@ -41,7 +41,7 @@ public class AngularFrictionApplier implements VelocityConstrainer
 
 	return new ActiveVelocityConstraint()
 	{
-	    double angularImpulse = 0;
+	    private double angularImpulse = 0;
 
 	    @Override public void updateSolution() {
 		final double targetDeltaAngularVel = -pointMass.getAngularVel(); // We want to stop the point mass...
