@@ -293,6 +293,29 @@ public class Vector2D
     }
 
     /**
+     * Returns the result of limiting the magnitude of this vector
+     *
+     * @param maxMagnitude The maximum magnitude
+     */
+    public Vector2D limitMagnitude(final double maxMagnitude) {
+	final double magnitudeSquared = getMagnitudeSquared();	// Faster than getting the actual magnitude
+	final double maxMagnitudeSquared = maxMagnitude * maxMagnitude;
+	if (magnitudeSquared > maxMagnitudeSquared) {
+	    final double magnitude = Math.sqrt(magnitudeSquared);
+	    final double magnitudeRatio = maxMagnitude / magnitude;
+	    return multiply(magnitudeRatio);
+	}
+	return copy();
+    }
+
+    /**
+     * Changes this vector by limiting its magnitude
+     */
+    public void limitMagnitudeLocally(final double maxMagnitude) {
+	set(limitMagnitude(maxMagnitude));
+    }
+
+    /**
      * Returns the result of rotating this vector 90 degrees in one of two directions.
      * Whether the rotation direction represents a clockwise or a counter-clockwise
      * direction is dependent on where the x- and y-axes are interpreted to point towards.
