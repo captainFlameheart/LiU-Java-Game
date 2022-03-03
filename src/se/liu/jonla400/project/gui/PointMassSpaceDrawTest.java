@@ -26,7 +26,7 @@ public class PointMassSpaceDrawTest
 
 	// Create point masses
 	final PointMass pointMassA = new PointMass();
-	pointMassA.setPos(Vector2D.createCartesianVector(4, 5));
+	pointMassA.setPos(Vector2D.createCartesianVector(5, 5));
 	//pointMassA.setVel(Vector2D.createPolarVector(0.4 * Math.PI, 12));
 	//pointMassA.setAngularVel(0.2 * Math.PI);
 
@@ -40,9 +40,10 @@ public class PointMassSpaceDrawTest
 	pointMassSpace.addPointMass(pointMassB);
 
 	// Create constraints
-	final Vector2D localPoint = Vector2D.createCartesianVector(1, 0);
-	final Vector2D globalPoint = pointMassA.convertLocalPointToGlobalPoint(localPoint);
+	final Vector2D localPoint = Vector2D.createCartesianVector(0,1);
+	final Vector2D globalPoint = pointMassA.convertLocalPointToGlobalPoint(localPoint).add(Vector2D.createCartesianVector(-4, 0));
 	final Pin pin = new Pin(pointMassA, localPoint, globalPoint);
+	pin.setPosCorrectionFraction(0.5);
 
 	final IterativeVelocityConstrainer iterativeVelConstrainer = new IterativeVelocityConstrainer(10, pin);
 

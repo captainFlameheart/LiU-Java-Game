@@ -33,10 +33,10 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
     /**
      * Adds a sub velocity constrainer
      *
-     * @param velocityConstrainer The velocity constrainer to be added
+     * @param velConstrainer The velocity constrainer to be added
      */
-    public void add(final VelocityConstrainer velocityConstrainer) {
-	velConstrainers.add(velocityConstrainer);
+    public void add(final VelocityConstrainer velConstrainer) {
+	velConstrainers.add(velConstrainer);
     }
 
     /**
@@ -54,7 +54,7 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
      * updated, solves the collection of velocity constraints one-by-one for the
      * given number of iterations.
      *
-     * @param deltaTime The size of the time step after the velocity has been constrained
+     * @param deltaTime The size of the upcoming time step
      * @return The new ActiveVelocityConstraint
      */
     @Override public ActiveVelocityConstraint initActiveVelConstraint(final double deltaTime) {

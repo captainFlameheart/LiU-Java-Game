@@ -12,7 +12,7 @@ public interface VelocityConstrainer
      * The velocity constraint is only required to work for the current position of
      * the system.
      *
-     * @param deltaTime The size of the time step after the velocity has been constrained
+     * @param deltaTime The size of the upcoming time step
      * @return The new ActiveVelocityConstraint
      */
     ActiveVelocityConstraint initActiveVelConstraint(double deltaTime);
