@@ -38,6 +38,18 @@ public class Matrix22
     }
 
     /**
+     * Returns the value at the given row and column. The first row has the
+     * index 0 and the second row has the index 1. The same goes for the columns.
+     *
+     * @param row The index of the row
+     * @param col The index of the column
+     * @return The value at the given row and column
+     */
+    public double getValueAt(final int row, final int col) {
+	return values[row][col];
+    }
+
+    /**
      * Solves a system of linear equations: this * x = product where * represent
      * matrix multiplication
      *
