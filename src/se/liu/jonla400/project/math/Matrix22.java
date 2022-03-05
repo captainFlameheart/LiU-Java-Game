@@ -7,7 +7,7 @@ import java.util.Arrays;
  */
 public class Matrix22
 {
-    private final static int DIMENSION = 2;
+    public final static int DIMENSION = 2;
 
     private double[][] values;
 
@@ -36,21 +36,14 @@ public class Matrix22
 	}
     }
 
-    /**
-     * Returns the result of multiplying each of the elements in this matrix by the
-     * corresponding elements in the other matrix
-     *
-     * @param other The other matrix to multiply with element-wise
-     * @return The result of this element-wise multiplication
-     */
-    public Matrix22 multiplyElementWise(final Matrix22 other) {
-	final double[][] result = new double[DIMENSION][DIMENSION];
+    public double getWeightedSum(final Matrix22 weights) {
+	double weightedSum = 0;
 	for (int row = 0; row < DIMENSION; row++) {
 	    for (int col = 0; col < DIMENSION; col++) {
-		result[row][col] = values[row][col] * other.values[row][col];
+		weightedSum += values[row][col] * weights.values[row][col];
 	    }
 	}
-	return new Matrix22(result);
+	return weightedSum;
     }
 
     /**
