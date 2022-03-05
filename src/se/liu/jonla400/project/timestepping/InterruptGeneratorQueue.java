@@ -30,10 +30,10 @@ public class InterruptGeneratorQueue implements InterruptGenerator
      */
     @Override public Optional<Interrupt> generateNextInterrupt(final double timeLeft) {
 	Interrupt firstInterrupt = null;
-	double firstInterruptTime = Double.POSITIVE_INFINITY;
+	double upperTimeLimit = timeLeft;
 
 	for (InterruptGenerator generator : generators) {
-	    final Optional<Interrupt> possibleInterrupt = generator.generateNextInterrupt(timeLeft);
+	    final Optional<Interrupt> possibleInterrupt = generator.generateNextInterrupt(upperTimeLimit);
 	    if (possibleInterrupt.isEmpty()) {
 		continue;
 	    }
@@ -41,9 +41,9 @@ public class InterruptGeneratorQueue implements InterruptGenerator
 	    final Interrupt interrupt = possibleInterrupt.get();
 	    final double interruptTime = interrupt.getTime();
 
-	    if (interruptTime < firstInterruptTime) {
+	    if (interruptTime < upperTimeLimit) {
 		firstInterrupt = interrupt;
-		firstInterruptTime = interruptTime;
+		upperTimeLimit = interruptTime;
 	    }
 	}
 	return Optional.ofNullable(firstInterrupt);
