@@ -129,6 +129,7 @@ public class PointMassSpaceDrawer extends JComponent
 	// and the other for the local y-axis of the point mass
 	g.setColor(Color.BLUE);
 	g.drawLine(0, 0, 0, 1);
+	g.drawOval(-1, -1, 2, 2);
 
 	// Reset the saved transform
 	g.setTransform(oldTransform);

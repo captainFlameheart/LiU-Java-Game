@@ -369,7 +369,7 @@ public class Vector2D
      * Returns the dot product between this vector and another vector.
      * Given two vectors v = (x1, y1) and w = (x2, y2) the dot product is
      * defined as (x1 * x2) + (y1 * y2). Another equivalent definition is
-     * ||a|| * ||b|| * cos(angle between a and b).
+     * ||v|| * ||w|| * cos(angle between v and w).
      *
      * @param other The other vector to perform the dot product with
      * @return The dot product

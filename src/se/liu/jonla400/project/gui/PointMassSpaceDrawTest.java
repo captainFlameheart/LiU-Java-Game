@@ -4,9 +4,17 @@ import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.PointMass;
 import se.liu.jonla400.project.physics.PointMassSpace;
+import se.liu.jonla400.project.physics.collision.CollisionInterruptGenerator;
+import se.liu.jonla400.project.physics.collision.collisiondetection.ContinousCollisionDetector;
+import se.liu.jonla400.project.physics.collision.collisiondetection.types.DummyCollisionDetector;
+import se.liu.jonla400.project.physics.collision.collisionlistening.CollisionListener;
+import se.liu.jonla400.project.physics.collision.collisionlistening.CollisionSolver;
 import se.liu.jonla400.project.physics.constraints.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.constraints.IterativeVelocityConstrainer;
 import se.liu.jonla400.project.physics.constraints.types.FrictionApplier;
+import se.liu.jonla400.project.physics.constraints.types.Pin;
+import se.liu.jonla400.project.timestepping.InterruptableTimeStepper;
+import se.liu.jonla400.project.timestepping.TimeStepper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,17 +34,23 @@ public class PointMassSpaceDrawTest
 
 	// Create point masses
 	final PointMass pointMassA = new PointMass();
-	pointMassA.setPos(Vector2D.createCartesianVector(1, 5));
-	pointMassA.setVel(Vector2D.createCartesianVector(5, 0));
+	pointMassA.setPos(Vector2D.createCartesianVector(0, 5));
+	pointMassA.setVel(Vector2D.createCartesianVector(1, 10));
 	pointMassA.setAngularVel(5);
+	pointMassA.setMass(1);
+	pointMassA.setAngularMass(0.01);
 
 	// Add point masses
 	pointMassSpace.addPointMass(pointMassA);
 
 	// Create constraints
-	final double maxFrictionForce = 3;
-	final double maxFrictionTorque = 3;
+	final double maxFrictionForce = 0;
+	final double maxFrictionTorque = 0;
 	final FrictionApplier frictionApplier = new FrictionApplier(pointMassA, maxFrictionForce, maxFrictionTorque);
+
+	final Vector2D pinnedPoint = Vector2D.createCartesianVector(0, 0);
+	final Vector2D pointPinnedTo = pointMassA.convertLocalPointToGlobalPoint(pinnedPoint);
+	final Pin pin = new Pin(pointMassA, pinnedPoint, pointPinnedTo);
 
 	final int velConstraintIterations = 10;
 	final IterativeVelocityConstrainer iterativeVelConstrainer = new IterativeVelocityConstrainer(
@@ -61,22 +75,39 @@ public class PointMassSpaceDrawTest
 	final int deltaTimeMilliseconds = 1000 / tickRate;
 	final double deltaTimeSeconds = 1.0 / tickRate;
 
-	final Vector2D gravityAcceleration = Vector2D.createCartesianVector(0, 0);
+	final Vector2D gravityAcceleration = Vector2D.createCartesianVector(0, -9.82);
 	final Vector2D gravityDeltaVelPerTick = gravityAcceleration.multiply(deltaTimeSeconds);
+
+	final double radius = 0.3;
+	final double collisionPlaneY = 0;
+	final ContinousCollisionDetector collisionDetector = new DummyCollisionDetector(
+		pointMassA, radius, collisionPlaneY
+	);
+
+	final double enforcedSeparation = 0.001;
+	final CollisionListener collisionListener = new CollisionSolver(enforcedSeparation);
+
+	final int maxTickIterations = 50;
+	final TimeStepper timeStepper = new InterruptableTimeStepper(
+		pointMassSpace,
+		new CollisionInterruptGenerator(collisionDetector, collisionListener),
+		maxTickIterations
+	);
 
 	Timer clockTimer = new Timer(deltaTimeMilliseconds, e -> {
 	    for (PointMass pointMass : pointMassSpace) {
-		Vector2D vel = pointMass.getVel();
+		final Vector2D vel = pointMass.getVel();
 		vel.addLocally(gravityDeltaVelPerTick);
 		pointMass.setVel(vel);
 	    }
 
 	    ActiveVelocityConstraint activeVelConstraint = iterativeVelConstrainer.initActiveVelConstraint(deltaTimeSeconds);
 	    activeVelConstraint.updateSolution();
-	    pointMassSpace.tick(deltaTimeSeconds);
+	    timeStepper.tick(deltaTimeSeconds);
 	    pointMassSpaceDrawer.repaint();
 	});
 	clockTimer.setCoalesce(false);
 	clockTimer.start();
     }
+
 }

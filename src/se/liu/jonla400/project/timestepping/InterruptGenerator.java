@@ -9,12 +9,12 @@ import java.util.Optional;
 public interface InterruptGenerator
 {
     /**
-     * Generates the next upcoming interrupt of a time step, if any.
+     * Generates the next interrupt of a time step, if any.
      * An implementation of this method is allowed to return an interrupt
-     * that occurs after the time step has ended, but is not expected to.
+     * that occurs after the time step has ended, but is not required to.
      *
      * @param timeLeft The time left of the time step
-     * @return The next upcoming interrupt of the time step, if any
+     * @return The next interrupt of the time step, if any
      */
     Optional<Interrupt> generateNextInterrupt(double timeLeft);
 }

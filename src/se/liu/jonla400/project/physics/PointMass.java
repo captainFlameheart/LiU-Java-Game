@@ -274,7 +274,7 @@ public class PointMass implements TimeStepper
      * This method returns a 2-by-2 matrix M such that M * J = Δv where * denotes matrix multiplication
      *
      * @param offset The offset from the position of this point mass
-     * @return The inverse of the mass at that offset
+     * @return The inverse of the mass at the offset
      */
     public Matrix22 getInvMassAt(final Vector2D offset) {
 	// See derivation in report

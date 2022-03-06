@@ -1,9 +1,10 @@
 package se.liu.jonla400.project.physics.constraints.types;
 
-import se.liu.jonla400.project.math.Clamping;
+import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.physics.PointMass;
 import se.liu.jonla400.project.physics.constraints.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.constraints.VelocityConstrainer;
+import se.liu.jonla400.project.temp.ActiveImpulse;
 
 /**
  * Used to apply top-down angular friction by reducing the angular speed of
@@ -38,24 +39,18 @@ public class AngularFrictionApplier implements VelocityConstrainer
      */
     @Override public ActiveVelocityConstraint initActiveVelConstraint(final double deltaTime) {
 	final double maxAngularImpulse = maxTorque * deltaTime;
+	final Interval angularImpulseRange = new Interval(-maxAngularImpulse, maxAngularImpulse);
 
 	return new ActiveVelocityConstraint()
 	{
-	    private double angularImpulse = 0;
+	    private ActiveImpulse angularImpulse = new ActiveImpulse();
 
 	    @Override public void updateSolution() {
-		final double targetDeltaAngularVel = -pointMass.getAngularVel(); // We want to stop the point mass...
-		final double targetDeltaAngularImpulse = targetDeltaAngularVel * pointMass.getAngularMass();
-		final double targetAngularImpulse = angularImpulse + targetDeltaAngularImpulse;
-
-		final double nextAngularImpulse = Clamping.limitMagnitude(targetAngularImpulse, maxAngularImpulse); // But we are limited by a maximum impulse
-		final double deltaAngularImpulse = nextAngularImpulse - angularImpulse;
-
+		final double targetDeltaAngularVel = -pointMass.getAngularVel();
+		final double deltaAngularImpulse = angularImpulse.update(targetDeltaAngularVel, pointMass.getAngularMass(), angularImpulseRange);
 		pointMass.applyAngularImpulse(deltaAngularImpulse);
-		angularImpulse = nextAngularImpulse;
 	    }
 	};
-
     }
 
 }

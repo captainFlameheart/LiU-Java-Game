@@ -59,6 +59,20 @@ public class Interval
     }
 
     /**
+     * Returns the value within this interval closest to the given value
+     *
+     * @param value The value to clamp
+     * @return The closest value
+     */
+    public double clamp(final double value) {
+	final Interval sorted = sort();
+	if (value < sorted.start) {
+	    return sorted.start;
+	}
+	return Math.min(value, sorted.end);
+    }
+
+    /**
      * Performs linear interpolation between the start and end value of this interval.
      * The passed in value is typically between 0 and 1, and represent "how long" to
      * travel from the start value to the end value. The point traveled to is returned.
