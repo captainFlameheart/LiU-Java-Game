@@ -49,13 +49,32 @@ public class Interval
     }
 
     /**
+     * Returns the result of flipping this interval
+     *
+     * @return A flipped version of this interval
+     */
+    public Interval flip() {
+	return new Interval(end, start);
+    }
+
+    /**
+     * Returns the result of flipping this interval if the boolean is true
+     *
+     * @param b The boolean indicating whether to flip or not
+     * @return A potentially flipped version of this interval
+     */
+    public Interval flipIf(final boolean b) {
+	return b ? flip() : new Interval(start, end);
+    }
+
+    /**
      * Returns the result of sorting this interval so that the start value
      * precedes the end value.
      *
      * @return A sorted version of this interval
      */
     public Interval sort() {
-	return end < start ? new Interval(end, start) : new Interval(start, end);
+	return flipIf(end < start);
     }
 
     /**

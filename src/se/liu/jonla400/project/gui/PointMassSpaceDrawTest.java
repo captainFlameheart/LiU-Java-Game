@@ -5,6 +5,7 @@ import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.PointMass;
 import se.liu.jonla400.project.physics.PointMassSpace;
 import se.liu.jonla400.project.physics.collision.CollisionInterruptGenerator;
+import se.liu.jonla400.project.physics.collision.collisiondetection.CollisionDetectorQueue;
 import se.liu.jonla400.project.physics.collision.collisiondetection.ContinousCollisionDetector;
 import se.liu.jonla400.project.physics.collision.collisiondetection.types.DummyCollisionDetector;
 import se.liu.jonla400.project.physics.collision.collisionlistening.CollisionListener;
@@ -34,14 +35,22 @@ public class PointMassSpaceDrawTest
 
 	// Create point masses
 	final PointMass pointMassA = new PointMass();
-	pointMassA.setPos(Vector2D.createCartesianVector(0, 5));
-	pointMassA.setVel(Vector2D.createCartesianVector(1, 10));
-	pointMassA.setAngularVel(5);
+	pointMassA.setPos(Vector2D.createCartesianVector(1, 10));
+	pointMassA.setVel(Vector2D.createCartesianVector(10, 0));
+	pointMassA.setAngularVel(0);
 	pointMassA.setMass(1);
 	pointMassA.setAngularMass(0.01);
 
+	final PointMass pointMassB = new PointMass();
+	pointMassB.setPos(Vector2D.createCartesianVector(9, 10));
+	pointMassB.setVel(Vector2D.createCartesianVector(-10, 0));
+	pointMassB.setAngularVel(0);
+	pointMassB.setMass(1);
+	pointMassB.setAngularMass(0.01);
+
 	// Add point masses
 	pointMassSpace.addPointMass(pointMassA);
+	pointMassSpace.addPointMass(pointMassB);
 
 	// Create constraints
 	final double maxFrictionForce = 0;
@@ -79,9 +88,19 @@ public class PointMassSpaceDrawTest
 	final Vector2D gravityDeltaVelPerTick = gravityAcceleration.multiply(deltaTimeSeconds);
 
 	final double radius = 0.3;
-	final double collisionPlaneY = 0;
-	final ContinousCollisionDetector collisionDetector = new DummyCollisionDetector(
-		pointMassA, radius, collisionPlaneY
+	final ContinousCollisionDetector collisionDetector = new CollisionDetectorQueue(
+		new DummyCollisionDetector(
+			pointMassA, radius, Vector2D.createUnitVector(0.5 * Math.PI), 0
+		),
+		new DummyCollisionDetector(
+			pointMassA, radius, Vector2D.createUnitVector(0.8 * Math.PI), -5
+		),
+		new DummyCollisionDetector(
+			pointMassA, radius, Vector2D.createUnitVector(0 * Math.PI), 0
+		),
+		new DummyCollisionDetector(
+			pointMassA, radius, Vector2D.createUnitVector(1.5 * Math.PI), -10
+		)
 	);
 
 	final double enforcedSeparation = 0.001;

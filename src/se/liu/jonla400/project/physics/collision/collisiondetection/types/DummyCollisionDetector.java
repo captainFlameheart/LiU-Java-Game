@@ -12,29 +12,33 @@ public class DummyCollisionDetector implements ContinousCollisionDetector
     private PointMass pointMass;
     private double radius;
 
-    private double collisionPlaneY;
+    private Vector2D collisionPlaneNormal;
+    private double collisionPlaneOffset;
 
-    public DummyCollisionDetector(final PointMass pointMass, final double radius, final double collisionPlaneY) {
+    public DummyCollisionDetector(final PointMass pointMass, final double radius, final Vector2D collisionPlaneNormal,
+				  final double collisionPlaneOffset)
+    {
 	this.pointMass = pointMass;
 	this.radius = radius;
-	this.collisionPlaneY = collisionPlaneY;
+	this.collisionPlaneNormal = collisionPlaneNormal;
+	this.collisionPlaneOffset = collisionPlaneOffset;
     }
 
     @Override public Optional<UpcomingCollision> detectCollision(final double upperTimeLimit) {
-	final double y = pointMass.getPos().getY();
-	final double bottomY = y - radius;
-	final double separation = bottomY - collisionPlaneY;
+	final double posAlongNormal = collisionPlaneNormal.dot(pointMass.getPos());
+	final double relPosAlongNormal = posAlongNormal - collisionPlaneOffset;
+	final double separation = relPosAlongNormal - radius;
 
 	if (separation <= 0) {
 	    final double timeOfImpact = 0;
 	    return Optional.of(createCollision(separation, timeOfImpact));
 	}
 
-	final double vy = pointMass.getVel().getY();
-	if (vy >= 0) {
+	final double velAlongNormal = collisionPlaneNormal.dot(pointMass.getVel());
+	if (velAlongNormal >= 0) {
 	    return Optional.empty();
 	}
-	final double timeOfImpact = -separation / vy;
+	final double timeOfImpact = -separation / velAlongNormal;
 	final double separationDuringCollision = 0;
 	return Optional.of(createCollision(separationDuringCollision, timeOfImpact));
     }
@@ -48,15 +52,15 @@ public class DummyCollisionDetector implements ContinousCollisionDetector
     }
 
     private Vector2D getContactPointOffset() {
-	return Vector2D.createCartesianVector(0, -radius);
+	return collisionPlaneNormal.multiply(-radius);
     }
 
     private Vector2D getCollisionNormal() {
-	return Vector2D.createCartesianVector(0, 1);
+	return collisionPlaneNormal.copy();
     }
 
     private double getBounceCoefficient() {
-	return 0.3;
+	return 0.4;
     }
 
     private double getFrictionCoefficient() {
