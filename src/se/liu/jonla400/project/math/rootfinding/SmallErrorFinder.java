@@ -30,10 +30,10 @@ public class SmallErrorFinder
 	    final ContinousErrorStateFunction<R> function, final Interval inputInterval)
     {
 	final Optional<ZeroErrorIsolation> zeroErrorIsolation = performGlobalSearch(function, inputInterval);
-	if (zeroErrorIsolation.isPresent()) {
-	    return performLocalSearch(function, zeroErrorIsolation.get());
+	if (zeroErrorIsolation.isEmpty()) {
+	    return Optional.empty();
 	}
-	return Optional.empty();
+	return performLocalSearch(function, zeroErrorIsolation.get());
     }
 
     private Optional<ZeroErrorIsolation> performGlobalSearch(final ContinousErrorStateFunction<?> function, final Interval inputInterval) {

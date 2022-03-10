@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.physics.constraints.types;
+package se.liu.jonla400.project.restructure.physics.constraints.types;
 
 import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Matrix22;

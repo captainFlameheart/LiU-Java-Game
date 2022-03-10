@@ -7,7 +7,7 @@ import se.liu.jonla400.project.physics.collision.collisioninfo.UpcomingCollision
 
 import java.util.Optional;
 
-public class DummyCollisionDetector implements ContinousCollisionDetector
+public class CircleVsPlaneCollisionDetector implements ContinousCollisionDetector
 {
     private PointMass pointMass;
     private double radius;
@@ -15,8 +15,8 @@ public class DummyCollisionDetector implements ContinousCollisionDetector
     private Vector2D collisionPlaneNormal;
     private double collisionPlaneOffset;
 
-    public DummyCollisionDetector(final PointMass pointMass, final double radius, final Vector2D collisionPlaneNormal,
-				  final double collisionPlaneOffset)
+    public CircleVsPlaneCollisionDetector(final PointMass pointMass, final double radius, final Vector2D collisionPlaneNormal,
+					  final double collisionPlaneOffset)
     {
 	this.pointMass = pointMass;
 	this.radius = radius;

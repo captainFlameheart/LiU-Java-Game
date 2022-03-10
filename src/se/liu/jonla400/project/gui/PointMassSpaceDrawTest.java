@@ -7,7 +7,8 @@ import se.liu.jonla400.project.physics.PointMassSpace;
 import se.liu.jonla400.project.physics.collision.CollisionInterruptGenerator;
 import se.liu.jonla400.project.physics.collision.collisiondetection.CollisionDetectorQueue;
 import se.liu.jonla400.project.physics.collision.collisiondetection.ContinousCollisionDetector;
-import se.liu.jonla400.project.physics.collision.collisiondetection.types.DummyCollisionDetector;
+import se.liu.jonla400.project.physics.collision.collisiondetection.types.CircleVsPlaneCollisionDetector;
+import se.liu.jonla400.project.physics.collision.collisiondetection.types.CircleVsPointCollisionDetector;
 import se.liu.jonla400.project.physics.collision.collisionlistening.CollisionListener;
 import se.liu.jonla400.project.physics.collision.collisionlistening.CollisionSolver;
 import se.liu.jonla400.project.physics.constraints.ActiveVelocityConstraint;
@@ -35,8 +36,8 @@ public class PointMassSpaceDrawTest
 
 	// Create point masses
 	final PointMass pointMassA = new PointMass();
-	pointMassA.setPos(Vector2D.createCartesianVector(1, 10));
-	pointMassA.setVel(Vector2D.createCartesianVector(10, 0));
+	pointMassA.setPos(Vector2D.createCartesianVector(0, 5));
+	pointMassA.setVel(Vector2D.createCartesianVector(6, 0));
 	pointMassA.setAngularVel(0);
 	pointMassA.setMass(1);
 	pointMassA.setAngularMass(0.01);
@@ -50,7 +51,6 @@ public class PointMassSpaceDrawTest
 
 	// Add point masses
 	pointMassSpace.addPointMass(pointMassA);
-	pointMassSpace.addPointMass(pointMassB);
 
 	// Create constraints
 	final double maxFrictionForce = 0;
@@ -88,20 +88,24 @@ public class PointMassSpaceDrawTest
 	final Vector2D gravityDeltaVelPerTick = gravityAcceleration.multiply(deltaTimeSeconds);
 
 	final double radius = 0.3;
+
+	final int pointCount = 60;
+	final ContinousCollisionDetector[] detectors = new ContinousCollisionDetector[pointCount];
+	for (int i = 0; i < pointCount; i++) {
+	    double x = new Interval(0, pointCount - 1).mapValueToOtherInterval(i, new Interval(0, 10));
+	    double y = 3 - Math.signum(i % 3);//Math.random() * 10;
+	    Vector2D point = Vector2D.createCartesianVector(x, y);
+	    detectors[i] = new CircleVsPointCollisionDetector(
+		    pointMassA, radius, point
+	    );
+	}
+
+	final ContinousCollisionDetector collisionDetector = new CollisionDetectorQueue(detectors);
+
+	/*
 	final ContinousCollisionDetector collisionDetector = new CollisionDetectorQueue(
-		new DummyCollisionDetector(
-			pointMassA, radius, Vector2D.createUnitVector(0.5 * Math.PI), 0
-		),
-		new DummyCollisionDetector(
-			pointMassA, radius, Vector2D.createUnitVector(0.8 * Math.PI), -5
-		),
-		new DummyCollisionDetector(
-			pointMassA, radius, Vector2D.createUnitVector(0 * Math.PI), 0
-		),
-		new DummyCollisionDetector(
-			pointMassA, radius, Vector2D.createUnitVector(1.5 * Math.PI), -10
-		)
-	);
+		new CircleVsPointCollisionDetector(pointMassA, radius, Vector2D.createCartesianVector(5, 5))
+	);*/
 
 	final double enforcedSeparation = 0.001;
 	final CollisionListener collisionListener = new CollisionSolver(enforcedSeparation);

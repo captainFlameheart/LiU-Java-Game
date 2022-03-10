@@ -1,18 +1,10 @@
-package se.liu.jonla400.project.physics;
+package se.liu.jonla400.project.restructure.physics;
 
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.timestepping.TimeStepper;
+import se.liu.jonla400.project.restructure.physics.timestepping.TimeStepper;
 
-/**
- * Represents a physical point in space that can move and rotate with time.
- * A point mass also has a mass and an angular mass (rotational inertia)
- * which in this case control how ineffective impulses are at changing
- * the velocity and the angular velocity respectively. A point mass does
- * not know about collisions. It also doesn't have any knowledge about acceleration.
- * It only knows about position, velocity, mass and their angular counterparts.
- */
-public class PointMass implements TimeStepper
+public class Body implements TimeStepper
 {
     private Vector2D pos;
     private Vector2D vel;
@@ -28,7 +20,7 @@ public class PointMass implements TimeStepper
      * dependent on the default values since the values can change at a later time.
      * To control the values, use the setter-methods after creating this point mass.
      */
-    public PointMass() {
+    public Body() {
 	pos = Vector2D.createZeroVector();
 	vel = Vector2D.createZeroVector();
 	mass = 1;
@@ -36,17 +28,6 @@ public class PointMass implements TimeStepper
 	angle = 0;
 	angularVel = 0;
 	angularMass = 1;
-    }
-
-    public PointMass copy() {
-	final PointMass copy = new PointMass();
-	copy.setPos(pos);
-	copy.setVel(vel);
-	copy.setMass(mass);
-	copy.setAngle(angle);
-	copy.setAngularVel(angularVel);
-	copy.setAngularMass(mass);
-	return copy;
     }
 
     /**
@@ -174,7 +155,7 @@ public class PointMass implements TimeStepper
      * @param localPoint The point in local space
      * @return The offset from the position of this point mass
      */
-    public Vector2D convertLocalPointToOffset(final Vector2D localPoint) {
+    public Vector2D convertLocalVectorToGlobalVector(final Vector2D localPoint) {
 	return localPoint.rotate(angle);
     }
 
@@ -198,7 +179,7 @@ public class PointMass implements TimeStepper
      * @return The point in global space
      */
     public Vector2D convertLocalPointToGlobalPoint(final Vector2D localPoint) {
-	final Vector2D offset = convertLocalPointToOffset(localPoint);
+	final Vector2D offset = convertLocalVectorToGlobalVector(localPoint);
 	return convertOffsetToGlobalPoint(offset);
     }
 
@@ -352,7 +333,7 @@ public class PointMass implements TimeStepper
      *
      * @param deltaTime	The amount of time during which to move
      */
-    @Override public void tick(final double deltaTime) {
+    public void tick(final double deltaTime) {
 	if (deltaTime < 0) {
 	    throw new IllegalArgumentException("Negative delta time: " + deltaTime);
 	}
@@ -365,7 +346,7 @@ public class PointMass implements TimeStepper
     }
 
     @Override public String toString() {
-	return "PointMass{" + "pos=" + pos + ", vel=" + vel + ", mass=" + mass + ", angle=" + angle + ", angularVel=" + angularVel +
+	return "Body{" + "pos=" + pos + ", vel=" + vel + ", mass=" + mass + ", angle=" + angle + ", angularVel=" + angularVel +
 	       ", angularMass=" + angularMass + '}';
     }
 }

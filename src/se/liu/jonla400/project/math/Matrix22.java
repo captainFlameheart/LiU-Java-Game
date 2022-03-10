@@ -46,6 +46,16 @@ public class Matrix22
 	return weightedSum;
     }
 
+    public Matrix22 add(final Matrix22 other) {
+	final double[][] sum = new double[DIMENSION][DIMENSION];
+	for (int row = 0; row < DIMENSION; row++) {
+	    for (int col = 0; col < DIMENSION; col++) {
+		sum[row][col] = values[row][col] + other.values[row][col];
+	    }
+	}
+	return new Matrix22(sum);
+    }
+
     /**
      * Returns the value at the given row and column. The first row has the
      * index 0 and the second row has the index 1. The same goes for the columns.
