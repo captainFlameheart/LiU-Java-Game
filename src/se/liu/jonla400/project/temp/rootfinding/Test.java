@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.temp.rootfinding;
 
-import se.liu.jonla400.project.restructure.math.Interval;
+import se.liu.jonla400.project.math.Interval;
 
 import java.util.Optional;
 
