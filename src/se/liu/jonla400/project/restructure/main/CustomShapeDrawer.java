@@ -1,8 +1,8 @@
 package se.liu.jonla400.project.restructure.main;
 
-import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.restructure.physics.fresh.collisions.collisiondetection.CustomShape;
-import se.liu.jonla400.project.restructure.physics.fresh.collisions.collisiondetection.LineSegment;
+import se.liu.jonla400.project.restructure.math.Vector2D;
+import se.liu.jonla400.project.restructure.physics.implementation.collision.CustomShape;
+import se.liu.jonla400.project.restructure.physics.implementation.collision.LineSegment;
 
 import java.awt.*;
 import java.awt.geom.Line2D;

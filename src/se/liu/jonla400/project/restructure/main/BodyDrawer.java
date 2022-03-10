@@ -1,7 +1,7 @@
 package se.liu.jonla400.project.restructure.main;
 
-import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.restructure.physics.Body;
+import se.liu.jonla400.project.restructure.math.Vector2D;
+import se.liu.jonla400.project.restructure.physics.abstraction.main.Body;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

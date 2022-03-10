@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.restructure.main;
 
-import se.liu.jonla400.project.math.Interval;
+import se.liu.jonla400.project.restructure.math.Interval;
 
 import javax.swing.*;
 import java.awt.*;
