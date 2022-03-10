@@ -51,7 +51,7 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 	    final Vector2D circleContactPoint = customColliderBody.convertLocalVectorToGlobalVector(localCircleContactPoint);
 	    final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(closestPoint);
 
-	    final double bounceCoefficient = 0.5;
+	    final double bounceCoefficient = 0.7;
 	    final double frictionCoefficient = 1;
 
 	    collisions.add(new CollisionData(

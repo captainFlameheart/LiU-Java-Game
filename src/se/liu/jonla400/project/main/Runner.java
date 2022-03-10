@@ -23,10 +23,10 @@ public class Runner
         final BodyGroupDrawer bodyGroupDrawer = new BodyGroupDrawer(leftToRightX, topToBottomY);
 
         final Body bodyA = new Body();
-        bodyA.setPos(Vector2D.createCartesianVector(0, 0));
-        bodyA.setVel(Vector2D.createCartesianVector(0, 0));
+        bodyA.setPos(Vector2D.createCartesianVector(0, 0.5));
+        bodyA.setVel(Vector2D.createCartesianVector(0, -10));
         bodyA.setAngle(0);
-        bodyA.setAngularVel(10);
+        bodyA.setAngularVel(0);
         bodyA.setMass(1);
         bodyA.setAngularMass(1);
 
@@ -34,18 +34,20 @@ public class Runner
         bodyGroupDrawer.add(bodyA, new CrossDrawer());
 
         final Body bodyB = new Body();
-        bodyB.setPos(Vector2D.createCartesianVector(0, -2));
+        bodyB.setPos(Vector2D.createCartesianVector(0, 0));
         bodyB.setVel(Vector2D.createCartesianVector(0, 0));
         bodyB.setAngle(0);
         bodyB.setAngularVel(0);
-        bodyB.setMass(1000);
-        bodyB.setAngularMass(1000);
+        bodyB.setMass(10);
+        bodyB.setAngularMass(10);
 
         physicsEngine.add(bodyB);
         bodyGroupDrawer.add(bodyB, new CrossDrawer());
 
         final double radius = 1;
-        final CustomShape customShape = new CustomShape(createSineWave(new Interval(-10, 10), 0, 1, 1, 100));
+        final CustomShape customShape = new CustomShape(
+                new LineSegment(Vector2D.createCartesianVector(-1, 0), Vector2D.createCartesianVector(1, 0))
+        );
 
         final CircleCollider circleCollider = new CircleCollider(bodyA, radius);
         final CustomCollider customCollider = new CustomCollider(bodyB, customShape);

@@ -30,7 +30,8 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     private ActiveImpulse1D normalImpulse;
     private ActiveImpulse1D tangentImpulse;
 
-    public ActiveCollisionConstraint(final CollisionData collisionData)
+    public ActiveCollisionConstraint(final CollisionData collisionData, final double deltaTime,
+                                     final double penetrationTolerence, final double posCorrectionFraction)
     {
         bodies = collisionData.getBodies();
         contactPointOffsets = collisionData.getContactPointOffsets();
@@ -38,12 +39,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
         normal = collisionData.getNormal();
         tangent = normal.rotate90Degrees(Vector2D.RotationDirection.Y_TO_X);
 
-        final double initNormalVel = getNormalVel();
-        if (initNormalVel < 0) {
-            targetNormalVel = -collisionData.getBounceCoefficient() * initNormalVel;
-        } else {
-            targetNormalVel = 0;
-        }
+        initTargetNormalVel(collisionData, deltaTime, penetrationTolerence, posCorrectionFraction);
         frictionCoefficient = collisionData.getFrictionCoefficient();
 
         final Matrix22 collisionInvMass = getInvMassOfContactPoint(0).add(getInvMassOfContactPoint(1));
@@ -52,6 +48,29 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
 
         normalImpulse = new ActiveImpulse1D();
         tangentImpulse = new ActiveImpulse1D();
+    }
+
+    private void initTargetNormalVel(final CollisionData collisionData, final double deltaTime,
+                                     final double penetrationTolerence, final double posCorrectionFraction)
+    {
+        final double untoleratedPenetration = collisionData.getPenetration() - penetrationTolerence;
+        final double targetNormalVelFromPenetration;
+        if (untoleratedPenetration > 0) {
+            final double posCorrection = posCorrectionFraction * untoleratedPenetration;
+            targetNormalVelFromPenetration = posCorrection / deltaTime;
+        } else {
+            targetNormalVelFromPenetration = 0;
+        }
+
+        final double initNormalVel = getNormalVel();
+        final double targetNormalVelFromBounce;
+        if (initNormalVel < 0) {
+            targetNormalVelFromBounce = -collisionData.getBounceCoefficient() * initNormalVel;
+        } else {
+            targetNormalVelFromBounce = 0;
+        }
+
+        targetNormalVel = Math.max(targetNormalVelFromPenetration, targetNormalVelFromBounce);
     }
 
     private Matrix22 getInvMassOfContactPoint(final int pointIndex) {

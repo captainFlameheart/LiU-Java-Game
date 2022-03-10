@@ -22,10 +22,12 @@ public class CollisionHandler implements VelocityConstrainer
     }
 
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
-	return new ActiveIterativeVelocityConstraint(iterations, generateSubConstraints());
+	return new ActiveIterativeVelocityConstraint(iterations, generateSubConstraints(deltaTime));
     }
 
-    private Collection<ActiveVelocityConstraint> generateSubConstraints() {
-	return collisionDetector.detectCollisions().stream().map(ActiveCollisionConstraint::new).collect(Collectors.toList());
+    private Collection<ActiveVelocityConstraint> generateSubConstraints(final double deltaTime) {
+	return collisionDetector.detectCollisions().stream().map(
+		c -> new ActiveCollisionConstraint(c, deltaTime, 0.05, 0.1)
+	).collect(Collectors.toList());
     }
 }
