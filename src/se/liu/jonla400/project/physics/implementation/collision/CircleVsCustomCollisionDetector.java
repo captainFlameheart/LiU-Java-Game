@@ -28,7 +28,6 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 
 	final Body circleBody = circleCollider.getBody();
 	final Body customColliderBody = customCollider.getBody();
-	final double customColliderAngle = customColliderBody.getAngle();
 
 	final Vector2D localCirclePos = customColliderBody.convertGlobalPointToLocalPoint(circleBody.getPos());
 	final double radius = circleCollider.getRadius();
@@ -51,58 +50,13 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 	    final Vector2D circleContactPoint = customColliderBody.convertLocalVectorToGlobalVector(localCircleContactPoint);
 	    final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(closestPoint);
 
-	    final double bounceCoefficient = 0.7;
+	    final double bounceCoefficient = 0.3;
 	    final double frictionCoefficient = 1;
 
 	    collisions.add(new CollisionData(
 		    circleBody, circleContactPoint, customColliderBody, customColliderContactPoint,
 		    collisionNormal, penetration, bounceCoefficient, frictionCoefficient
 	    ));
-
-	    /*
-	    final Vector2D lineSegmentStart = lineSegment.getStart();
-	    final Vector2D lineSegmentEnd = lineSegment.getEnd();
-	    final Vector2D lineSegmentNormal = lineSegment.getNormal();
-	    final Vector2D lineSegmentTangent = lineSegment.getTangent();
-	    final double lineSegmentNormalPos = lineSegment.getNormalPos();
-	    final double lineSegmentTangentStart = lineSegment.getTangentStart();
-	    final double lineSegmentTangentEnd = lineSegment.getTangentEnd();
-
-	    final double circleNormalPos = lineSegmentNormal.dot(localCirclePos);
-	    final double relativeNormalPos = circleNormalPos - lineSegmentNormalPos;
-	    final double circleTangentPos = lineSegment.getTangentPosOf(localCirclePos);
-
-	    if (circleTangentPos < lineSegmentTangentStart) {
-
-	    } else if (circleTangentPos > lineSegmentTangentEnd) {
-
-	    } else {
-		if (relativeNormalPos == 0) {
-		    continue;
-		}
-		final double dist = Math.abs(relativeNormalPos);
-		final double penetration = radius - dist;
-		if (penetration < 0) {
-		    continue;
-		}
-		final double sideSign = relativeNormalPos / dist;
-		final Vector2D localCollisionNormal = lineSegmentNormal.multiply(sideSign);
-		final Vector2D localCircleContactPoint = localCollisionNormal.multiply(-radius);
-		final Vector2D localCustomColliderContactPoint =
-			lineSegmentTangent.multiply(circleTangentPos).add(lineSegmentNormal.multiply(lineSegmentNormalPos));
-
-		final Vector2D collisionNormal = customColliderBody.convertLocalVectorToGlobalVector(localCollisionNormal);
-		final Vector2D circleContactPoint = customColliderBody.convertLocalVectorToGlobalVector(localCircleContactPoint);
-		final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(localCustomColliderContactPoint);
-
-		final double bounceCoefficient = 0.9;
-		final double frictionCoefficient = 0.5;
-
-		collisions.add(new CollisionData(
-			circleBody, circleContactPoint, customColliderBody, customColliderContactPoint,
-			collisionNormal, penetration, bounceCoefficient, frictionCoefficient
-		));
-	    }*/
 	}
 	return collisions;
     }
