@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.test;
 
 import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.physics.abstraction.main.Body;

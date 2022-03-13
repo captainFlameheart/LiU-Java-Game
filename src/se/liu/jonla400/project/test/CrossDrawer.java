@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.test;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -9,14 +9,18 @@ public class CrossDrawer implements Drawer
     private Color color;
     private BasicStroke stroke;
 
-    private CrossDrawer(final double radius, final Color color, final BasicStroke stroke) {
+    public CrossDrawer(final double radius, final Color color, final float strokeWidth) {
 	this.radius = radius;
 	this.color = color;
-	this.stroke = stroke;
+	stroke = new BasicStroke(strokeWidth);
     }
 
-    public static CrossDrawer createWithDefaultColor(final double radius, final float strokeWidth) {
-	return new CrossDrawer(radius, Color.BLACK, new BasicStroke(strokeWidth));
+    public CrossDrawer(final double radius) {
+	this(radius, Color.BLACK, 0.03f);
+    }
+
+    public CrossDrawer() {
+	this(0.1);
     }
 
     @Override public void draw(final Graphics2D g) {

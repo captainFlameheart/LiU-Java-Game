@@ -70,6 +70,15 @@ public class Vector2D
     }
 
     /**
+     * Returns whether the components of this vector are exactly zero
+     *
+     * @return Whether this is a zero vector
+     */
+    public boolean isZero() {
+	return x == 0 && y == 0;
+    }
+
+    /**
      * Get the x component of this vector
      *
      * @return The x component

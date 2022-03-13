@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.test;
 
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.implementation.collision.CustomShape;
@@ -13,14 +13,14 @@ public class CustomShapeDrawer implements Drawer
     private Color color;
     private BasicStroke stroke;
 
-    private CustomShapeDrawer(final CustomShape shape, final Color color, final BasicStroke stroke) {
+    public CustomShapeDrawer(final CustomShape shape, final Color color, final float strokeWidth) {
 	this.shape = shape;
 	this.color = color;
-	this.stroke = stroke;
+	stroke = new BasicStroke(strokeWidth);
     }
 
-    public static CustomShapeDrawer createWithDefaultColor(final CustomShape shape, final float strokeWidth) {
-	return new CustomShapeDrawer(shape, Color.BLACK, new BasicStroke(strokeWidth));
+    public CustomShapeDrawer(final CustomShape shape) {
+	this(shape, Color.BLACK, 0.05f);
     }
 
     @Override public void draw(final Graphics2D g) {

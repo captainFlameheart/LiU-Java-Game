@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.physics.abstraction.main;
 
+import se.liu.jonla400.project.main.BodyDefinition;
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -27,6 +28,22 @@ public class Body
 	angle = 0;
 	angularVel = 0;
 	angularMass = 1;
+    }
+
+    private Body(final Vector2D pos, final Vector2D vel, final double mass, final double angle, final double angularVel,
+		final double angularMass)
+    {
+	this.pos = pos;
+	this.vel = vel;
+	this.mass = mass;
+	this.angle = angle;
+	this.angularVel = angularVel;
+	this.angularMass = angularMass;
+    }
+
+    public static Body createFromDefinition(final BodyDefinition definition) {
+	return new Body(definition.getPos(), Vector2D.createZeroVector(), definition.getMass(),
+			0, 0, definition.getAngularMass());
     }
 
     /**

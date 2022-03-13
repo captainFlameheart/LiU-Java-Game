@@ -6,23 +6,28 @@ import java.awt.geom.Ellipse2D;
 public class CircleDrawer implements Drawer
 {
     private double radius;
-    private Color color;
+    private Color fillColor;
+    private Color strokeColor;
     private BasicStroke stroke;
 
-    public CircleDrawer(final double radius, final Color color, final float strokeWidth) {
-	this.radius = radius;
-	this.color = color;
-	this.stroke = new BasicStroke(strokeWidth);
+    private CircleDrawer(final double radius, final Color fillColor, final Color strokeColor, final BasicStroke stroke) {
+        this.radius = radius;
+        this.fillColor = fillColor;
+        this.strokeColor = strokeColor;
+        this.stroke = stroke;
     }
 
-    public CircleDrawer(final double radius) {
-	this(radius, Color.BLACK, 0.03f);
+    public static CircleDrawer createWithDefaultColors(final double radius, final float strokeWidth) {
+        return new CircleDrawer(radius, Color.RED, Color.BLACK, new BasicStroke(strokeWidth));
     }
 
     @Override public void draw(final Graphics2D g) {
-	g.setColor(color);
-	g.setStroke(stroke);
-	final double diameter = 2 * radius;
-	g.draw(new Ellipse2D.Double(-radius, -radius, diameter, diameter));
+        final double diameter = 2 * radius;
+        final Shape shape = new Ellipse2D.Double(-radius, -radius, diameter, diameter);
+        g.setColor(fillColor);
+        g.fill(shape);
+        g.setColor(strokeColor);
+        g.setStroke(stroke);
+        g.draw(shape);
     }
 }
