@@ -78,6 +78,14 @@ public class DrawRegion
         return size.getY();
     }
 
+    public Interval getMinToMaxX() {
+        return new Interval(getLeftX(), getRightX());
+    }
+
+    public Interval getMinToMaxY() {
+        return new Interval(getTopY(), getBottomY());
+    }
+
     public Vector2D getCenter() {
         return bottomLeft.add(size.divide(2));
     }

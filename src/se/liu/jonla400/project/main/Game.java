@@ -34,20 +34,20 @@ public class Game
         currentLevel.setCursorPos(pos);
     }
 
-    public void startTranslating() {
-        currentLevel.startTranslating();
+    public void startTranslation() {
+        currentLevel.startTranslation();
     }
 
-    public void stopTranslating() {
-        currentLevel.stopTranslating();
+    public void endTranslation() {
+        currentLevel.endTranslation();
     }
 
-    public void startRotating() {
-        currentLevel.startRotating();
+    public void startRotation(final RotationDirection direction) {
+        currentLevel.startRotation(direction);
     }
 
-    public void stopRotating() {
-        currentLevel.stopRotating();
+    public void endRotation(final RotationDirection direction) {
+        currentLevel.endRotation(direction);
     }
 
     public DrawRegion getMinDrawRegion() {

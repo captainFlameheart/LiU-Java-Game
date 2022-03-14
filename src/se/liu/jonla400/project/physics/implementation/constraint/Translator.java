@@ -29,8 +29,8 @@ public class Translator implements VelocityConstrainer
 	return new Translator(body, body.convertOffsetToLocalPoint(offset), body.convertOffsetToGlobalPoint(offset), maxForce);
     }
 
-    public static Translator createAtGlobalPoint(final Body body, final Vector2D globalPointPulledTowards, final double maxForce) {
-	return new Translator(body, body.convertGlobalPointToLocalPoint(globalPointPulledTowards), globalPointPulledTowards, maxForce);
+    public static Translator createAtGlobalPoint(final Body body, final Vector2D globalPoint, final double maxForce) {
+	return new Translator(body, body.convertGlobalPointToLocalPoint(globalPoint), globalPoint, maxForce);
     }
 
     public Body getBody() {

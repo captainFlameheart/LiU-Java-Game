@@ -7,10 +7,16 @@ import se.liu.jonla400.project.physics.implementation.collision.CircleCollider;
 import se.liu.jonla400.project.physics.implementation.collision.CircleVsCustomCollisionDetector;
 import se.liu.jonla400.project.physics.implementation.collision.CustomCollider;
 import se.liu.jonla400.project.physics.implementation.collision.CustomShape;
-import se.liu.jonla400.project.physics.implementation.collision.LineSegment;
+import se.liu.jonla400.project.physics.implementation.constraint.AngularVelocitySeeker;
+import se.liu.jonla400.project.physics.implementation.constraint.Friction;
+import se.liu.jonla400.project.physics.implementation.constraint.Translator;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Level
 {
@@ -19,6 +25,9 @@ public class Level
     private BodyDrawerSet bodyDrawers;
     private Body circleBody;
     private Body levelBody;
+    private Translator translator;
+    private Map<RotationDirection, AngularVelocitySeeker> directionToAngularVelSeeker;
+    private Vector2D curserPos;
 
     private Level(final DrawRegion minDrawRegion, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers, final Body circleBody,
                   final Body levelBody)
@@ -28,6 +37,11 @@ public class Level
         this.bodyDrawers = bodyDrawers;
         this.circleBody = circleBody;
         this.levelBody = levelBody;
+
+        translator = null;
+        directionToAngularVelSeeker = new EnumMap<>(RotationDirection.class);
+
+        curserPos = Vector2D.createZeroVector();
     }
 
     public static Level createFromDefinition(final LevelDefinition definition) {
@@ -38,12 +52,13 @@ public class Level
         final Body circleBody = Body.createFromDefinition(definition.getCircleBodyDefinition());
         final double circleRadius = definition.getCircleRadius();
         final Body levelBody = Body.createFromDefinition(definition.getLevelBodyDefinition());
-        levelBody.setAngle(-0.3);
         final CustomShape levelShape = CustomShape.createFromDefinition(definition.getLevelShapeDefinition());
 
         {
             physicsEngine.add(circleBody);
+            physicsEngine.add(new Friction(circleBody, 1, 1));
             physicsEngine.add(levelBody);
+            physicsEngine.add(new Friction(levelBody, 2000, 300));
             final CircleCollider circleCollider = new CircleCollider(circleBody, circleRadius);
             final CustomCollider levelCollider = new CustomCollider(levelBody, levelShape);
             physicsEngine.add(new CircleVsCustomCollisionDetector(circleCollider, levelCollider));
@@ -67,29 +82,59 @@ public class Level
     }
 
     private void applyGravityToCircle(final double deltaTime) {
-        final Vector2D gravityAcc = Vector2D.createCartesianVector(0, -9.82);
+        final Vector2D gravityAcc = Vector2D.createCartesianVector(0, -9.82 * 2);
         final Vector2D gravityDeltaVel = gravityAcc.multiply(deltaTime);
         circleBody.setVel(circleBody.getVel().add(gravityDeltaVel));
     }
 
     public void setCursorPos(final Vector2D pos) {
-
+        curserPos.set(pos);
+        if (translator != null) {
+            translator.setGlobalPointPulledTowards(pos);
+        }
     }
 
-    public void startTranslating() {
+    public void startTranslation() {
+        if (translator != null) {
+            return;
+        }
 
+
+
+        final double maxForce = 4000;
+
+        translator = Translator.createAtGlobalPoint(levelBody, curserPos, maxForce);
+        physicsEngine.add(translator);
     }
 
-    public void stopTranslating() {
-
+    public void endTranslation() {
+        if (translator == null) {
+            return;
+        }
+        physicsEngine.remove(translator);
+        translator = null;
     }
 
-    public void startRotating() {
+    public void startRotation(final RotationDirection direction) {
+        if (directionToAngularVelSeeker.get(direction) != null) {
+            return;
+        }
 
+        final double targetAngularSpeed = 3;
+        final double maxTorque = 1000;
+
+        final double targetAngularVel = -direction.getSign() * targetAngularSpeed;
+        final AngularVelocitySeeker angularVelSeeker = new AngularVelocitySeeker(levelBody, targetAngularVel, maxTorque);
+        directionToAngularVelSeeker.put(direction, angularVelSeeker);
+        physicsEngine.add(angularVelSeeker);
     }
 
-    public void stopRotating() {
-
+    public void endRotation(final RotationDirection direction) {
+        if (directionToAngularVelSeeker.get(direction) == null) {
+            return;
+        }
+        physicsEngine.remove(directionToAngularVelSeeker.get(direction));
+        directionToAngularVelSeeker.remove(direction);
     }
 
     public DrawRegion getMinDrawRegion() {
@@ -99,6 +144,11 @@ public class Level
     public void draw(final Graphics2D g, final DrawRegion region) {
         drawBackground(g, region);
         bodyDrawers.draw(g);
+
+        if (translator != null) {
+            final Vector2D grabbedPoint = levelBody.convertLocalPointToGlobalPoint(translator.getPulledLocalPoint());
+            g.draw(new Line2D.Double(grabbedPoint.getX(), grabbedPoint.getY(), curserPos.getX(), curserPos.getY()));
+        }
     }
 
     private void drawBackground(final Graphics2D g, final DrawRegion region) {

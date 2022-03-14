@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.main;
 
+import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Vector2D;
 
 import javax.swing.*;
@@ -18,10 +19,37 @@ public class GameJComponent extends JComponent
 	return new GameJComponent(game);
     }
 
+    public Vector2D convertToGamePoint(final Vector2D point) {
+	final Interval xInterval = new Interval(0, getWidth());
+	final Interval yInterval = new Interval(0, getHeight());
+
+	final DrawRegion gameRegion = encloseGameWithCurrentAspectRatio();
+	final Interval gameXInterval = gameRegion.getMinToMaxX();
+	final Interval gameYInterval = gameRegion.getMinToMaxY();
+
+	return Vector2D.createCartesianVector(
+		xInterval.mapValueToOtherInterval(point.getX(), gameXInterval),
+		yInterval.mapValueToOtherInterval(point.getY(), gameYInterval)
+	);
+    }
+
     @Override protected void paintComponent(final Graphics g) {
 	super.paintComponent(g);
 	final Graphics2D g2d = (Graphics2D) g;
 	drawGame(g2d);
+    }
+
+    private void drawGame(final Graphics2D g) {
+	final AffineTransform oldTransform = g.getTransform();
+
+	flipGraphics(g);
+	final DrawRegion drawRegion = encloseGameWithCurrentAspectRatio();
+	final double scale = getWidth() / drawRegion.getWidth();
+	g.scale(scale, scale);
+	g.translate(-drawRegion.getLeftX(), -drawRegion.getBottomY());
+	game.draw(g, drawRegion);
+
+	g.setTransform(oldTransform);
     }
 
     private void flipGraphics(final Graphics2D g) {
@@ -29,20 +57,7 @@ public class GameJComponent extends JComponent
 	g.translate(0, -getHeight());
     }
 
-    private void drawGame(final Graphics2D g) {
-	final AffineTransform oldTransform = g.getTransform();
-
-	flipGraphics(g);
-	final DrawRegion enclosingRegion = encloseGameRegionWithCurrentAspectRatio();
-	final double scale = getWidth() / enclosingRegion.getWidth();
-	g.scale(scale, scale);
-	g.translate(-enclosingRegion.getLeftX(), -enclosingRegion.getBottomY());
-	game.draw(g, enclosingRegion);
-
-	g.setTransform(oldTransform);
-    }
-
-    private DrawRegion encloseGameRegionWithCurrentAspectRatio() {
+    private DrawRegion encloseGameWithCurrentAspectRatio() {
 	final DrawRegion gameRegion = game.getMinDrawRegion();
 	final double gameWidth = gameRegion.getWidth();
 	final double gameHeight = gameRegion.getHeight();
