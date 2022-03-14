@@ -1,16 +1,30 @@
 package se.liu.jonla400.restructure.main;
 
 import se.liu.jonla400.restructure.math.Vector2D;
+import se.liu.jonla400.restructure.physics.implementation.collision.CustomShapeDefinition;
 
 public class LevelDefinition
 {
     private GlobalLevelConfiguration sharedConfiguration;
-    private Vector2D pos;
+    private Vector2D levelPos;
+    private CustomShapeDefinition levelShapeDefinition;
+    private Vector2D circlePos;
+    private double circleRadius;
+    private double circleMass;
+    private double circleAngularMass;
     private DrawRegion preferredDrawRegion;
 
-    public LevelDefinition(final GlobalLevelConfiguration sharedConfiguration, final Vector2D pos, final DrawRegion preferredDrawRegion) {
+    public LevelDefinition(final GlobalLevelConfiguration sharedConfiguration, final Vector2D levelPos,
+			   final CustomShapeDefinition levelShapeDefinition, final Vector2D circlePos, final double circleRadius,
+			   final double circleMass, final double circleAngularMass, final DrawRegion preferredDrawRegion)
+    {
 	this.sharedConfiguration = sharedConfiguration;
-	this.pos = pos;
+	this.levelPos = levelPos;
+	this.levelShapeDefinition = levelShapeDefinition;
+	this.circlePos = circlePos;
+	this.circleRadius = circleRadius;
+	this.circleMass = circleMass;
+	this.circleAngularMass = circleAngularMass;
 	this.preferredDrawRegion = preferredDrawRegion;
     }
 
@@ -42,12 +56,52 @@ public class LevelDefinition
 	return sharedConfiguration.getScaleFactor();
     }
 
-    public Vector2D getPos() {
-	return pos;
+    public Vector2D getLevelPos() {
+	return levelPos;
     }
 
-    public void setPos(final Vector2D pos) {
-	this.pos = pos;
+    public void setLevelPos(final Vector2D levelPos) {
+	this.levelPos = levelPos;
+    }
+
+    public CustomShapeDefinition getLevelShapeDefinition() {
+	return levelShapeDefinition;
+    }
+
+    public void setLevelShapeDefinition(final CustomShapeDefinition levelShapeDefinition) {
+	this.levelShapeDefinition = levelShapeDefinition;
+    }
+
+    public Vector2D getCirclePos() {
+	return circlePos;
+    }
+
+    public void setCirclePos(final Vector2D circlePos) {
+	this.circlePos = circlePos;
+    }
+
+    public double getCircleRadius() {
+	return circleRadius;
+    }
+
+    public void setCircleRadius(final double circleRadius) {
+	this.circleRadius = circleRadius;
+    }
+
+    public double getCircleMass() {
+	return circleMass;
+    }
+
+    public void setCircleMass(final double circleMass) {
+	this.circleMass = circleMass;
+    }
+
+    public double getCircleAngularMass() {
+	return circleAngularMass;
+    }
+
+    public void setCircleAngularMass(final double circleAngularMass) {
+	this.circleAngularMass = circleAngularMass;
     }
 
     public DrawRegion getPreferredDrawRegion() {

@@ -22,7 +22,7 @@ public class DrawRegion
         final double bottomY = bottomYAndPositiveHeight.pos;
         final double positiveHeight = bottomYAndPositiveHeight.dimension;
 
-        return new DrawRegion(Vector2D.createCartesianVector(leftX, bottomY), Vector2D.createCartesianVector(positiveWidth, positiveHeight));
+        return new DrawRegion(Vector2D.createCartesian(leftX, bottomY), Vector2D.createCartesian(positiveWidth, positiveHeight));
     }
 
     private static PosAndDimensionPair requirePositiveDimension(final double pos, final double dimension) {
@@ -44,8 +44,8 @@ public class DrawRegion
     }
 
     public static DrawRegion createFromIntervals(final Interval startToEndX, final Interval startToEndY) {
-        final Vector2D startPos = Vector2D.createCartesianVector(startToEndX.getStart(), startToEndY.getStart());
-        final Vector2D size = Vector2D.createCartesianVector(startToEndX.getStartToEndDisplacement(), startToEndY.getStartToEndDisplacement());
+        final Vector2D startPos = Vector2D.createCartesian(startToEndX.getStart(), startToEndY.getStart());
+        final Vector2D size = Vector2D.createCartesian(startToEndX.getStartToEndDisplacement(), startToEndY.getStartToEndDisplacement());
         return create(startPos, size);
     }
 

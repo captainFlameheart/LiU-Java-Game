@@ -12,7 +12,7 @@ public enum MovementDirection
     private final Vector2D dirVector;
 
     MovementDirection(final int dirX, final int dirY) {
-	this.dirVector = Vector2D.createCartesianVector(dirX, dirY);
+	this.dirVector = Vector2D.createCartesian(dirX, dirY);
     }
 
     public Vector2D getDirVector() {

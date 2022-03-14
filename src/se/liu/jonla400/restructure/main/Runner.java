@@ -2,6 +2,8 @@ package se.liu.jonla400.restructure.main;
 
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
+import se.liu.jonla400.restructure.physics.implementation.collision.CustomShapeDefinition;
+import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentDefinition;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +13,8 @@ public class Runner
 {
     public static void main(String[] args) {
         final GlobalLevelConfiguration globalLevelConfiguration = new GlobalLevelConfiguration(
-                1,
-                1,
+                50,
+                50,
                 10,
                 20,
                 5,
@@ -21,7 +23,27 @@ public class Runner
         );
         final LevelDefinition levelDefinition = new LevelDefinition(
                 globalLevelConfiguration,
-                Vector2D.createCartesianVector(0, 0),
+                Vector2D.createCartesian(0, 0),
+                CustomShapeDefinition.create(
+                        LineSegmentDefinition.create(Vector2D.createCartesian(0, -1), Vector2D.createCartesian(5, -1)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(5, -1), Vector2D.createCartesian(5, -3)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(5, -3), Vector2D.createCartesian(1, -3)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(1, -3), Vector2D.createCartesian(1, -4)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(1, -4), Vector2D.createCartesian(0, -4)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(7, 0), Vector2D.createCartesian(7, -3)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(2, -4), Vector2D.createCartesian(7, -4)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(9, 0), Vector2D.createCartesian(9, -6)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(9, -6), Vector2D.createCartesian(7, -6)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(7, -6), Vector2D.createCartesian(7, -4)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(2, -4), Vector2D.createCartesian(2, -6)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(2, -6), Vector2D.createCartesian(12, -6)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(0, -9), Vector2D.createCartesian(5, -9)),
+                        LineSegmentDefinition.create(Vector2D.createCartesian(5, -9), Vector2D.createCartesian(5, -8))
+                ),
+                Vector2D.createCartesian(0, 3),
+                0.5,
+                1,
+                0.01,
                 DrawRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10))
         );
         final Level level = Level.createFromDefinition(levelDefinition);

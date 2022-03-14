@@ -27,12 +27,15 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 	final Collection<CollisionData> collisions = new ArrayList<>();
 
 	final Body circleBody = circleCollider.getBody();
+	final double radius = circleCollider.getRadius();
 	final Body customColliderBody = customCollider.getBody();
+	final TranslatedCustomShape translatedCustomShape = customCollider.getShape();
+	final Vector2D customShapeTranslation = translatedCustomShape.getTranslation();
 
 	final Vector2D localCirclePos = customColliderBody.convertGlobalPointToLocalPoint(circleBody.getPos());
-	final double radius = circleCollider.getRadius();
+	localCirclePos.subtractLocally(customShapeTranslation);
 
-	for (LineSegment lineSegment : customCollider.getShape()) {
+	for (LineSegment lineSegment : translatedCustomShape.getShape()) {
 	    final Vector2D closestPoint = lineSegment.getClosestPointTo(localCirclePos);
 	    final Vector2D circleOffsetFromClosestPoint = localCirclePos.subtract(closestPoint);
 	    final double dist = circleOffsetFromClosestPoint.getMagnitude();
@@ -48,7 +51,8 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 
 	    final Vector2D collisionNormal = customColliderBody.convertLocalVectorToGlobalVector(localCollisionNormal);
 	    final Vector2D circleContactPoint = customColliderBody.convertLocalVectorToGlobalVector(localCircleContactPoint);
-	    final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(closestPoint);
+	    final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(
+		    customShapeTranslation.add(closestPoint));
 
 	    final double bounceCoefficient = 0.3;
 	    final double frictionCoefficient = 1;

@@ -27,7 +27,7 @@ public class GameJComponent extends JComponent
 	final Interval gameXInterval = gameRegion.getMinToMaxX();
 	final Interval gameYInterval = gameRegion.getMinToMaxY();
 
-	return Vector2D.createCartesianVector(
+	return Vector2D.createCartesian(
 		xInterval.mapValueToOtherInterval(point.getX(), gameXInterval),
 		yInterval.mapValueToOtherInterval(point.getY(), gameYInterval)
 	);
@@ -75,6 +75,6 @@ public class GameJComponent extends JComponent
 	    enclosingWidth = enclosingHeight * targetWidthToHeightRatio;
 	}
 
-	return DrawRegion.createFromCenter(gameRegion.getCenter(), Vector2D.createCartesianVector(enclosingWidth, enclosingHeight));
+	return DrawRegion.createFromCenter(gameRegion.getCenter(), Vector2D.createCartesian(enclosingWidth, enclosingHeight));
     }
 }

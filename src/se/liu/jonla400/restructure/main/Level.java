@@ -1,10 +1,18 @@
 package se.liu.jonla400.restructure.main;
 
 import se.liu.jonla400.restructure.main.drawing.BodyDrawerSet;
+import se.liu.jonla400.restructure.main.drawing.CircleDrawer;
 import se.liu.jonla400.restructure.main.drawing.CrossDrawer;
+import se.liu.jonla400.restructure.main.drawing.CustomShapeDrawer;
 import se.liu.jonla400.restructure.math.Vector2D;
 import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 import se.liu.jonla400.restructure.physics.abstraction.main.PhysicsEngine;
+import se.liu.jonla400.restructure.physics.implementation.collision.CircleCollider;
+import se.liu.jonla400.restructure.physics.implementation.collision.CircleVsCustomCollisionDetector;
+import se.liu.jonla400.restructure.physics.implementation.collision.CustomCollider;
+import se.liu.jonla400.restructure.physics.implementation.collision.CustomShape;
+import se.liu.jonla400.restructure.physics.implementation.collision.TranslatedCustomShape;
+import se.liu.jonla400.restructure.physics.implementation.collision.TranslatedCustomShapeDefinition;
 import se.liu.jonla400.restructure.physics.implementation.constraint.AngularVelocitySeeker;
 import se.liu.jonla400.restructure.physics.implementation.constraint.OffsetVelocitySeeker;
 
@@ -23,7 +31,8 @@ public class Level
 
     private PhysicsEngine physicsEngine;
     private BodyDrawerSet bodyDrawers;
-    private Body levelBody;
+    private CustomCollider levelCollider;
+    private Body circleBody;
 
     private OffsetVelocitySeeker velSeeker;
     private double movementSpeed;
@@ -33,35 +42,59 @@ public class Level
     private double angularSpeed;
     private Set<RotationDirection> activeRotationDirections;
 
-    public Level(final DrawRegion preferredDrawRegion, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
-                 final Body levelBody, final Vector2D cursorPos, final OffsetVelocitySeeker velSeeker, final double movementSpeed,
-                 final Set<MovementDirection> activeMovementDirections, final AngularVelocitySeeker angularVelSeeker,
-                 final double angularSpeed, final Set<RotationDirection> activeRotationDirections, final double scaleFactor)
+    public Level(final DrawRegion preferredDrawRegion, final Vector2D cursorPos, final boolean pointAtCursorGrabbed,
+                 final double scaleFactor, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
+                 final CustomCollider levelCollider, final Body circleBody, final OffsetVelocitySeeker velSeeker,
+                 final double movementSpeed, final Set<MovementDirection> activeMovementDirections,
+                 final AngularVelocitySeeker angularVelSeeker, final double angularSpeed,
+                 final Set<RotationDirection> activeRotationDirections)
     {
         this.preferredDrawRegion = preferredDrawRegion;
+        this.cursorPos = cursorPos;
+        this.pointAtCursorGrabbed = pointAtCursorGrabbed;
+        this.scaleFactor = scaleFactor;
         this.physicsEngine = physicsEngine;
         this.bodyDrawers = bodyDrawers;
-        this.levelBody = levelBody;
-        this.cursorPos = cursorPos;
+        this.levelCollider = levelCollider;
+        this.circleBody = circleBody;
         this.velSeeker = velSeeker;
         this.movementSpeed = movementSpeed;
         this.activeMovementDirections = activeMovementDirections;
         this.angularVelSeeker = angularVelSeeker;
         this.angularSpeed = angularSpeed;
         this.activeRotationDirections = activeRotationDirections;
-        this.scaleFactor = scaleFactor;
     }
 
     public static Level createFromDefinition(final LevelDefinition definition) {
+        final Vector2D cursorPos = Vector2D.createZeroVector();
+        final double scaleFactor = definition.getScaleFactor();
+
         final PhysicsEngine physicsEngine = new PhysicsEngine(10);
         final BodyDrawerSet bodyDrawers = BodyDrawerSet.create();
 
         final Body levelBody = new Body();
-        levelBody.setPos(definition.getPos());
+        levelBody.setPos(definition.getLevelPos());
         levelBody.setVel(Vector2D.createZeroVector());
         levelBody.setMass(definition.getLevelMass());
+        levelBody.setAngle(0);
+        levelBody.setAngularVel(0);
+        levelBody.setAngularMass(definition.getAngularMass());
 
-        final Vector2D cursorPos = Vector2D.createZeroVector();
+        final TranslatedCustomShapeDefinition translatedLevelShapeDef = TranslatedCustomShapeDefinition.create(
+                Vector2D.createCartesian(0, 1), definition.getLevelShapeDefinition());
+        final TranslatedCustomShape translatedLevelShape = TranslatedCustomShape.createFromDefinition(translatedLevelShapeDef);
+        final CustomCollider levelCollider = new CustomCollider(levelBody, translatedLevelShape);
+
+        final Body circleBody = new Body();
+        circleBody.setPos(definition.getCirclePos());
+        circleBody.setVel(Vector2D.createZeroVector());
+        circleBody.setMass(definition.getCircleMass());
+        circleBody.setAngle(0);
+        circleBody.setAngularVel(0);
+        circleBody.setAngularMass(definition.getCircleAngularMass());
+
+        final double circleRadius = definition.getCircleRadius();
+        final CircleCollider circleCollider = new CircleCollider(circleBody, circleRadius);
 
         final double maxForce = definition.getLevelMass() * definition.getMaxMovementAcc();
         final OffsetVelocitySeeker velSeeker = new OffsetVelocitySeeker(
@@ -78,16 +111,27 @@ public class Level
         physicsEngine.add(levelBody);
         physicsEngine.add(velSeeker);
         physicsEngine.add(angularVelSeeker);
+        physicsEngine.add(circleBody);
+        physicsEngine.add(new CircleVsCustomCollisionDetector(circleCollider, levelCollider));
 
-        bodyDrawers.add(levelBody, CrossDrawer.createWithDefaultColor(1, 0.1f));
+        bodyDrawers.add(levelBody,
+                        CustomShapeDrawer.createWithDefaultColor(translatedLevelShape, 0.1f),
+                        CrossDrawer.createWithDefaultColor(1, 0.1f)
+        );
+        bodyDrawers.add(circleBody,
+                        CircleDrawer.createWithDefaultColors(circleRadius, 0.1f),
+                        CrossDrawer.createWithDefaultColor(0.1, 0.05f)
+        );
 
-        final double scaleFactor = definition.getScaleFactor();
-
-        return new Level(definition.getPreferredDrawRegion(), physicsEngine, bodyDrawers, levelBody, cursorPos, velSeeker,
-                         movementSpeed, activeMovementDirections, angularVelSeeker, angularSpeed, activeRotationDirections, scaleFactor);
+        return new Level(definition.getPreferredDrawRegion(), cursorPos, false, scaleFactor, physicsEngine, bodyDrawers,
+                         levelCollider, circleBody, velSeeker, movementSpeed, activeMovementDirections, angularVelSeeker, angularSpeed,
+                         activeRotationDirections);
     }
 
     public void tick(final double deltaTime) {
+        final Vector2D gravityAcc = Vector2D.createCartesian(0, -9.82);
+        final Vector2D gravityDeltaVel = gravityAcc.multiply(deltaTime);
+        circleBody.setVel(circleBody.getVel().add(gravityDeltaVel));
         physicsEngine.tick(deltaTime);
     }
 
@@ -112,7 +156,13 @@ public class Level
     }
 
     public void setCenterOfMassAtCursor() {
+        final Body levelBody = levelCollider.getBody();
+        final TranslatedCustomShape shape = levelCollider.getShape();
+
+        final Vector2D globalShapePos = levelBody.convertLocalPointToGlobalPoint(shape.getTranslation());
         levelBody.setPos(cursorPos);
+        shape.setTranslation(levelBody.convertGlobalPointToLocalPoint(globalShapePos));
+
     }
 
     public void scale(final double count) {

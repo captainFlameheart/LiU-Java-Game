@@ -26,15 +26,15 @@ public class MouseController extends MouseInputAdapter
     }
 
     @Override public void mousePressed(final MouseEvent e) {
-	if (e.getButton() == MouseEvent.BUTTON1) {
+	if (e.getButton() == MouseEvent.BUTTON3) {
 	    level.setPointAtCursorGrabbed(true);
-	} else if (e.getButton() == MouseEvent.BUTTON3) {
+	} else if (e.getButton() == MouseEvent.BUTTON1) {
 	    level.setCenterOfMassAtCursor();
 	}
     }
 
     @Override public void mouseReleased(final MouseEvent e) {
-	if (e.getButton() == MouseEvent.BUTTON1) {
+	if (e.getButton() == MouseEvent.BUTTON3) {
 	    level.setPointAtCursorGrabbed(false);
 	}
     }
@@ -45,7 +45,7 @@ public class MouseController extends MouseInputAdapter
     }
 
     private void setCursorPos(final MouseEvent e) {
-	final Vector2D mousePos = Vector2D.createCartesianVector(e.getX(), e.getY());
+	final Vector2D mousePos = Vector2D.createCartesian(e.getX(), e.getY());
 	final Vector2D mousePosInLevelSpace = mouseToLevelPointConverter.apply(mousePos);
 	level.setCursorPos(mousePosInLevelSpace);
     }

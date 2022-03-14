@@ -5,9 +5,9 @@ import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 public class CustomCollider
 {
     private Body body;
-    private CustomShape shape;
+    private TranslatedCustomShape shape;
 
-    public CustomCollider(final Body body, final CustomShape customShape) {
+    public CustomCollider(final Body body, final TranslatedCustomShape customShape) {
 	this.body = body;
 	this.shape = customShape;
     }
@@ -16,7 +16,7 @@ public class CustomCollider
 	return body;
     }
 
-    public CustomShape getShape() {
+    public TranslatedCustomShape getShape() {
 	return shape;
     }
 }
