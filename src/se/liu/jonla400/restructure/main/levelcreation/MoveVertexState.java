@@ -35,6 +35,13 @@ public class MoveVertexState implements LevelCreatorState
 	return Optional.of(new ReleaseVertexCommand(possibleGrabbedVertex.get(), levelCreator.getCursorPos()));
     }
 
+    public void putBackVertex(final LevelCreator levelCreator) {
+	possibleGrabbedVertex.ifPresent(grabbedVertex -> {
+	    final Command putBackVertexCommand = new ReversedCommand(new GrabVertexCommand(grabbedVertex));
+	    levelCreator.execute(putBackVertexCommand);
+	});
+    }
+
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
 	if (possibleGrabbedVertex.isEmpty()) {
 	    drawClosestVertexToCursorIfExists(levelCreator, g);
@@ -98,19 +105,16 @@ public class MoveVertexState implements LevelCreatorState
 	private ReleaseVertexCommand(final Vector2D vertex, final Vector2D newVertexPos) {
 	    this.vertex = vertex;
 	    this.newVertexPos = newVertexPos;
-	    oldVertexPos = null;
+	    oldVertexPos = vertex.copy();
 	}
 
 	@Override public void execute(final LevelCreator levelCreator) {
-	    oldVertexPos = vertex.copy();
 	    vertex.set(newVertexPos);
-
 	    possibleGrabbedVertex = Optional.empty();
 	}
 
 	@Override public void undo(final LevelCreator levelCreator) {
 	    vertex.set(oldVertexPos);
-
 	    possibleGrabbedVertex = Optional.of(vertex);
 	}
     }

@@ -49,6 +49,13 @@ public class AddVertexState implements LevelCreatorState
 	}
     }
 
+    public void deleteNewLineSegmentStart(final LevelCreator levelCreator) {
+	getNewLineSegmentStart(levelCreator).ifPresent(start -> {
+	    final Command deleteStartCommand = new ReversedCommand(new AddVertexCommand(start));
+	    levelCreator.execute(deleteStartCommand);
+	});
+    }
+
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
 	final Vector2D upcomingVertex = getUpcomingVertex(levelCreator);
 

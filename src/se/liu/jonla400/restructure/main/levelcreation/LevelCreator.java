@@ -9,10 +9,13 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 public class LevelCreator
@@ -105,11 +108,11 @@ public class LevelCreator
 	g.setColor(Color.BLACK);
 	g.setStroke(new BasicStroke(0.1f));
 
-	final Iterator<LineSegmentDefinition> lineSegmentIterator = getLineSegmentIterator();
+	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
 	while (lineSegmentIterator.hasNext()) {
-	    final LineSegmentDefinition lineSegment = lineSegmentIterator.next();
-	    final Vector2D start = lineSegment.getStart();
-	    final Vector2D end = lineSegment.getEnd();
+	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
+	    final Vector2D start = lineSegment.getStartPos();
+	    final Vector2D end = lineSegment.getEndPos();
 	    g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
 	}
     }
@@ -118,7 +121,7 @@ public class LevelCreator
 	return vertices;
     }
 
-    public Iterator<LineSegmentDefinition> getLineSegmentIterator() {
+    public Iterator<IndexedLineSegment> getLineSegmentIterator() {
 	return new Iterator<>()
 	{
 	    private int nextVertexIndex = 0;
@@ -127,17 +130,17 @@ public class LevelCreator
 		return nextVertexIndex < vertices.size() - 1;
 	    }
 
-	    @Override public LineSegmentDefinition next() {
+	    @Override public IndexedLineSegment next() {
 		if (!hasNext()) {
 		    throw new NoSuchElementException("No more line segments");
 		}
-		final Vector2D start = getNextVertex();
-		final Vector2D end = getNextVertex();
-		return LineSegmentDefinition.create(start, end);
+		final IndexedVertex start = getNextVertex();
+		final IndexedVertex end = getNextVertex();
+		return new IndexedLineSegment(start, end);
 	    }
 
-	    private Vector2D getNextVertex() {
-		final Vector2D vertex = vertices.get(nextVertexIndex);
+	    private IndexedVertex getNextVertex() {
+		final IndexedVertex vertex = new IndexedVertex(nextVertexIndex, vertices.get(nextVertexIndex));
 		nextVertexIndex++;
 		return vertex;
 	    }
@@ -147,11 +150,11 @@ public class LevelCreator
     public Set<Vector2D> getNeighboursTo(final Vector2D vertex) {
 	final Set<Vector2D> neighbours = new HashSet<>();
 
-	final Iterator<LineSegmentDefinition> lineSegmentIterator = getLineSegmentIterator();
+	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
 	while (lineSegmentIterator.hasNext()) {
-	    final LineSegmentDefinition lineSegment = lineSegmentIterator.next();
-	    final Vector2D start = lineSegment.getStart();
-	    final Vector2D end = lineSegment.getEnd();
+	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
+	    final Vector2D start = lineSegment.getStartPos();
+	    final Vector2D end = lineSegment.getEndPos();
 
 	    if (start.equals(vertex)) {
 		neighbours.add(end);
@@ -159,7 +162,26 @@ public class LevelCreator
 		neighbours.add(start);
 	    }
 	}
-
 	return neighbours;
+    }
+
+    public Optional<IndexedLineSegment> getClosestLineSegmentToCursor() {
+	// LOOK FOR CODE REDUNDANCY!
+
+	IndexedLineSegment closestLineSegment = null;
+	double minDist = Double.POSITIVE_INFINITY;
+
+	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
+	while (lineSegmentIterator.hasNext()) {
+	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
+	    final Vector2D closestPoint = lineSegment.getClosestPointTo(cursorPos);
+	    final double dist = closestPoint.subtract(cursorPos).getMagnitudeSquared();
+	    if (dist < minDist) {
+		closestLineSegment = lineSegment;
+		minDist = dist;
+	    }
+	}
+
+	return Optional.ofNullable(closestLineSegment);
     }
 }

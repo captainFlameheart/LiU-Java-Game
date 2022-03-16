@@ -15,10 +15,11 @@ public class Runner
         final AddVertexState addVertexState = new AddVertexState();
         addVertexState.setChainsLineSegments(true);
         final MoveVertexState moveVertexState = new MoveVertexState();
+        final DeleteLineSegmentState deleteLineSegmentState = new DeleteLineSegmentState();
         levelCreator.setState(addVertexState);
 
         final LevelCreatorJComponent levelCreatorJComponent = LevelCreatorJComponent.create(levelCreator);
-        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState);
+        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState, deleteLineSegmentState);
 
         final JFrame frame = new JFrame("Become The Level!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -40,7 +41,8 @@ public class Runner
     }
 
     private static void setupControls(final LevelCreator levelCreator, final LevelCreatorJComponent levelCreatorJComponent,
-                                      final AddVertexState addVertexState, final MoveVertexState moveVertexState) {
+                                      final AddVertexState addVertexState, final MoveVertexState moveVertexState,
+                                      final DeleteLineSegmentState deleteLineSegmentState) {
         // TEMPORARY
 
         final InputMap inputMap = levelCreatorJComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -48,7 +50,10 @@ public class Runner
         inputMap.put(KeyStroke.getKeyStroke("control Y"), "redo");
         inputMap.put(KeyStroke.getKeyStroke("pressed M"), "toggleMagnetize");
         inputMap.put(KeyStroke.getKeyStroke("pressed C"), "toggleChain");
-        inputMap.put(KeyStroke.getKeyStroke("pressed SPACE"), "changeState");
+        inputMap.put(KeyStroke.getKeyStroke("pressed 1"), "add");
+        inputMap.put(KeyStroke.getKeyStroke("pressed 2"), "move");
+        inputMap.put(KeyStroke.getKeyStroke("pressed 3"), "delete");
+        inputMap.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "deleteInProgress");
 
         final ActionMap actionMap = levelCreatorJComponent.getActionMap();
         actionMap.put("undo", new AbstractAction()
@@ -75,12 +80,32 @@ public class Runner
                 addVertexState.setChainsLineSegments(!addVertexState.chainsLineSegments());
             }
         });
-        actionMap.put("changeState", new AbstractAction()
+        actionMap.put("add", new AbstractAction()
         {
             @Override public void actionPerformed(final ActionEvent e) {
-                final LevelCreatorState newState = levelCreator.getState().equals(addVertexState) ?
-                                                   moveVertexState : addVertexState;
-                levelCreator.execute(new SetStateCommand(newState));
+                levelCreator.execute(new SetStateCommand(addVertexState));
+            }
+        });
+        actionMap.put("move", new AbstractAction()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                levelCreator.execute(new SetStateCommand(moveVertexState));
+            }
+        });
+        actionMap.put("delete", new AbstractAction()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                levelCreator.execute(new SetStateCommand(deleteLineSegmentState));
+            }
+        });
+        actionMap.put("deleteInProgress", new AbstractAction()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                if (levelCreator.getState().equals(addVertexState)) {
+                    addVertexState.deleteNewLineSegmentStart(levelCreator);
+                } else if (levelCreator.getState().equals(moveVertexState)) {
+                    moveVertexState.putBackVertex(levelCreator);
+                }
             }
         });
 
