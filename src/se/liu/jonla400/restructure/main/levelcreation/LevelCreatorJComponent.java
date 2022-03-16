@@ -1,7 +1,6 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
 import se.liu.jonla400.restructure.main.DrawRegion;
-import se.liu.jonla400.restructure.main.Level;
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
 
@@ -11,13 +10,13 @@ import java.awt.geom.AffineTransform;
 
 public class LevelCreatorJComponent extends JComponent
 {
-    private LevelCreator1 levelCreator;
+    private LevelCreator levelCreator;
 
-    private LevelCreatorJComponent(final LevelCreator1 levelCreator) {
+    private LevelCreatorJComponent(final LevelCreator levelCreator) {
 	this.levelCreator = levelCreator;
     }
 
-    public static LevelCreatorJComponent create(final LevelCreator1 levelCreator) {
+    public static LevelCreatorJComponent create(final LevelCreator levelCreator) {
 	return new LevelCreatorJComponent(levelCreator);
     }
 

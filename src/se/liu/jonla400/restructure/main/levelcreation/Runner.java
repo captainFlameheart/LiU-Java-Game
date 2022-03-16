@@ -11,13 +11,14 @@ import java.awt.event.ActionEvent;
 public class Runner
 {
     public static void main(String[] args) {
-        final LevelCreator1 levelCreator = new LevelCreator1();
+        final LevelCreator levelCreator = new LevelCreator();
         final AddVertexState addVertexState = new AddVertexState();
         addVertexState.setChainsLineSegments(true);
+        final MoveVertexState moveVertexState = new MoveVertexState();
         levelCreator.setState(addVertexState);
 
         final LevelCreatorJComponent levelCreatorJComponent = LevelCreatorJComponent.create(levelCreator);
-        setupControls(levelCreator, levelCreatorJComponent, addVertexState);
+        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState);
 
         final JFrame frame = new JFrame("Become The Level!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -38,7 +39,8 @@ public class Runner
         tickTimer.start();
     }
 
-    private static void setupControls(final LevelCreator1 levelCreator, final LevelCreatorJComponent levelCreatorJComponent, AddVertexState addVertexState) {
+    private static void setupControls(final LevelCreator levelCreator, final LevelCreatorJComponent levelCreatorJComponent,
+                                      final AddVertexState addVertexState, final MoveVertexState moveVertexState) {
         // TEMPORARY
 
         final InputMap inputMap = levelCreatorJComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -46,6 +48,7 @@ public class Runner
         inputMap.put(KeyStroke.getKeyStroke("control Y"), "redo");
         inputMap.put(KeyStroke.getKeyStroke("pressed M"), "toggleMagnetize");
         inputMap.put(KeyStroke.getKeyStroke("pressed C"), "toggleChain");
+        inputMap.put(KeyStroke.getKeyStroke("pressed SPACE"), "changeState");
 
         final ActionMap actionMap = levelCreatorJComponent.getActionMap();
         actionMap.put("undo", new AbstractAction()
@@ -70,6 +73,14 @@ public class Runner
         {
             @Override public void actionPerformed(final ActionEvent e) {
                 addVertexState.setChainsLineSegments(!addVertexState.chainsLineSegments());
+            }
+        });
+        actionMap.put("changeState", new AbstractAction()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                final LevelCreatorState newState = levelCreator.getState().equals(addVertexState) ?
+                                                   moveVertexState : addVertexState;
+                levelCreator.execute(new SetStateCommand(newState));
             }
         });
 

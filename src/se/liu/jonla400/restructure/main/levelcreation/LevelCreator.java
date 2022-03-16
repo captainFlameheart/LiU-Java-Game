@@ -9,11 +9,13 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
-public class LevelCreator1
+public class LevelCreator
 {
     private List<Command> commands;
     private int currentCommandIndex;
@@ -25,7 +27,7 @@ public class LevelCreator1
     private Vector2D cursorPos;
     private DrawRegion camera;
 
-    public LevelCreator1() {
+    public LevelCreator() {
 	commands = new ArrayList<>();
 	currentCommandIndex = -1;
 	vertices = new ArrayList<>();
@@ -66,7 +68,9 @@ public class LevelCreator1
     }
 
     public void setState(final LevelCreatorState state) {
+	this.state.exit(this);
 	this.state = state;
+	state.enter(this);
     }
 
     public Vector2D getCursorPos() {
@@ -138,5 +142,24 @@ public class LevelCreator1
 		return vertex;
 	    }
 	};
+    }
+
+    public Set<Vector2D> getNeighboursTo(final Vector2D vertex) {
+	final Set<Vector2D> neighbours = new HashSet<>();
+
+	final Iterator<LineSegmentDefinition> lineSegmentIterator = getLineSegmentIterator();
+	while (lineSegmentIterator.hasNext()) {
+	    final LineSegmentDefinition lineSegment = lineSegmentIterator.next();
+	    final Vector2D start = lineSegment.getStart();
+	    final Vector2D end = lineSegment.getEnd();
+
+	    if (start.equals(vertex)) {
+		neighbours.add(end);
+	    } else if (end.equals(vertex)) {
+		neighbours.add(start);
+	    }
+	}
+
+	return neighbours;
     }
 }

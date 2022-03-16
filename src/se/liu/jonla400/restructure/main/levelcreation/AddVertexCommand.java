@@ -12,11 +12,11 @@ public class AddVertexCommand implements Command
 	this.vertex = vertex;
     }
 
-    @Override public void execute(final LevelCreator1 levelCreator) {
+    @Override public void execute(final LevelCreator levelCreator) {
 	levelCreator.getVertices().add(vertex);
     }
 
-    @Override public void undo(final LevelCreator1 levelCreator) {
+    @Override public void undo(final LevelCreator levelCreator) {
 	final List<Vector2D> vertices = levelCreator.getVertices();
 	vertices.remove(vertices.size() - 1);
     }

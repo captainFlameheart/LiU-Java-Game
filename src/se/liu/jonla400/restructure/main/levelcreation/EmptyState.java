@@ -6,9 +6,13 @@ import java.awt.*;
 
 public class EmptyState implements LevelCreatorState
 {
-    @Override public void cursorPosChanged(final LevelCreator1 levelCreator) {}
+    @Override public void enter(final LevelCreator levelCreator) {}
 
-    @Override public void cursorActionPerformed(final LevelCreator1 levelCreator) {}
+    @Override public void exit(final LevelCreator levelCreator) {}
 
-    @Override public void draw(final LevelCreator1 levelCreator, final Graphics2D g, final DrawRegion region) {}
+    @Override public void cursorPosChanged(final LevelCreator levelCreator) {}
+
+    @Override public void cursorActionPerformed(final LevelCreator levelCreator) {}
+
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {}
 }

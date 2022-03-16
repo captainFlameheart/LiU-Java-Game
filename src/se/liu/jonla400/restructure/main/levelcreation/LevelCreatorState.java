@@ -4,15 +4,19 @@ import se.liu.jonla400.restructure.main.DrawRegion;
 
 import java.awt.*;
 
-// AddVertexState: magnetized,
+// AddVertexState: magnetized, chain
 // MoveVertexState
 // RemoveLineSegmentState
 // ChangeLineSegmentTypeState
 public interface LevelCreatorState
 {
-    void cursorPosChanged(LevelCreator1 levelCreator);
+    void enter(LevelCreator levelCreator);
 
-    void cursorActionPerformed(LevelCreator1 levelCreator);
+    void exit(LevelCreator levelCreator);
 
-    void draw(LevelCreator1 levelCreator, Graphics2D g, DrawRegion region);
+    void cursorPosChanged(LevelCreator levelCreator);
+
+    void cursorActionPerformed(LevelCreator levelCreator);
+
+    void draw(LevelCreator levelCreator, Graphics2D g, DrawRegion region);
 }

@@ -8,10 +8,10 @@ import java.util.function.Function;
 
 public class MouseLevelCreatorController extends MouseInputAdapter
 {
-    private LevelCreator1 levelCreator;
+    private LevelCreator levelCreator;
     private Function<Vector2D, Vector2D> mouseToLevelCreatorPointConverter;
 
-    public MouseLevelCreatorController(final LevelCreator1 levelCreator,
+    public MouseLevelCreatorController(final LevelCreator levelCreator,
 				       final Function<Vector2D, Vector2D> mouseToLevelCreatorPointConverter)
     {
 	this.levelCreator = levelCreator;

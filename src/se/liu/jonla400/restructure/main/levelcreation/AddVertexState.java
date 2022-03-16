@@ -2,14 +2,12 @@ package se.liu.jonla400.restructure.main.levelcreation;
 
 import se.liu.jonla400.restructure.main.DrawRegion;
 import se.liu.jonla400.restructure.math.Vector2D;
-import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentDefinition;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,9 +33,14 @@ public class AddVertexState implements LevelCreatorState
 	this.magnetized = magnetized;
     }
 
-    @Override public void cursorPosChanged(final LevelCreator1 levelCreator) {}
+    @Override public void enter(final LevelCreator levelCreator) {}
 
-    @Override public void cursorActionPerformed(final LevelCreator1 levelCreator) {
+    @Override public void exit(final LevelCreator levelCreator) {
+    }
+
+    @Override public void cursorPosChanged(final LevelCreator levelCreator) {}
+
+    @Override public void cursorActionPerformed(final LevelCreator levelCreator) {
 	final Vector2D newVertex = getUpcomingVertex(levelCreator);
 	final AddVertexCommand addVertexCommand = new AddVertexCommand(newVertex);
 	levelCreator.execute(addVertexCommand);
@@ -46,7 +49,7 @@ public class AddVertexState implements LevelCreatorState
 	}
     }
 
-    @Override public void draw(final LevelCreator1 levelCreator, final Graphics2D g, final DrawRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
 	final Vector2D upcomingVertex = getUpcomingVertex(levelCreator);
 
 	final double radius = 0.2;
@@ -62,11 +65,11 @@ public class AddVertexState implements LevelCreatorState
 	});
     }
 
-    private Vector2D getUpcomingVertex(final LevelCreator1 levelCreator) {
+    private Vector2D getUpcomingVertex(final LevelCreator levelCreator) {
 	return getClosestMagneticVertexToCursor(levelCreator).orElse(levelCreator.getCursorPos());
     }
 
-    private Optional<Vector2D> getNewLineSegmentStart(final LevelCreator1 levelCreator) {
+    private Optional<Vector2D> getNewLineSegmentStart(final LevelCreator levelCreator) {
 	final List<Vector2D> vertices = levelCreator.getVertices();
 	final int vertexCount = vertices.size();
 	if (vertexCount % 2 == 0) {
@@ -75,35 +78,20 @@ public class AddVertexState implements LevelCreatorState
 	return Optional.of(vertices.get(vertexCount - 1));
     }
 
-    private Optional<Vector2D> getClosestMagneticVertexToCursor(final LevelCreator1 levelCreator) {
+    private Optional<Vector2D> getClosestMagneticVertexToCursor(final LevelCreator levelCreator) {
 	return ClosestPointFinder.findClosestPoint(getMagneticVertices(levelCreator), levelCreator.getCursorPos());
     }
 
-    private Set<Vector2D> getMagneticVertices(final LevelCreator1 levelCreator) {
+    private Set<Vector2D> getMagneticVertices(final LevelCreator levelCreator) {
 	if (!magnetized) {
 	    return Collections.emptySet();
 	}
 
 	final Set<Vector2D> magneticVertices = new HashSet<>(levelCreator.getVertices());
-
-	final Optional<Vector2D> possibleNewLineSegmentStart = getNewLineSegmentStart(levelCreator);
-	if (possibleNewLineSegmentStart.isPresent()) {
-	    final Vector2D newLineSegmentStart = possibleNewLineSegmentStart.get();
+	getNewLineSegmentStart(levelCreator).ifPresent(newLineSegmentStart -> {
 	    magneticVertices.remove(newLineSegmentStart);
-
-	    final Iterator<LineSegmentDefinition> lineSegmentIterator = levelCreator.getLineSegmentIterator();
-	    while (lineSegmentIterator.hasNext()) {
-		final LineSegmentDefinition lineSegment = lineSegmentIterator.next();
-		final Vector2D start = lineSegment.getStart();
-		final Vector2D end = lineSegment.getEnd();
-
-		if (start.equals(newLineSegmentStart)) {
-		    magneticVertices.remove(end);
-		} else if (end.equals(newLineSegmentStart)) {
-		    magneticVertices.remove(start);
-		}
-	    }
-	}
+	    magneticVertices.removeAll(levelCreator.getNeighboursTo(newLineSegmentStart));
+	});
 	return magneticVertices;
     }
 }
