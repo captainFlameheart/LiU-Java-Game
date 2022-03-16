@@ -13,22 +13,22 @@ public class LineSegmentDefinition
     }
 
     public static LineSegmentDefinition create(final Vector2D start, final Vector2D end) {
-	return new LineSegmentDefinition(start.copy(), end.copy());
+	return new LineSegmentDefinition(start, end);
     }
 
     public Vector2D getStart() {
-	return start.copy();
+	return start;
     }
 
     public void setStart(final Vector2D start) {
-	this.start.set(start);
+	this.start = start;
     }
 
     public Vector2D getEnd() {
-	return end.copy();
+	return end;
     }
 
     public void setEnd(final Vector2D end) {
-	this.end.set(end);
+	this.end = end;
     }
 }

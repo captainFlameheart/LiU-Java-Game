@@ -8,6 +8,7 @@ import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentD
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
 public class Runner
 {
@@ -17,7 +18,7 @@ public class Runner
                 50,
                 10,
                 20,
-                5,
+                2,
                 10,
                 1.1
         );
