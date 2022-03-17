@@ -17,10 +17,12 @@ public class Runner
         final MoveVertexMode moveVertexState = new MoveVertexMode();
         final RemoveLineSegmentMode deleteLineSegmentState = new RemoveLineSegmentMode();
         final ChangeTypeMode changeTypeMode = new ChangeTypeMode();
+        final SetCenterOfMassMode setCenterOfMassMode = new SetCenterOfMassMode();
         levelCreator.setMode(addVertexState);
 
         final LevelCreatorJComponent levelCreatorJComponent = LevelCreatorJComponent.create(levelCreator);
-        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState, deleteLineSegmentState, changeTypeMode);
+        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState, deleteLineSegmentState, changeTypeMode,
+                      setCenterOfMassMode);
 
         final JFrame frame = new JFrame("Become The Level!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -43,7 +45,8 @@ public class Runner
 
     private static void setupControls(final LevelCreator levelCreator, final LevelCreatorJComponent levelCreatorJComponent,
                                       final AddVertexMode addVertexState, final MoveVertexMode moveVertexState,
-                                      final RemoveLineSegmentMode deleteLineSegmentState, final ChangeTypeMode changeTypeMode) {
+                                      final RemoveLineSegmentMode deleteLineSegmentState, final ChangeTypeMode changeTypeMode,
+                                      final SetCenterOfMassMode setCenterOfMassMode) {
         // TEMPORARY
 
         final InputMap inputMap = levelCreatorJComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -55,6 +58,7 @@ public class Runner
         inputMap.put(KeyStroke.getKeyStroke("pressed 2"), "move");
         inputMap.put(KeyStroke.getKeyStroke("pressed 3"), "delete");
         inputMap.put(KeyStroke.getKeyStroke("pressed 4"), "changeType");
+        inputMap.put(KeyStroke.getKeyStroke("pressed 5"), "setCenterOfMass");
         inputMap.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "deleteInProgress");
 
         final ActionMap actionMap = levelCreatorJComponent.getActionMap();
@@ -104,6 +108,12 @@ public class Runner
         {
             @Override public void actionPerformed(final ActionEvent e) {
                 levelCreator.execute(new SetStateCommand(changeTypeMode));
+            }
+        });
+        actionMap.put("setCenterOfMass", new AbstractAction()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                levelCreator.execute(new SetStateCommand(setCenterOfMassMode));
             }
         });
         actionMap.put("deleteInProgress", new AbstractAction()

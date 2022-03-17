@@ -1,6 +1,7 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
 import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.drawing.CrossDrawer;
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
 
@@ -91,6 +92,7 @@ public class LevelCreator
     public void draw(final Graphics2D g, final DrawRegion region) {
 	drawBackground(g, region);
 	drawFullLineSegments(g, region);
+	drawCenterOfMass(g, region);
 	mode.draw(this, g, region);
     }
 
@@ -110,6 +112,13 @@ public class LevelCreator
 	    g.setColor(lineSegment.getType().getColor());
 	    g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
 	}
+    }
+
+    private void drawCenterOfMass(final Graphics2D g, final DrawRegion region) {
+	final Vector2D pos = blueprint.getCenterOfMass();
+	final CrossDrawer drawerAtPos = CrossDrawer.createWithDefaultColor(1, 0.1f);
+	final TranslatedDrawer drawer = new TranslatedDrawer(pos, drawerAtPos);
+	drawer.draw(g);
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -142,6 +151,14 @@ public class LevelCreator
 
     public void setType(final int lineSegmentIndex, final LineSegmentType type) {
 	blueprint.setType(lineSegmentIndex, type);
+    }
+
+    public Vector2D getCenterOfMass() {
+	return blueprint.getCenterOfMass();
+    }
+
+    public void setCenterOfMass(final Vector2D centerOfMass) {
+	blueprint.setCenterOfMass(centerOfMass);
     }
 
     public boolean hasIncompleteLineSegment() {

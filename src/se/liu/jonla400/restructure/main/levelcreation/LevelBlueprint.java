@@ -16,9 +16,13 @@ public class LevelBlueprint
     private List<Vector2D> vertices;
     private List<LineSegmentType> types;
 
+    private Vector2D centerOfMass;
+
     public LevelBlueprint() {
         vertices = new ArrayList<>();
         types = new ArrayList<>();
+
+        centerOfMass = Vector2D.createZeroVector();
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -62,6 +66,14 @@ public class LevelBlueprint
 
     public void setType(final int lineSegmentIndex, final LineSegmentType type) {
         types.set(lineSegmentIndex, type);
+    }
+
+    public Vector2D getCenterOfMass() {
+        return centerOfMass;
+    }
+
+    public void setCenterOfMass(final Vector2D centerOfMass) {
+        this.centerOfMass.set(centerOfMass);
     }
 
     public boolean hasIncompleteLineSegment() {

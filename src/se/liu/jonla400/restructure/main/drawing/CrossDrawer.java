@@ -15,8 +15,12 @@ public class CrossDrawer implements Drawer
 	this.stroke = stroke;
     }
 
+    public static CrossDrawer create(final double radius, final Color color, final float strokeWidth) {
+	return new CrossDrawer(radius, color, new BasicStroke(strokeWidth));
+    }
+
     public static CrossDrawer createWithDefaultColor(final double radius, final float strokeWidth) {
-	return new CrossDrawer(radius, Color.BLACK, new BasicStroke(strokeWidth));
+	return create(radius, Color.BLACK, strokeWidth);
     }
 
     @Override public void draw(final Graphics2D g) {
