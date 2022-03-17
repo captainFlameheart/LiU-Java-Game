@@ -1,5 +1,7 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
+import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.util.ArrayList;
@@ -18,11 +20,15 @@ public class LevelBlueprint
 
     private Vector2D centerOfMass;
 
+    private DrawRegion camera;
+
     public LevelBlueprint() {
         vertices = new ArrayList<>();
         types = new ArrayList<>();
 
         centerOfMass = Vector2D.createZeroVector();
+
+        camera = DrawRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -74,6 +80,14 @@ public class LevelBlueprint
 
     public void setCenterOfMass(final Vector2D centerOfMass) {
         this.centerOfMass.set(centerOfMass);
+    }
+
+    public DrawRegion getCamera() {
+        return camera;
+    }
+
+    public void setCamera(final DrawRegion camera) {
+        this.camera = camera;
     }
 
     public boolean hasIncompleteLineSegment() {

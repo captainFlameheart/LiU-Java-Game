@@ -60,6 +60,7 @@ public class AddVertexMode implements LevelCreatorMode
 	final double radius = 0.2;
 	final double diameter = 2 * radius;
 	g.setColor(Color.BLACK);
+	g.setStroke(new BasicStroke(0.1f));
 	g.draw(new Ellipse2D.Double(upcomingVertex.getX() - radius, upcomingVertex.getY() - radius, diameter, diameter));
 
 	final Optional<Vector2D> startOfNewLineSegment = levelCreator.getIncompleteLineSegmentStart();

@@ -93,6 +93,7 @@ public class LevelCreator
 	drawBackground(g, region);
 	drawFullLineSegments(g, region);
 	drawCenterOfMass(g, region);
+	drawLevelCamera(g, region);
 	mode.draw(this, g, region);
     }
 
@@ -119,6 +120,11 @@ public class LevelCreator
 	final CrossDrawer drawerAtPos = CrossDrawer.createWithDefaultColor(1, 0.1f);
 	final TranslatedDrawer drawer = new TranslatedDrawer(pos, drawerAtPos);
 	drawer.draw(g);
+    }
+
+    private void drawLevelCamera(final Graphics2D g, final DrawRegion region) {
+	final CameraDrawer cameraDrawer = CameraDrawer.createDashed(blueprint.getCamera(), Color.BLACK, 0.1f);
+	cameraDrawer.draw(g);
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -159,6 +165,14 @@ public class LevelCreator
 
     public void setCenterOfMass(final Vector2D centerOfMass) {
 	blueprint.setCenterOfMass(centerOfMass);
+    }
+
+    public DrawRegion getLevelCamera() {
+	return blueprint.getCamera();
+    }
+
+    public void setLevelCamera(final DrawRegion camera) {
+	blueprint.setCamera(camera);
     }
 
     public boolean hasIncompleteLineSegment() {

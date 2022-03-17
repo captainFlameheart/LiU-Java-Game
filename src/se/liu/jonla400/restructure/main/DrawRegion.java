@@ -27,7 +27,7 @@ public class DrawRegion
 
     private static PosAndDimensionPair requirePositiveDimension(final double pos, final double dimension) {
         if (dimension < 0) {
-            return new PosAndDimensionPair(pos + dimension + 1, -dimension);
+            return new PosAndDimensionPair(pos + dimension, -dimension);
         } else {
             return new PosAndDimensionPair(pos, dimension);
         }
@@ -52,6 +52,10 @@ public class DrawRegion
     public static DrawRegion createFromCenter(final Vector2D center, final Vector2D size) {
         final Vector2D cornerPos = center.subtract(size.divide(2));
         return create(cornerPos, size);
+    }
+
+    public static DrawRegion createFromCorners(final Vector2D start, final Vector2D end) {
+        return createFromIntervals(new Interval(start.getX(), end.getX()), new Interval(start.getY(), end.getY()));
     }
 
     public double getLeftX() {
