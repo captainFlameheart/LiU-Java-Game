@@ -3,18 +3,13 @@ package se.liu.jonla400.restructure.main.levelcreation;
 import se.liu.jonla400.restructure.main.DrawRegion;
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
-import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentDefinition;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,9 +18,9 @@ public class LevelCreator
     private List<Command> commands;
     private int currentCommandIndex;
 
-    private List<Vector2D> vertices;
+    private LevelBlueprint blueprint;
 
-    private LevelCreatorState state;
+    private LevelCreatorMode mode;
 
     private Vector2D cursorPos;
     private DrawRegion camera;
@@ -33,8 +28,8 @@ public class LevelCreator
     public LevelCreator() {
 	commands = new ArrayList<>();
 	currentCommandIndex = -1;
-	vertices = new ArrayList<>();
-	state = new EmptyState();
+	blueprint = new LevelBlueprint();
+	mode = new EmptyMode();
 	cursorPos = Vector2D.createZeroVector();
 	camera = DrawRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
     }
@@ -66,14 +61,14 @@ public class LevelCreator
 	commands.get(currentCommandIndex).execute(this);
     }
 
-    public LevelCreatorState getState() {
-	return state;
+    public LevelCreatorMode getMode() {
+	return mode;
     }
 
-    public void setState(final LevelCreatorState state) {
-	this.state.exit(this);
-	this.state = state;
-	state.enter(this);
+    public void setMode(final LevelCreatorMode mode) {
+	this.mode.exit(this);
+	this.mode = mode;
+	mode.enter(this);
     }
 
     public Vector2D getCursorPos() {
@@ -82,11 +77,11 @@ public class LevelCreator
 
     public void setCursorPos(final Vector2D cursorPos) {
 	this.cursorPos.set(cursorPos);
-	state.cursorPosChanged(this);
+	mode.cursorPosChanged(this);
     }
 
     public void performCursorAction() {
-	state.cursorActionPerformed(this);
+	mode.cursorActionPerformed(this);
     }
 
     public DrawRegion getCamera() {
@@ -96,7 +91,7 @@ public class LevelCreator
     public void draw(final Graphics2D g, final DrawRegion region) {
 	drawBackground(g, region);
 	drawFullLineSegments(g, region);
-	state.draw(this, g, region);
+	mode.draw(this, g, region);
     }
 
     private void drawBackground(final Graphics2D g, final DrawRegion region) {
@@ -105,83 +100,67 @@ public class LevelCreator
     }
 
     private void drawFullLineSegments(final Graphics2D g, final DrawRegion region) {
-	g.setColor(Color.BLACK);
 	g.setStroke(new BasicStroke(0.1f));
 
 	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
 	while (lineSegmentIterator.hasNext()) {
 	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
-	    final Vector2D start = lineSegment.getStartPos();
-	    final Vector2D end = lineSegment.getEndPos();
+	    final Vector2D start = lineSegment.getStart();
+	    final Vector2D end = lineSegment.getEnd();
+	    g.setColor(lineSegment.getType().getColor());
 	    g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
 	}
     }
 
-    public List<Vector2D> getVertices() {
-	return vertices;
+    public Set<Vector2D> getAllVertices() {
+	return blueprint.getAllVertices();
+    }
+
+    public Vector2D getVertex(final int index) {
+	return blueprint.getVertex(index);
+    }
+
+    public void add(final Vector2D vertex) {
+	blueprint.addVertex(vertex);
+    }
+
+    public void removeVertex() {
+	blueprint.removeVertex();
+    }
+
+    public void addLineSegment(final IndexedLineSegment lineSegment) {
+	blueprint.addLineSegment(lineSegment);
+    }
+
+    public void removeLineSegment(final int lineSegmentIndex) {
+	blueprint.removeLineSegment(lineSegmentIndex);
+    }
+
+    public LineSegmentType getType(final int lineSegmentIndex) {
+	return blueprint.getType(lineSegmentIndex);
+    }
+
+    public void setType(final int lineSegmentIndex, final LineSegmentType type) {
+	blueprint.setType(lineSegmentIndex, type);
+    }
+
+    public boolean hasIncompleteLineSegment() {
+	return blueprint.hasIncompleteLineSegment();
+    }
+
+    public Optional<Vector2D> getIncompleteLineSegmentStart() {
+	return blueprint.getIncompleteLineSegmentStart();
     }
 
     public Iterator<IndexedLineSegment> getLineSegmentIterator() {
-	return new Iterator<>()
-	{
-	    private int nextVertexIndex = 0;
-
-	    @Override public boolean hasNext() {
-		return nextVertexIndex < vertices.size() - 1;
-	    }
-
-	    @Override public IndexedLineSegment next() {
-		if (!hasNext()) {
-		    throw new NoSuchElementException("No more line segments");
-		}
-		final IndexedVertex start = getNextVertex();
-		final IndexedVertex end = getNextVertex();
-		return new IndexedLineSegment(start, end);
-	    }
-
-	    private IndexedVertex getNextVertex() {
-		final IndexedVertex vertex = new IndexedVertex(nextVertexIndex, vertices.get(nextVertexIndex));
-		nextVertexIndex++;
-		return vertex;
-	    }
-	};
+	return blueprint.getLineSegmentIterator();
     }
 
     public Set<Vector2D> getNeighboursTo(final Vector2D vertex) {
-	final Set<Vector2D> neighbours = new HashSet<>();
-
-	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
-	while (lineSegmentIterator.hasNext()) {
-	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
-	    final Vector2D start = lineSegment.getStartPos();
-	    final Vector2D end = lineSegment.getEndPos();
-
-	    if (start.equals(vertex)) {
-		neighbours.add(end);
-	    } else if (end.equals(vertex)) {
-		neighbours.add(start);
-	    }
-	}
-	return neighbours;
+	return blueprint.getNeighboursTo(vertex);
     }
 
     public Optional<IndexedLineSegment> getClosestLineSegmentToCursor() {
-	// LOOK FOR CODE REDUNDANCY!
-
-	IndexedLineSegment closestLineSegment = null;
-	double minDist = Double.POSITIVE_INFINITY;
-
-	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
-	while (lineSegmentIterator.hasNext()) {
-	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
-	    final Vector2D closestPoint = lineSegment.getClosestPointTo(cursorPos);
-	    final double dist = closestPoint.subtract(cursorPos).getMagnitudeSquared();
-	    if (dist < minDist) {
-		closestLineSegment = lineSegment;
-		minDist = dist;
-	    }
-	}
-
-	return Optional.ofNullable(closestLineSegment);
+	return blueprint.getClosestLineSegmentTo(cursorPos);
     }
 }

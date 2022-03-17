@@ -7,12 +7,10 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class AddVertexState implements LevelCreatorState
+public class AddVertexMode implements LevelCreatorMode
 {
     private boolean chainsLineSegments;
     private boolean magnetized;
@@ -44,13 +42,13 @@ public class AddVertexState implements LevelCreatorState
 	final Vector2D newVertex = getUpcomingVertex(levelCreator);
 	final AddVertexCommand addVertexCommand = new AddVertexCommand(newVertex);
 	levelCreator.execute(addVertexCommand);
-	if (chainsLineSegments && getNewLineSegmentStart(levelCreator).isEmpty()) {
+	if (chainsLineSegments && !levelCreator.hasIncompleteLineSegment()) {
 	    levelCreator.execute(addVertexCommand);
 	}
     }
 
-    public void deleteNewLineSegmentStart(final LevelCreator levelCreator) {
-	getNewLineSegmentStart(levelCreator).ifPresent(start -> {
+    public void deleteInclompleteLineSegment(final LevelCreator levelCreator) {
+	levelCreator.getIncompleteLineSegmentStart().ifPresent(start -> {
 	    final Command deleteStartCommand = new ReversedCommand(new AddVertexCommand(start));
 	    levelCreator.execute(deleteStartCommand);
 	});
@@ -64,7 +62,7 @@ public class AddVertexState implements LevelCreatorState
 	g.setColor(Color.BLACK);
 	g.draw(new Ellipse2D.Double(upcomingVertex.getX() - radius, upcomingVertex.getY() - radius, diameter, diameter));
 
-	final Optional<Vector2D> startOfNewLineSegment = getNewLineSegmentStart(levelCreator);
+	final Optional<Vector2D> startOfNewLineSegment = levelCreator.getIncompleteLineSegmentStart();
 	startOfNewLineSegment.ifPresent(start -> {
 	    g.setColor(Color.GREEN);
 	    g.setStroke(new BasicStroke(0.1f));
@@ -76,15 +74,6 @@ public class AddVertexState implements LevelCreatorState
 	return getClosestMagneticVertexToCursor(levelCreator).orElse(levelCreator.getCursorPos());
     }
 
-    private Optional<Vector2D> getNewLineSegmentStart(final LevelCreator levelCreator) {
-	final List<Vector2D> vertices = levelCreator.getVertices();
-	final int vertexCount = vertices.size();
-	if (vertexCount % 2 == 0) {
-	    return Optional.empty();
-	}
-	return Optional.of(vertices.get(vertexCount - 1));
-    }
-
     private Optional<Vector2D> getClosestMagneticVertexToCursor(final LevelCreator levelCreator) {
 	return ClosestPointFinder.findClosestPoint(getMagneticVertices(levelCreator), levelCreator.getCursorPos());
     }
@@ -94,8 +83,8 @@ public class AddVertexState implements LevelCreatorState
 	    return Collections.emptySet();
 	}
 
-	final Set<Vector2D> magneticVertices = new HashSet<>(levelCreator.getVertices());
-	getNewLineSegmentStart(levelCreator).ifPresent(newLineSegmentStart -> {
+	final Set<Vector2D> magneticVertices = levelCreator.getAllVertices();
+	levelCreator.getIncompleteLineSegmentStart().ifPresent(newLineSegmentStart -> {
 	    magneticVertices.remove(newLineSegmentStart);
 	    magneticVertices.removeAll(levelCreator.getNeighboursTo(newLineSegmentStart));
 	});

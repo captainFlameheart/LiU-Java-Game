@@ -9,11 +9,11 @@ import java.awt.geom.Line2D;
 import java.util.Optional;
 import java.util.Set;
 
-public class MoveVertexState implements LevelCreatorState
+public class MoveVertexMode implements LevelCreatorMode
 {
     private Optional<Vector2D> possibleGrabbedVertex;
 
-    public MoveVertexState() {
+    public MoveVertexMode() {
 	possibleGrabbedVertex = Optional.empty();
     }
 
@@ -77,7 +77,7 @@ public class MoveVertexState implements LevelCreatorState
     }
 
     private Optional<Vector2D> getClosestVertexToCursor(final LevelCreator levelCreator) {
-	return ClosestPointFinder.findClosestPoint(levelCreator.getVertices(), levelCreator.getCursorPos());
+	return ClosestPointFinder.findClosestPoint(levelCreator.getAllVertices(), levelCreator.getCursorPos());
     }
 
     private class GrabVertexCommand implements Command {

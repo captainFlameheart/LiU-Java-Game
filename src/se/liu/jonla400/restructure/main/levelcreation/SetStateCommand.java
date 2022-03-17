@@ -2,20 +2,20 @@ package se.liu.jonla400.restructure.main.levelcreation;
 
 public class SetStateCommand implements Command
 {
-    private LevelCreatorState state;
-    private LevelCreatorState stateBefore;
+    private LevelCreatorMode state;
+    private LevelCreatorMode stateBefore;
 
-    public SetStateCommand(final LevelCreatorState state) {
+    public SetStateCommand(final LevelCreatorMode state) {
 	this.state = state;
 	stateBefore = null;
     }
 
     @Override public void execute(final LevelCreator levelCreator) {
-	stateBefore = levelCreator.getState();
-	levelCreator.setState(state);
+	stateBefore = levelCreator.getMode();
+	levelCreator.setMode(state);
     }
 
     @Override public void undo(final LevelCreator levelCreator) {
-	levelCreator.setState(stateBefore);
+	levelCreator.setMode(stateBefore);
     }
 }

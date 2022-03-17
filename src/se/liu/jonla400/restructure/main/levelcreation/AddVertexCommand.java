@@ -2,8 +2,6 @@ package se.liu.jonla400.restructure.main.levelcreation;
 
 import se.liu.jonla400.restructure.math.Vector2D;
 
-import java.util.List;
-
 public class AddVertexCommand implements Command
 {
     private Vector2D vertex;
@@ -13,11 +11,10 @@ public class AddVertexCommand implements Command
     }
 
     @Override public void execute(final LevelCreator levelCreator) {
-	levelCreator.getVertices().add(vertex);
+	levelCreator.add(vertex);
     }
 
     @Override public void undo(final LevelCreator levelCreator) {
-	final List<Vector2D> vertices = levelCreator.getVertices();
-	vertices.remove(vertices.size() - 1);
+	levelCreator.removeVertex();
     }
 }

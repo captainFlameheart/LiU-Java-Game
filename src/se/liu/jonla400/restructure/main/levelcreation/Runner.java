@@ -12,14 +12,15 @@ public class Runner
 {
     public static void main(String[] args) {
         final LevelCreator levelCreator = new LevelCreator();
-        final AddVertexState addVertexState = new AddVertexState();
+        final AddVertexMode addVertexState = new AddVertexMode();
         addVertexState.setChainsLineSegments(true);
-        final MoveVertexState moveVertexState = new MoveVertexState();
-        final DeleteLineSegmentState deleteLineSegmentState = new DeleteLineSegmentState();
-        levelCreator.setState(addVertexState);
+        final MoveVertexMode moveVertexState = new MoveVertexMode();
+        final RemoveLineSegmentMode deleteLineSegmentState = new RemoveLineSegmentMode();
+        final ChangeTypeMode changeTypeMode = new ChangeTypeMode();
+        levelCreator.setMode(addVertexState);
 
         final LevelCreatorJComponent levelCreatorJComponent = LevelCreatorJComponent.create(levelCreator);
-        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState, deleteLineSegmentState);
+        setupControls(levelCreator, levelCreatorJComponent, addVertexState, moveVertexState, deleteLineSegmentState, changeTypeMode);
 
         final JFrame frame = new JFrame("Become The Level!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -41,8 +42,8 @@ public class Runner
     }
 
     private static void setupControls(final LevelCreator levelCreator, final LevelCreatorJComponent levelCreatorJComponent,
-                                      final AddVertexState addVertexState, final MoveVertexState moveVertexState,
-                                      final DeleteLineSegmentState deleteLineSegmentState) {
+                                      final AddVertexMode addVertexState, final MoveVertexMode moveVertexState,
+                                      final RemoveLineSegmentMode deleteLineSegmentState, final ChangeTypeMode changeTypeMode) {
         // TEMPORARY
 
         final InputMap inputMap = levelCreatorJComponent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -53,6 +54,7 @@ public class Runner
         inputMap.put(KeyStroke.getKeyStroke("pressed 1"), "add");
         inputMap.put(KeyStroke.getKeyStroke("pressed 2"), "move");
         inputMap.put(KeyStroke.getKeyStroke("pressed 3"), "delete");
+        inputMap.put(KeyStroke.getKeyStroke("pressed 4"), "changeType");
         inputMap.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "deleteInProgress");
 
         final ActionMap actionMap = levelCreatorJComponent.getActionMap();
@@ -98,12 +100,18 @@ public class Runner
                 levelCreator.execute(new SetStateCommand(deleteLineSegmentState));
             }
         });
+        actionMap.put("changeType", new AbstractAction()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                levelCreator.execute(new SetStateCommand(changeTypeMode));
+            }
+        });
         actionMap.put("deleteInProgress", new AbstractAction()
         {
             @Override public void actionPerformed(final ActionEvent e) {
-                if (levelCreator.getState().equals(addVertexState)) {
-                    addVertexState.deleteNewLineSegmentStart(levelCreator);
-                } else if (levelCreator.getState().equals(moveVertexState)) {
+                if (levelCreator.getMode().equals(addVertexState)) {
+                    addVertexState.deleteInclompleteLineSegment(levelCreator);
+                } else if (levelCreator.getMode().equals(moveVertexState)) {
                     moveVertexState.putBackVertex(levelCreator);
                 }
             }

@@ -8,7 +8,7 @@ import java.awt.*;
 // MoveVertexState
 // RemoveLineSegmentState
 // ChangeLineSegmentTypeState
-public interface LevelCreatorState
+public interface LevelCreatorMode
 {
     void enter(LevelCreator levelCreator);
 

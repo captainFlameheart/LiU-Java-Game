@@ -5,11 +5,9 @@ import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-public class DeleteLineSegmentState implements LevelCreatorState
+public class RemoveLineSegmentMode implements LevelCreatorMode
 {
     @Override public void enter(final LevelCreator levelCreator) {
     }
@@ -21,36 +19,33 @@ public class DeleteLineSegmentState implements LevelCreatorState
     }
 
     @Override public void cursorActionPerformed(final LevelCreator levelCreator) {
-        final Optional<IndexedLineSegment> lineSegmentToDelete = levelCreator.getClosestLineSegmentToCursor();
-        lineSegmentToDelete.ifPresent(segment -> levelCreator.execute(new DeleteCommand(segment)));
+        final Optional<IndexedLineSegment> lineSegmentToRemove = levelCreator.getClosestLineSegmentToCursor();
+        lineSegmentToRemove.ifPresent(segment -> levelCreator.execute(new RemoveCommand(segment)));
     }
 
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
-        final Optional<IndexedLineSegment> closestLineSegment = levelCreator.getClosestLineSegmentToCursor();
-        closestLineSegment.ifPresent(segment -> {
-            final Vector2D start = segment.getStartPos();
-            final Vector2D end = segment.getEndPos();
+        levelCreator.getClosestLineSegmentToCursor().ifPresent(segment -> {
+            final Vector2D start = segment.getStart();
+            final Vector2D end = segment.getEnd();
             g.setColor(Color.RED);
             g.setStroke(new BasicStroke(0.2f));
             g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
         });
     }
 
-    private static class DeleteCommand implements Command {
+    private static class RemoveCommand implements Command {
         private IndexedLineSegment lineSegment;
 
-        private DeleteCommand(final IndexedLineSegment lineSegment) {
+        private RemoveCommand(final IndexedLineSegment lineSegment) {
             this.lineSegment = lineSegment;
         }
 
         @Override public void execute(final LevelCreator levelCreator) {
-            final List<Vector2D> vertices = levelCreator.getVertices();
-            vertices.subList(lineSegment.getStartIndex(), lineSegment.getEndIndex() + 1).clear();
+            levelCreator.removeLineSegment(lineSegment.getIndex());
         }
 
         @Override public void undo(final LevelCreator levelCreator) {
-            final List<Vector2D> vertices = levelCreator.getVertices();
-            vertices.addAll(lineSegment.getStartIndex(), Arrays.asList(lineSegment.getStartPos(), lineSegment.getEndPos()));
+            levelCreator.addLineSegment(lineSegment);
         }
     }
 }

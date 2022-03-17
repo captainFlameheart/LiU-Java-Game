@@ -4,42 +4,44 @@ import se.liu.jonla400.restructure.math.Vector2D;
 import se.liu.jonla400.restructure.physics.implementation.collision.LineSegment;
 import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentDefinition;
 
+import java.awt.*;
+
 public class IndexedLineSegment
 {
-    private IndexedVertex start;
-    private IndexedVertex end;
+    private int index;
+    private LineSegmentDefinition lineSegment;
 
-    public IndexedLineSegment(final IndexedVertex start, final IndexedVertex end) {
-	this.start = start;
-	this.end = end;
+    private IndexedLineSegment(final int index, final LineSegmentDefinition lineSegment) {
+	this.index = index;
+	this.lineSegment = lineSegment;
     }
 
-    public IndexedVertex getStart() {
-	return start;
+    public static IndexedLineSegment create(final int index, final Vector2D start, final Vector2D end, LineSegmentType type) {
+	return new IndexedLineSegment(index, LineSegmentDefinition.create(start, end, type));
     }
 
-    public int getStartIndex() {
-	return start.getIndex();
+    public int getIndex() {
+	return index;
     }
 
-    public Vector2D getStartPos() {
-	return start.getVertex();
+    public Vector2D getStart() {
+	return lineSegment.getStart();
     }
 
-    public IndexedVertex getEnd() {
-	return end;
+    public Vector2D getEnd() {
+	return lineSegment.getEnd();
     }
 
-    public int getEndIndex() {
-	return end.getIndex();
+    public LineSegmentType getType() {
+	return lineSegment.getType();
     }
 
-    public Vector2D getEndPos() {
-	return end.getVertex();
+    public Color getColor() {
+	return lineSegment.getType().getColor();
     }
 
     public Vector2D getClosestPointTo(final Vector2D point) {
-	final LineSegment lineSegment = new LineSegment(start.getVertex(), end.getVertex());
-	return lineSegment.getClosestPointTo(point);
+	final LineSegment efficientLineSegment = LineSegment.createFromDefinition(lineSegment);
+	return efficientLineSegment.getClosestPointTo(point);
     }
 }

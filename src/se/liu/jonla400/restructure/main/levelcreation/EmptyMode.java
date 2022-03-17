@@ -4,7 +4,7 @@ import se.liu.jonla400.restructure.main.DrawRegion;
 
 import java.awt.*;
 
-public class EmptyState implements LevelCreatorState
+public class EmptyMode implements LevelCreatorMode
 {
     @Override public void enter(final LevelCreator levelCreator) {}
 
