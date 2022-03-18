@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -20,7 +22,7 @@ import java.util.Optional;
 public class LevelCreatorRunner
 {
     public static void main(String[] args) {
-	final Path path = Paths.get("C:tmp\\foo");
+	final Path path = Paths.get(System.getProperty("user.home"), "ANOTHER.txt");
 
 	final Optional<LevelDefinition> levelDef = getLevelDefFromFile(path);
 	final LevelBlueprint levelBlueprint;
@@ -71,7 +73,13 @@ public class LevelCreatorRunner
 		final LevelDefinition currentLevelDef = LevelDefinition.createFromBlueprint(currentLevelBlueprint);
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		System.out.println(gson.toJson(currentLevelDef));
+		final String defAsJson = gson.toJson(currentLevelDef);
+
+		try {
+		    Files.writeString(path, defAsJson);
+		} catch (IOException e) {
+		    e.printStackTrace(); // TEMPORARY
+		}
 	    }
 	});
 
@@ -95,7 +103,17 @@ public class LevelCreatorRunner
 	tickTimer.start();
     }
 
-    private static Optional<LevelDefinition> getLevelDefFromFile(Path path) {
-	return Optional.empty();
+    private static Optional<LevelDefinition> getLevelDefFromFile(final Path path) {
+	if (!Files.exists(path)) {
+	    return Optional.empty();
+	}
+	try {
+	    final String levelDefAsJson = Files.readString(path);
+	    final Gson gson = new GsonBuilder().create();
+	    return Optional.of(gson.fromJson(levelDefAsJson, LevelDefinition.class));
+	} catch (IOException e) {
+	    e.printStackTrace(); // TEMPORARY!
+	    return Optional.empty();
+	}
     }
 }
