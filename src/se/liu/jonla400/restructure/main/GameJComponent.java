@@ -58,7 +58,8 @@ public class GameJComponent extends JComponent
     }
 
     private RectangularRegion encloseGameWithCurrentAspectRatio() {
-	final RectangularRegion gameRegion = level.getPreferredDrawRegion();
+	return null;
+	/*final RectangularRegion gameRegion = level.getPreferredDrawRegion();
 	final double gameWidth = gameRegion.getWidth();
 	final double gameHeight = gameRegion.getHeight();
 
@@ -75,6 +76,6 @@ public class GameJComponent extends JComponent
 	    enclosingWidth = enclosingHeight * targetWidthToHeightRatio;
 	}
 
-	return RectangularRegion.createFromCenter(gameRegion.getCenter(), Vector2D.createCartesian(enclosingWidth, enclosingHeight));
+	return RectangularRegion.createFromCenter(gameRegion.getCenter(), Vector2D.createCartesian(enclosingWidth, enclosingHeight));*/
     }
 }

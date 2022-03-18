@@ -2,22 +2,25 @@ package se.liu.jonla400.restructure.main.levelcreation;
 
 import se.liu.jonla400.restructure.math.Vector2D;
 import se.liu.jonla400.restructure.physics.implementation.collision.LineSegment;
-import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentDefinition;
 
 import java.awt.*;
 
 public class IndexedLineSegment
 {
     private int index;
-    private LineSegmentDefinition lineSegment;
+    private Vector2D start;
+    private Vector2D end;
+    private LineSegmentType type;
 
-    private IndexedLineSegment(final int index, final LineSegmentDefinition lineSegment) {
+    private IndexedLineSegment(final int index, final Vector2D start, final Vector2D end, final LineSegmentType type) {
 	this.index = index;
-	this.lineSegment = lineSegment;
+	this.start = start;
+	this.end = end;
+	this.type = type;
     }
 
-    public static IndexedLineSegment create(final int index, final Vector2D start, final Vector2D end, LineSegmentType type) {
-	return new IndexedLineSegment(index, LineSegmentDefinition.create(start, end, type));
+    public static IndexedLineSegment create(final int index, final Vector2D start, final Vector2D end, final LineSegmentType type) {
+	return new IndexedLineSegment(index, start.copy(), end.copy(), type);
     }
 
     public int getIndex() {
@@ -25,23 +28,26 @@ public class IndexedLineSegment
     }
 
     public Vector2D getStart() {
-	return lineSegment.getStart();
+	return start.copy();
     }
 
     public Vector2D getEnd() {
-	return lineSegment.getEnd();
+	return end.copy();
     }
 
     public LineSegmentType getType() {
-	return lineSegment.getType();
+	return type;
     }
 
     public Color getColor() {
-	return lineSegment.getType().getColor();
+	return type.getColor();
+    }
+
+    public LineSegment<LineSegmentType> convertToCollidableLineSegment() {
+	return LineSegment.create(start, end, type);
     }
 
     public Vector2D getClosestPointTo(final Vector2D point) {
-	final LineSegment efficientLineSegment = LineSegment.createFromDefinition(lineSegment);
-	return efficientLineSegment.getClosestPointTo(point);
+	return convertToCollidableLineSegment().getClosestPointTo(point);
     }
 }

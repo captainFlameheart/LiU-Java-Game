@@ -1,18 +1,17 @@
 package se.liu.jonla400.restructure.main;
 
-import se.liu.jonla400.restructure.main.levelcreation.AddVertexMode;
-import se.liu.jonla400.restructure.main.levelcreation.LevelCreator;
+import se.liu.jonla400.restructure.main.levelcreation.LevelBlueprint;
 import se.liu.jonla400.restructure.main.levelcreation.LevelCreatorConstructor;
 import se.liu.jonla400.restructure.math.Interval;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class TestRunner
+public class LevelCreatorRunner
 {
     public static void main(String[] args) {
 	final LevelCreatorConstructor constructor = new LevelCreatorConstructor();
-	final World world = constructor.constructLevelCreator();
+	final World world = constructor.constructLevelCreator(LevelBlueprint.createEmpty());
 	final RectangularRegion camera = RectangularRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
 	final FilmedWorld filmedWorld = new FilmedWorld(world, camera);
 

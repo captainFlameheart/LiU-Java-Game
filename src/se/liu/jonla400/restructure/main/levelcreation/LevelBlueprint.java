@@ -1,8 +1,10 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
+import se.liu.jonla400.restructure.main.LevelDefinition;
 import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
+import se.liu.jonla400.restructure.physics.implementation.collision.LineSegment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +38,19 @@ public class LevelBlueprint
         final List<LineSegmentType> types = new ArrayList<>();
         final Vector2D centerOfMass = Vector2D.createZero();
         final RectangularRegion camera = RectangularRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
+        return new LevelBlueprint(vertices, types, centerOfMass, camera);
+    }
+
+    public static LevelBlueprint createFromDefinition(final LevelDefinition definition) {
+        final List<Vector2D> vertices = new ArrayList<>();
+        final List<LineSegmentType> types = new ArrayList<>();
+        for (LineSegment<LineSegmentType> collisionLineSeg : definition.getShape()) {
+            vertices.add(collisionLineSeg.getStart());
+            vertices.add(collisionLineSeg.getEnd());
+            types.add(collisionLineSeg.getUserData());
+        }
+        final Vector2D centerOfMass = definition.getCenterOfMass();
+        final RectangularRegion camera = definition.getCamera();
         return new LevelBlueprint(vertices, types, centerOfMass, camera);
     }
 

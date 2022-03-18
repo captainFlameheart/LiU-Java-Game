@@ -3,11 +3,12 @@ package se.liu.jonla400.restructure.main.levelcreation;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 public class LevelCreatorConstructor
 {
-    public LevelCreator constructLevelCreator() {
-        final DrawableLevelBlueprint blueprint = DrawableLevelBlueprint.createEmpty();
+    public LevelCreator constructLevelCreator(LevelBlueprint blueprint) {
+        final DrawableLevelBlueprint drawableBlueprint = DrawableLevelBlueprint.createFromBlueprint(blueprint);
         final CommandTimeLine commandTimeLine = CommandTimeLine.createEmpty();
 
         final AddVertexMode addVertexMode = AddVertexMode.createWithDefaultConfigAndKeys();
@@ -25,7 +26,7 @@ public class LevelCreatorConstructor
                 addVertexMode, moveVertexMode, removeLineSegmentMode, changeTypeMode, setCenterOfMassMode, setCameraMode
         );
 
-        return new LevelCreator(blueprint, commandTimeLine, currentMode, cursorPos, keyListener);
+        return new LevelCreator(drawableBlueprint, commandTimeLine, currentMode, cursorPos, keyListener);
     }
 
     private static class DefaultKeyListener implements LevelCreatorKeyListener

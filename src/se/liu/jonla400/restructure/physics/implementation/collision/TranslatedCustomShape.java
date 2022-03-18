@@ -2,20 +2,14 @@ package se.liu.jonla400.restructure.physics.implementation.collision;
 
 import se.liu.jonla400.restructure.math.Vector2D;
 
-public class TranslatedCustomShape
+public class TranslatedCustomShape<T>
 {
     private Vector2D translation;
-    private CustomShape shape;
+    private CustomShape<T> shape;
 
-    private TranslatedCustomShape(final Vector2D translation, final CustomShape shape) {
+    public TranslatedCustomShape(final Vector2D translation, final CustomShape<T> shape) {
         this.translation = translation;
         this.shape = shape;
-    }
-
-    public static TranslatedCustomShape createFromDefinition(final TranslatedCustomShapeDefinition definition) {
-        final Vector2D translation = definition.getTranslation();
-        final CustomShape customShape = CustomShape.createFromDefinition(definition.getCustomShapeDefinition());
-        return new TranslatedCustomShape(translation, customShape);
     }
 
     public Vector2D getTranslation() {
@@ -26,7 +20,7 @@ public class TranslatedCustomShape
         this.translation.set(translation);
     }
 
-    public CustomShape getShape() {
+    public CustomShape<T> getShape() {
         return shape;
     }
 }

@@ -1,10 +1,13 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
+import se.liu.jonla400.restructure.constants.DrawConstants;
+import se.liu.jonla400.restructure.constants.PhysicsConstants;
 import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.main.drawing.CrossDrawer;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
@@ -19,15 +22,20 @@ public class DrawableLevelBlueprint
         this.blueprint = blueprint;
     }
 
+    public static DrawableLevelBlueprint createFromBlueprint(final LevelBlueprint blueprint) {
+        return new DrawableLevelBlueprint(blueprint);
+    }
+
     public static DrawableLevelBlueprint createEmpty() {
         return new DrawableLevelBlueprint(LevelBlueprint.createEmpty());
     }
 
     public void draw(final Graphics2D g, final RectangularRegion drawRegion) {
         drawBackground(g, drawRegion);
-        drawFullLineSegments(g, drawRegion);
-        drawCenterOfMass(g, drawRegion);
-        drawLevelCamera(g, drawRegion);
+        drawFullLineSegments(g);
+        drawBall(g);
+        drawCenterOfMass(g);
+        drawLevelCamera(g);
     }
 
     private void drawBackground(final Graphics2D g, final RectangularRegion drawRegion) {
@@ -35,7 +43,7 @@ public class DrawableLevelBlueprint
         g.fill(new Rectangle2D.Double(drawRegion.getLeftX(), drawRegion.getBottomY(), drawRegion.getWidth(), drawRegion.getHeight()));
     }
 
-    private void drawFullLineSegments(final Graphics2D g, final RectangularRegion region) {
+    private void drawFullLineSegments(final Graphics2D g) {
         g.setStroke(new BasicStroke(0.1f));
 
         final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
@@ -48,16 +56,32 @@ public class DrawableLevelBlueprint
         }
     }
 
-    private void drawCenterOfMass(final Graphics2D g, final RectangularRegion region) {
+    private void drawBall(final Graphics2D g) {
+        final Vector2D pos = PhysicsConstants.getBallSpawnPos();
+        final double radius = PhysicsConstants.getBallRadius();
+        final double diameter = 2 * radius;
+        final Ellipse2D circle = new Ellipse2D.Double(pos.getX() - radius, pos.getY() - radius, diameter, diameter);
+        g.setColor(DrawConstants.getBallFillColor());
+        g.fill(circle);
+        g.setColor(DrawConstants.getBallStrokeColor());
+        g.setStroke(new BasicStroke(DrawConstants.getDefaultStrokeWidth()));
+        g.draw(circle);
+    }
+
+    private void drawCenterOfMass(final Graphics2D g) {
         final Vector2D pos = blueprint.getCenterOfMass();
         final CrossDrawer drawerAtPos = CrossDrawer.createWithDefaultColor(1, 0.1f);
         final TranslatedDrawer drawer = new TranslatedDrawer(pos, drawerAtPos);
         drawer.draw(g);
     }
 
-    private void drawLevelCamera(final Graphics2D g, final RectangularRegion region) {
+    private void drawLevelCamera(final Graphics2D g) {
         final CameraDrawer cameraDrawer = CameraDrawer.createDashed(blueprint.getCamera(), Color.BLACK, 0.1f);
         cameraDrawer.draw(g);
+    }
+
+    public LevelBlueprint getBlueprint() {
+        return blueprint;
     }
 
     public Set<Vector2D> getAllVertices() {

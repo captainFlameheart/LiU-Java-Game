@@ -110,4 +110,8 @@ public class RectangularRegion
         bottomLeft.set(other.bottomLeft);
         size.set(other.size);
     }
+
+    public RectangularRegion copy() {
+        return new RectangularRegion(bottomLeft.copy(), size.copy());
+    }
 }

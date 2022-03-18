@@ -8,12 +8,12 @@ import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CircleVsCustomCollisionDetector implements CollisionDetector
+public class CircleVsCustomCollisionDetector<T> implements CollisionDetector
 {
     private CircleCollider circleCollider;
-    private CustomCollider customCollider;
+    private CustomCollider<T> customCollider;
 
-    public CircleVsCustomCollisionDetector(final CircleCollider circleCollider, final CustomCollider customCollider) {
+    public CircleVsCustomCollisionDetector(final CircleCollider circleCollider, final CustomCollider<T> customCollider) {
 	this.circleCollider = circleCollider;
 	this.customCollider = customCollider;
     }
@@ -29,13 +29,13 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 	final Body circleBody = circleCollider.getBody();
 	final double radius = circleCollider.getRadius();
 	final Body customColliderBody = customCollider.getBody();
-	final TranslatedCustomShape translatedCustomShape = customCollider.getShape();
+	final TranslatedCustomShape<T> translatedCustomShape = customCollider.getShape();
 	final Vector2D customShapeTranslation = translatedCustomShape.getTranslation();
 
 	final Vector2D localCirclePos = customColliderBody.convertGlobalPointToLocalPoint(circleBody.getPos());
 	localCirclePos.subtractLocally(customShapeTranslation);
 
-	for (LineSegment lineSegment : translatedCustomShape.getShape()) {
+	for (LineSegment<T> lineSegment : translatedCustomShape.getShape()) {
 	    final Vector2D closestPoint = lineSegment.getClosestPointTo(localCirclePos);
 	    final Vector2D circleOffsetFromClosestPoint = localCirclePos.subtract(closestPoint);
 	    final double dist = circleOffsetFromClosestPoint.getMagnitude();

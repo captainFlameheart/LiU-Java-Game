@@ -29,6 +29,10 @@ public class Screen extends JComponent implements MouseListener, MouseMotionList
         this.movingCamera = movingCamera;
     }
 
+    public void setFilmedWorld(final FilmedWorld filmedWorld) {
+        this.filmedWorld = filmedWorld;
+    }
+
     public static Screen create(final FilmedWorld filmedWorld) {
         final Screen screen = new Screen(filmedWorld, Vector2D.createZero(), false);
         screen.addMouseListener(screen);

@@ -1,114 +1,51 @@
 package se.liu.jonla400.restructure.main;
 
+import se.liu.jonla400.restructure.main.levelcreation.IndexedLineSegment;
+import se.liu.jonla400.restructure.main.levelcreation.LevelBlueprint;
+import se.liu.jonla400.restructure.main.levelcreation.LineSegmentType;
 import se.liu.jonla400.restructure.math.Vector2D;
-import se.liu.jonla400.restructure.physics.implementation.collision.CustomShapeDefinition;
+import se.liu.jonla400.restructure.physics.implementation.collision.CustomShape;
+import se.liu.jonla400.restructure.physics.implementation.collision.LineSegment;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class LevelDefinition
 {
-    private GlobalLevelConfiguration sharedConfiguration;
-    private Vector2D levelPos;
-    private CustomShapeDefinition levelShapeDefinition;
-    private Vector2D circlePos;
-    private double circleRadius;
-    private double circleMass;
-    private double circleAngularMass;
-    private RectangularRegion preferredRectangularRegion;
+    private CustomShape<LineSegmentType> shape;
+    private Vector2D centerOfMass;
+    private RectangularRegion camera;
 
-    public LevelDefinition(final GlobalLevelConfiguration sharedConfiguration, final Vector2D levelPos,
-			   final CustomShapeDefinition levelShapeDefinition, final Vector2D circlePos, final double circleRadius,
-			   final double circleMass, final double circleAngularMass, final RectangularRegion preferredRectangularRegion)
+    public LevelDefinition(final CustomShape<LineSegmentType> shape, final Vector2D centerOfMass, final RectangularRegion camera)
     {
-	this.sharedConfiguration = sharedConfiguration;
-	this.levelPos = levelPos;
-	this.levelShapeDefinition = levelShapeDefinition;
-	this.circlePos = circlePos;
-	this.circleRadius = circleRadius;
-	this.circleMass = circleMass;
-	this.circleAngularMass = circleAngularMass;
-	this.preferredRectangularRegion = preferredRectangularRegion;
+	this.shape = shape;
+	this.centerOfMass = centerOfMass;
+	this.camera = camera;
     }
 
-    public double getLevelMass() {
-	return sharedConfiguration.getMass();
+    public static LevelDefinition createFromBlueprint(final LevelBlueprint blueprint) {
+	final Collection<LineSegment<LineSegmentType>> collidableLineSegments = new ArrayList<>();
+
+	final Iterator<IndexedLineSegment> lineSegIterator = blueprint.getLineSegmentIterator();
+	while (lineSegIterator.hasNext()) {
+	    collidableLineSegments.add(lineSegIterator.next().convertToCollidableLineSegment());
+	}
+
+	final CustomShape<LineSegmentType> collidableShape = CustomShape.copyFrom(collidableLineSegments);
+
+	return new LevelDefinition(collidableShape, blueprint.getCenterOfMass(), blueprint.getCamera());
     }
 
-    public double getAngularMass() {
-	return sharedConfiguration.getAngularMass();
+    public Vector2D getCenterOfMass() {
+	return centerOfMass;
     }
 
-    public double getMovementSpeed() {
-	return sharedConfiguration.getMovementSpeed();
+    public CustomShape<LineSegmentType> getShape() {
+	return shape;
     }
 
-    public double getMaxMovementAcc() {
-	return sharedConfiguration.getMaxMovementAcc();
-    }
-
-    public double getAngularSpeed() {
-	return sharedConfiguration.getAngularSpeed();
-    }
-
-    public double getMaxAngularAcc() {
-	return sharedConfiguration.getMaxAngularAcc();
-    }
-
-    public double getScaleFactor() {
-	return sharedConfiguration.getScaleFactor();
-    }
-
-    public Vector2D getLevelPos() {
-	return levelPos;
-    }
-
-    public void setLevelPos(final Vector2D levelPos) {
-	this.levelPos = levelPos;
-    }
-
-    public CustomShapeDefinition getLevelShapeDefinition() {
-	return levelShapeDefinition;
-    }
-
-    public void setLevelShapeDefinition(final CustomShapeDefinition levelShapeDefinition) {
-	this.levelShapeDefinition = levelShapeDefinition;
-    }
-
-    public Vector2D getCirclePos() {
-	return circlePos;
-    }
-
-    public void setCirclePos(final Vector2D circlePos) {
-	this.circlePos = circlePos;
-    }
-
-    public double getCircleRadius() {
-	return circleRadius;
-    }
-
-    public void setCircleRadius(final double circleRadius) {
-	this.circleRadius = circleRadius;
-    }
-
-    public double getCircleMass() {
-	return circleMass;
-    }
-
-    public void setCircleMass(final double circleMass) {
-	this.circleMass = circleMass;
-    }
-
-    public double getCircleAngularMass() {
-	return circleAngularMass;
-    }
-
-    public void setCircleAngularMass(final double circleAngularMass) {
-	this.circleAngularMass = circleAngularMass;
-    }
-
-    public RectangularRegion getPreferredDrawRegion() {
-	return preferredRectangularRegion;
-    }
-
-    public void setPreferredDrawRegion(final RectangularRegion preferredRectangularRegion) {
-	this.preferredRectangularRegion = preferredRectangularRegion;
+    public RectangularRegion getCamera() {
+	return camera;
     }
 }

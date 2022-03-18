@@ -7,7 +7,7 @@ public class FilmedWorld
 
     public FilmedWorld(final World world, final RectangularRegion camera) {
 	this.world = world;
-	this.camera = camera;
+	this.camera = camera.copy();
     }
 
     public World getWorld() {

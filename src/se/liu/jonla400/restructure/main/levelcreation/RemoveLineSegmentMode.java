@@ -1,5 +1,6 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
+import se.liu.jonla400.restructure.constants.DrawConstants;
 import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Vector2D;
 
@@ -26,7 +27,7 @@ public class RemoveLineSegmentMode implements LevelCreatorMode
             final Vector2D start = segment.getStart();
             final Vector2D end = segment.getEnd();
             g.setColor(Color.RED);
-            g.setStroke(new BasicStroke(0.2f));
+            g.setStroke(new BasicStroke(2 * DrawConstants.getDefaultStrokeWidth()));
             g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
         });
     }

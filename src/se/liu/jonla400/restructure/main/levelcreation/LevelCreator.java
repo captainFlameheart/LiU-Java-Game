@@ -81,6 +81,10 @@ public class LevelCreator implements World
 	currentMode.draw(this, g, region);
     }
 
+    public LevelBlueprint getBlueprint() {
+	return blueprint.getBlueprint();
+    }
+
     public Set<Vector2D> getAllVertices() {
 	return blueprint.getAllVertices();
     }

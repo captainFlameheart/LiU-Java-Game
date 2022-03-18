@@ -1,5 +1,7 @@
 package se.liu.jonla400.restructure.math;
 
+import java.util.Objects;
+
 /**
  * Represents a 2D vector that supports typical vector operations.
  * Some of these operations act on the vector object itself, changing
@@ -408,6 +410,21 @@ public class Vector2D
      */
     public double cross(final Vector2D other) {
 	return (x * other.y) - (y * other.x);
+    }
+
+    @Override public boolean equals(final Object o) {
+	if (this == o) {
+	    return true;
+	}
+	if (o == null || getClass() != o.getClass()) {
+	    return false;
+	}
+	final Vector2D vector2D = (Vector2D) o;
+	return Double.compare(vector2D.x, x) == 0 && Double.compare(vector2D.y, y) == 0;
+    }
+
+    @Override public int hashCode() {
+	return Objects.hash(x, y);
     }
 
     @Override public String toString() {
