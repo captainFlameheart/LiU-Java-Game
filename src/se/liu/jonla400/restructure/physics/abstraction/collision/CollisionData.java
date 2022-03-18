@@ -3,7 +3,7 @@ package se.liu.jonla400.restructure.physics.abstraction.collision;
 import se.liu.jonla400.restructure.math.Vector2D;
 import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 
-public class CollisionData
+public class CollisionData<T>
 {
     private Body[] bodies;
     private Vector2D[] contactPointOffsets;
@@ -14,8 +14,11 @@ public class CollisionData
     private double bounceCoefficient;
     private double frictionCoefficient;
 
+    T userData;
+
     public CollisionData(final Body bodyA, final Vector2D contactPointOffsetA, final Body bodyB, final Vector2D contactPointOffsetB,
-			 final Vector2D normal, final double penetration, final double bounceCoefficient, final double frictionCoefficient)
+			 final Vector2D normal, final double penetration, final double bounceCoefficient, final double frictionCoefficient,
+			 T userData)
     {
 	bodies = new Body[]{bodyA, bodyB};
 	contactPointOffsets = new Vector2D[]{contactPointOffsetA, contactPointOffsetB};
@@ -23,6 +26,7 @@ public class CollisionData
 	this.penetration = penetration;
 	this.bounceCoefficient = bounceCoefficient;
 	this.frictionCoefficient = frictionCoefficient;
+	this.userData = userData;
     }
 
     public Body[] getBodies() {
@@ -49,4 +53,7 @@ public class CollisionData
 	return frictionCoefficient;
     }
 
+    public T getUserData() {
+	return userData;
+    }
 }

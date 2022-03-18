@@ -8,7 +8,7 @@ import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CircleVsCustomCollisionDetector<T> implements CollisionDetector
+public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 {
     private CircleCollider circleCollider;
     private CustomCollider<T> customCollider;
@@ -23,8 +23,8 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector
 	return customCollider.getBody().convertGlobalPointToLocalPoint(globalCirclePos);
     }
 
-    @Override public Collection<CollisionData> detectCollisions() {
-	final Collection<CollisionData> collisions = new ArrayList<>();
+    @Override public Collection<CollisionData<T>> detectCollisions() {
+	final Collection<CollisionData<T>> collisions = new ArrayList<>();
 
 	final Body circleBody = circleCollider.getBody();
 	final double radius = circleCollider.getRadius();
@@ -57,9 +57,10 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector
 	    final double bounceCoefficient = 0.3;
 	    final double frictionCoefficient = 1;
 
-	    collisions.add(new CollisionData(
+	    final T userData = lineSegment.getUserData();
+	    collisions.add(new CollisionData<>(
 		    circleBody, circleContactPoint, customColliderBody, customColliderContactPoint,
-		    collisionNormal, penetration, bounceCoefficient, frictionCoefficient
+		    collisionNormal, penetration, bounceCoefficient, frictionCoefficient, userData
 	    ));
 	}
 	return collisions;

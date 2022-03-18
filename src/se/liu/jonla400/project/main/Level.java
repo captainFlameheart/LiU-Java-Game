@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class Level
 {
-    private DrawRegion minDrawRegion;
     private PhysicsEngine physicsEngine;
     private BodyDrawerSet bodyDrawers;
     private Body circleBody;
@@ -32,7 +31,6 @@ public class Level
     private Level(final DrawRegion minDrawRegion, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers, final Body circleBody,
                   final Body levelBody)
     {
-        this.minDrawRegion = minDrawRegion;
         this.physicsEngine = physicsEngine;
         this.bodyDrawers = bodyDrawers;
         this.circleBody = circleBody;
@@ -115,6 +113,10 @@ public class Level
         translator = null;
     }
 
+    public DrawRegion getMinDrawRegion() {
+        return null;
+    }
+
     public void startRotation(final RotationDirection direction) {
         if (directionToAngularVelSeeker.get(direction) != null) {
             return;
@@ -135,10 +137,6 @@ public class Level
         }
         physicsEngine.remove(directionToAngularVelSeeker.get(direction));
         directionToAngularVelSeeker.remove(direction);
-    }
-
-    public DrawRegion getMinDrawRegion() {
-	return minDrawRegion;
     }
 
     public void draw(final Graphics2D g, final DrawRegion region) {

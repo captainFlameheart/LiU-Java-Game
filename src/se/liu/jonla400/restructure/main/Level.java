@@ -7,6 +7,8 @@ import se.liu.jonla400.restructure.main.drawing.CrossDrawer;
 import se.liu.jonla400.restructure.main.drawing.CustomShapeDrawer;
 import se.liu.jonla400.restructure.main.levelcreation.LineSegmentType;
 import se.liu.jonla400.restructure.math.Vector2D;
+import se.liu.jonla400.restructure.physics.abstraction.collision.CollisionDetector;
+import se.liu.jonla400.restructure.physics.abstraction.collision.CollisionHandler;
 import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 import se.liu.jonla400.restructure.physics.abstraction.main.PhysicsEngine;
 import se.liu.jonla400.restructure.physics.implementation.collision.CircleCollider;
@@ -102,7 +104,10 @@ public class Level implements World
         physicsEngine.add(velSeeker);
         physicsEngine.add(angularVelSeeker);
         physicsEngine.add(circleBody);
-        physicsEngine.add(new CircleVsCustomCollisionDetector<>(circleCollider, levelCollider));
+        final CollisionHandler<LineSegmentType> collisionHandler = new CollisionHandler<>(
+                new CircleVsCustomCollisionDetector<>(circleCollider, levelCollider)
+        );
+        physicsEngine.add(collisionHandler);
 
         bodyDrawers.add(levelBody,
                         new CustomShapeDrawer(translatedLevelShape),
