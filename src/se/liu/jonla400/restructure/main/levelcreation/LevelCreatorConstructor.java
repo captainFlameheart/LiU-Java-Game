@@ -3,11 +3,10 @@ package se.liu.jonla400.restructure.main.levelcreation;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.event.KeyEvent;
-import java.util.Optional;
 
 public class LevelCreatorConstructor
 {
-    public LevelCreator constructLevelCreator(LevelBlueprint blueprint) {
+    public LevelCreator constructLevelCreator(final LevelBlueprint blueprint) {
         final DrawableLevelBlueprint drawableBlueprint = DrawableLevelBlueprint.createFromBlueprint(blueprint);
         final CommandTimeLine commandTimeLine = CommandTimeLine.createEmpty();
 

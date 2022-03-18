@@ -1,5 +1,6 @@
 package se.liu.jonla400.restructure.main;
 
+import se.liu.jonla400.restructure.constants.CameraConstants;
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
 
@@ -145,7 +146,7 @@ public class Screen extends JComponent implements MouseListener, MouseMotionList
         if (movingCamera) {
             return;
         }
-        final double scaleFactor = 1.1;
+        final double scaleFactor = CameraConstants.getScaleFactor();
         final double scale = Math.pow(scaleFactor, e.getPreciseWheelRotation());
         filmedWorld.getCamera().scale(scale);
         onMouseMoved(e); // The mouse position in the world has changed since the camera scaled

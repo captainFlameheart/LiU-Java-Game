@@ -30,7 +30,7 @@ public class LineSegment<T>
 	this.tangentEnd = tangentEnd;
     }
 
-    public static <T> LineSegment<T> create(final Vector2D start, final Vector2D end, T userData) {
+    public static <T> LineSegment<T> copyEndPoints(final Vector2D start, final Vector2D end, T userData) {
 	final Vector2D startToEnd = end.subtract(start);
 	if (startToEnd.isZero()) {
 	    throw new IllegalArgumentException("The start and end points are the same: " + start);

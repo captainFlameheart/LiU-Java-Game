@@ -14,9 +14,11 @@ import se.liu.jonla400.restructure.physics.abstraction.main.PhysicsEngine;
 import se.liu.jonla400.restructure.physics.implementation.collision.CircleCollider;
 import se.liu.jonla400.restructure.physics.implementation.collision.CircleVsCustomCollisionDetector;
 import se.liu.jonla400.restructure.physics.implementation.collision.CustomCollider;
+import se.liu.jonla400.restructure.physics.implementation.collision.CustomShape;
 import se.liu.jonla400.restructure.physics.implementation.collision.TranslatedCustomShape;
 import se.liu.jonla400.restructure.physics.implementation.constraint.AngularVelocitySeeker;
 import se.liu.jonla400.restructure.physics.implementation.constraint.OffsetVelocitySeeker;
+import se.liu.jonla400.restructure.main.leveldefinition.LevelDefinition;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -76,7 +78,8 @@ public class Level implements World
         levelBody.setAngularMass(PhysicsConstants.getLevelAngularMass());
 
         final Vector2D shapeTranslation = definition.getCenterOfMass().negate();
-        final TranslatedCustomShape<LineSegmentType> translatedLevelShape = new TranslatedCustomShape<>(shapeTranslation, definition.getShape());
+        final CustomShape<LineSegmentType> levelShape = definition.getShape().convertToCollidableShape();
+        final TranslatedCustomShape<LineSegmentType> translatedLevelShape = new TranslatedCustomShape<>(shapeTranslation, levelShape);
         final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, translatedLevelShape);
 
         final Body circleBody = new Body();

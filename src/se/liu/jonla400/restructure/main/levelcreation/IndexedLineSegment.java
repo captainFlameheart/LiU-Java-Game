@@ -1,5 +1,6 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
+import se.liu.jonla400.restructure.main.leveldefinition.LineSegmentDefinition;
 import se.liu.jonla400.restructure.math.Vector2D;
 import se.liu.jonla400.restructure.physics.implementation.collision.LineSegment;
 
@@ -43,8 +44,12 @@ public class IndexedLineSegment
 	return type.getColor();
     }
 
+    public LineSegmentDefinition getWithoutIndex() {
+	return LineSegmentDefinition.copyEndPoints(start, end, type);
+    }
+
     public LineSegment<LineSegmentType> convertToCollidableLineSegment() {
-	return LineSegment.create(start, end, type);
+	return LineSegment.copyEndPoints(start, end, type);
     }
 
     public Vector2D getClosestPointTo(final Vector2D point) {

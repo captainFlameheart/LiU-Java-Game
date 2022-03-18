@@ -8,6 +8,10 @@ public class RectangularRegion
     private Vector2D bottomLeft;
     private Vector2D size;
 
+    private RectangularRegion() {
+        // Used by gson
+    }
+
     private RectangularRegion(final Vector2D bottomLeft, final Vector2D size) {
         this.bottomLeft = bottomLeft;
         this.size = size;
