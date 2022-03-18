@@ -20,8 +20,8 @@ public class Body
      * To control the values, use the setter-methods after creating this point mass.
      */
     public Body() {
-	pos = Vector2D.createZeroVector();
-	vel = Vector2D.createZeroVector();
+	pos = Vector2D.createZero();
+	vel = Vector2D.createZero();
 	mass = 1;
 
 	angle = 0;

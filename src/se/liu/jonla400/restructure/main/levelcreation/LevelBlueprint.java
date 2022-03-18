@@ -1,6 +1,6 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Interval;
 import se.liu.jonla400.restructure.math.Vector2D;
 
@@ -20,15 +20,23 @@ public class LevelBlueprint
 
     private Vector2D centerOfMass;
 
-    private DrawRegion camera;
+    private RectangularRegion camera;
 
-    public LevelBlueprint() {
-        vertices = new ArrayList<>();
-        types = new ArrayList<>();
+    private LevelBlueprint(final List<Vector2D> vertices, final List<LineSegmentType> types, final Vector2D centerOfMass,
+                          final RectangularRegion camera)
+    {
+        this.vertices = vertices;
+        this.types = types;
+        this.centerOfMass = centerOfMass;
+        this.camera = camera;
+    }
 
-        centerOfMass = Vector2D.createZeroVector();
-
-        camera = DrawRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
+    public static LevelBlueprint createEmpty() {
+        final List<Vector2D> vertices = new ArrayList<>();
+        final List<LineSegmentType> types = new ArrayList<>();
+        final Vector2D centerOfMass = Vector2D.createZero();
+        final RectangularRegion camera = RectangularRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
+        return new LevelBlueprint(vertices, types, centerOfMass, camera);
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -82,11 +90,11 @@ public class LevelBlueprint
         this.centerOfMass.set(centerOfMass);
     }
 
-    public DrawRegion getCamera() {
+    public RectangularRegion getCamera() {
         return camera;
     }
 
-    public void setCamera(final DrawRegion camera) {
+    public void setCamera(final RectangularRegion camera) {
         this.camera = camera;
     }
 
@@ -164,7 +172,6 @@ public class LevelBlueprint
                 minDist = dist;
             }
         }
-
         return Optional.ofNullable(closestLineSegment);
     }
 }

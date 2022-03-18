@@ -50,8 +50,8 @@ public class Friction implements VelocityConstrainer
     }
 
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
-	final Vector2D offset = Vector2D.createZeroVector();
-	final Vector2D targetVel = Vector2D.createZeroVector();
+	final Vector2D offset = Vector2D.createZero();
+	final Vector2D targetVel = Vector2D.createZero();
 	final OffsetVelocitySeeker
 		translationFriction = new OffsetVelocitySeeker(body, offset, targetVel, maxForce);
 	final ActiveVelocityConstraint activeTranslationFriction = translationFriction.generateConstraint(deltaTime);

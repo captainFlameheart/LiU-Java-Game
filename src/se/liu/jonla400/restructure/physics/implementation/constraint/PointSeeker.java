@@ -33,7 +33,7 @@ public class PointSeeker implements VelocityConstrainer
 
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
 	final Vector2D pointOffset = body.convertLocalVectorToGlobalVector(localPoint);
-	final Vector2D steeredPointOffset = onlyTranslates ? Vector2D.createZeroVector() : pointOffset;
+	final Vector2D steeredPointOffset = onlyTranslates ? Vector2D.createZero() : pointOffset;
 
 	final Vector2D globalPoint = body.convertOffsetToGlobalPoint(pointOffset);
 	final Vector2D pointToTarget = targetGlobalPoint.subtract(globalPoint);

@@ -33,7 +33,7 @@ public class Vector2D
      *
      * @return The created vector
      */
-    public static Vector2D createZeroVector() {
+    public static Vector2D createZero() {
 	return createCartesian(0, 0);
     }
 

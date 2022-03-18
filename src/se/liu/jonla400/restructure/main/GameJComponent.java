@@ -23,7 +23,7 @@ public class GameJComponent extends JComponent
 	final Interval xInterval = new Interval(0, getWidth());
 	final Interval yInterval = new Interval(0, getHeight());
 
-	final DrawRegion gameRegion = encloseGameWithCurrentAspectRatio();
+	final RectangularRegion gameRegion = encloseGameWithCurrentAspectRatio();
 	final Interval gameXInterval = gameRegion.getMinToMaxX();
 	final Interval gameYInterval = gameRegion.getMinToMaxY();
 
@@ -43,11 +43,11 @@ public class GameJComponent extends JComponent
 	final AffineTransform oldTransform = g.getTransform();
 
 	flipGraphics(g);
-	final DrawRegion drawRegion = encloseGameWithCurrentAspectRatio();
-	final double scale = getWidth() / drawRegion.getWidth();
+	final RectangularRegion rectangularRegion = encloseGameWithCurrentAspectRatio();
+	final double scale = getWidth() / rectangularRegion.getWidth();
 	g.scale(scale, scale);
-	g.translate(-drawRegion.getLeftX(), -drawRegion.getBottomY());
-	level.draw(g, drawRegion);
+	g.translate(-rectangularRegion.getLeftX(), -rectangularRegion.getBottomY());
+	level.draw(g, rectangularRegion);
 
 	g.setTransform(oldTransform);
     }
@@ -57,8 +57,8 @@ public class GameJComponent extends JComponent
 	g.translate(0, -getHeight());
     }
 
-    private DrawRegion encloseGameWithCurrentAspectRatio() {
-	final DrawRegion gameRegion = level.getPreferredDrawRegion();
+    private RectangularRegion encloseGameWithCurrentAspectRatio() {
+	final RectangularRegion gameRegion = level.getPreferredDrawRegion();
 	final double gameWidth = gameRegion.getWidth();
 	final double gameHeight = gameRegion.getHeight();
 
@@ -75,6 +75,6 @@ public class GameJComponent extends JComponent
 	    enclosingWidth = enclosingHeight * targetWidthToHeightRatio;
 	}
 
-	return DrawRegion.createFromCenter(gameRegion.getCenter(), Vector2D.createCartesian(enclosingWidth, enclosingHeight));
+	return RectangularRegion.createFromCenter(gameRegion.getCenter(), Vector2D.createCartesian(enclosingWidth, enclosingHeight));
     }
 }

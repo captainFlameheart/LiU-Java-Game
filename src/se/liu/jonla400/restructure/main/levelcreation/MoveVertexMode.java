@@ -1,9 +1,10 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.Optional;
@@ -12,21 +13,31 @@ import java.util.Set;
 public class MoveVertexMode implements LevelCreatorMode
 {
     private Optional<Vector2D> possibleGrabbedVertex;
+    private int putBackVertexKeyCode;
 
-    public MoveVertexMode() {
-	possibleGrabbedVertex = Optional.empty();
+    private MoveVertexMode(final Optional<Vector2D> possibleGrabbedVertex, final int putBackVertexKeyCode) {
+	this.possibleGrabbedVertex = possibleGrabbedVertex;
+	this.putBackVertexKeyCode = putBackVertexKeyCode;
     }
 
-    @Override public void enter(final LevelCreator levelCreator) {}
-
-    @Override public void exit(final LevelCreator levelCreator) {
+    public static MoveVertexMode createWithDefaultPutBackKey() {
+	return new MoveVertexMode(Optional.empty(), KeyEvent.VK_ESCAPE);
     }
 
-    @Override public void cursorPosChanged(final LevelCreator levelCreator) {}
-
-    @Override public void cursorActionPerformed(final LevelCreator levelCreator) {
+    @Override public void cursorPressed(final LevelCreator levelCreator) {
 	getCommand(levelCreator).ifPresent(levelCreator::execute);
     }
+
+    @Override public void cursorReleased(final LevelCreator levelCreator) {
+    }
+
+    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
+	if (keyEvent.getKeyCode() == putBackVertexKeyCode) {
+	    putBackVertex(levelCreator);
+	}
+    }
+
+    @Override public void keyReleased(final LevelCreator levelCreator, final KeyEvent keyEvent) {}
 
     private Optional<Command> getCommand(final LevelCreator levelCreator) {
 	if (possibleGrabbedVertex.isEmpty()) {
@@ -42,7 +53,7 @@ public class MoveVertexMode implements LevelCreatorMode
 	});
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
 	if (possibleGrabbedVertex.isEmpty()) {
 	    drawClosestVertexToCursorIfExists(levelCreator, g);
 	} else {

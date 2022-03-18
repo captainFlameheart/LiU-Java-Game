@@ -1,130 +1,84 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
-import se.liu.jonla400.restructure.main.drawing.CrossDrawer;
-import se.liu.jonla400.restructure.math.Interval;
+import se.liu.jonla400.restructure.main.RectangularRegion;
+import se.liu.jonla400.restructure.main.World;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
+import java.awt.event.KeyEvent;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class LevelCreator
+public class LevelCreator implements World
 {
-    private List<Command> commands;
-    private int currentCommandIndex;
-
-    private LevelBlueprint blueprint;
-
-    private LevelCreatorMode mode;
-
+    private DrawableLevelBlueprint blueprint;
+    private CommandTimeLine commandTimeLine;
+    private LevelCreatorMode currentMode;
     private Vector2D cursorPos;
-    private DrawRegion camera;
+    private LevelCreatorKeyListener keyListener;
 
-    public LevelCreator() {
-	commands = new ArrayList<>();
-	currentCommandIndex = -1;
-	blueprint = new LevelBlueprint();
-	mode = new EmptyMode();
-	cursorPos = Vector2D.createZeroVector();
-	camera = DrawRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10));
+    public LevelCreator(final DrawableLevelBlueprint blueprint, final CommandTimeLine commandTimeLine, final LevelCreatorMode currentMode,
+			final Vector2D cursorPos, final LevelCreatorKeyListener keyListener)
+    {
+	this.blueprint = blueprint;
+	this.commandTimeLine = commandTimeLine;
+	this.currentMode = currentMode;
+	this.cursorPos = cursorPos;
+	this.keyListener = keyListener;
     }
 
     public void execute(final Command command) {
-	removeCommandsAfterCurrent();
-	commands.add(command);
-	currentCommandIndex++;
-	command.execute(this);
-    }
-
-    private void removeCommandsAfterCurrent() {
-	commands.subList(currentCommandIndex + 1, commands.size()).clear();
+	commandTimeLine.execute(this, command);
     }
 
     public void undo() {
-	if (currentCommandIndex == -1) {
-	    return;
-	}
-	commands.get(currentCommandIndex).undo(this);
-	currentCommandIndex--;
+	commandTimeLine.undo(this);
     }
 
     public void redo() {
-	if (currentCommandIndex == commands.size() - 1) {
-	    return;
-	}
-	currentCommandIndex++;
-	commands.get(currentCommandIndex).execute(this);
+	commandTimeLine.redo(this);
     }
 
-    public LevelCreatorMode getMode() {
-	return mode;
+    public LevelCreatorMode getCurrentMode() {
+	return currentMode;
     }
 
-    public void setMode(final LevelCreatorMode mode) {
-	this.mode.exit(this);
-	this.mode = mode;
-	mode.enter(this);
+    public void setCurrentMode(final LevelCreatorMode currentMode) {
+	this.currentMode = currentMode;
+    }
+
+    @Override public void cursorMoved(final Vector2D newCursorPos) {
+	this.cursorPos.set(newCursorPos);
     }
 
     public Vector2D getCursorPos() {
 	return cursorPos.copy();
     }
 
-    public void setCursorPos(final Vector2D cursorPos) {
-	this.cursorPos.set(cursorPos);
-	mode.cursorPosChanged(this);
+    @Override public void cursorPressed() {
+	currentMode.cursorPressed(this);
     }
 
-    public void performCursorAction() {
-	mode.cursorActionPerformed(this);
+    @Override public void cursorReleased() {
+	currentMode.cursorReleased(this);
     }
 
-    public DrawRegion getCamera() {
-	return camera;
+    @Override public void keyPressed(final KeyEvent keyEvent) {
+	keyListener.keyPressed(this, keyEvent);
+	currentMode.keyPressed(this, keyEvent);
     }
 
-    public void draw(final Graphics2D g, final DrawRegion region) {
-	drawBackground(g, region);
-	drawFullLineSegments(g, region);
-	drawCenterOfMass(g, region);
-	drawLevelCamera(g, region);
-	mode.draw(this, g, region);
+    @Override public void keyReleased(final KeyEvent keyEvent) {
+	keyListener.keyReleased(this, keyEvent);
+	currentMode.keyReleased(this, keyEvent);
     }
 
-    private void drawBackground(final Graphics2D g, final DrawRegion region) {
-	g.setColor(Color.WHITE);
-	g.fill(new Rectangle2D.Double(region.getLeftX(), region.getBottomY(), region.getWidth(), region.getHeight()));
-    }
+    @Override public void tick(final double deltaTime) {}
 
-    private void drawFullLineSegments(final Graphics2D g, final DrawRegion region) {
-	g.setStroke(new BasicStroke(0.1f));
-
-	final Iterator<IndexedLineSegment> lineSegmentIterator = getLineSegmentIterator();
-	while (lineSegmentIterator.hasNext()) {
-	    final IndexedLineSegment lineSegment = lineSegmentIterator.next();
-	    final Vector2D start = lineSegment.getStart();
-	    final Vector2D end = lineSegment.getEnd();
-	    g.setColor(lineSegment.getType().getColor());
-	    g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
-	}
-    }
-
-    private void drawCenterOfMass(final Graphics2D g, final DrawRegion region) {
-	final Vector2D pos = blueprint.getCenterOfMass();
-	final CrossDrawer drawerAtPos = CrossDrawer.createWithDefaultColor(1, 0.1f);
-	final TranslatedDrawer drawer = new TranslatedDrawer(pos, drawerAtPos);
-	drawer.draw(g);
-    }
-
-    private void drawLevelCamera(final Graphics2D g, final DrawRegion region) {
-	final CameraDrawer cameraDrawer = CameraDrawer.createDashed(blueprint.getCamera(), Color.BLACK, 0.1f);
-	cameraDrawer.draw(g);
+    public void draw(final Graphics2D g, final RectangularRegion region) {
+	blueprint.draw(g, region);
+	currentMode.draw(this, g, region);
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -167,11 +121,11 @@ public class LevelCreator
 	blueprint.setCenterOfMass(centerOfMass);
     }
 
-    public DrawRegion getLevelCamera() {
+    public RectangularRegion getLevelCamera() {
 	return blueprint.getCamera();
     }
 
-    public void setLevelCamera(final DrawRegion camera) {
+    public void setLevelCamera(final RectangularRegion camera) {
 	blueprint.setCamera(camera);
     }
 

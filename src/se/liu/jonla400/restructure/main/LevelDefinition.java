@@ -12,11 +12,11 @@ public class LevelDefinition
     private double circleRadius;
     private double circleMass;
     private double circleAngularMass;
-    private DrawRegion preferredDrawRegion;
+    private RectangularRegion preferredRectangularRegion;
 
     public LevelDefinition(final GlobalLevelConfiguration sharedConfiguration, final Vector2D levelPos,
 			   final CustomShapeDefinition levelShapeDefinition, final Vector2D circlePos, final double circleRadius,
-			   final double circleMass, final double circleAngularMass, final DrawRegion preferredDrawRegion)
+			   final double circleMass, final double circleAngularMass, final RectangularRegion preferredRectangularRegion)
     {
 	this.sharedConfiguration = sharedConfiguration;
 	this.levelPos = levelPos;
@@ -25,7 +25,7 @@ public class LevelDefinition
 	this.circleRadius = circleRadius;
 	this.circleMass = circleMass;
 	this.circleAngularMass = circleAngularMass;
-	this.preferredDrawRegion = preferredDrawRegion;
+	this.preferredRectangularRegion = preferredRectangularRegion;
     }
 
     public double getLevelMass() {
@@ -104,11 +104,11 @@ public class LevelDefinition
 	this.circleAngularMass = circleAngularMass;
     }
 
-    public DrawRegion getPreferredDrawRegion() {
-	return preferredDrawRegion;
+    public RectangularRegion getPreferredDrawRegion() {
+	return preferredRectangularRegion;
     }
 
-    public void setPreferredDrawRegion(final DrawRegion preferredDrawRegion) {
-	this.preferredDrawRegion = preferredDrawRegion;
+    public void setPreferredDrawRegion(final RectangularRegion preferredRectangularRegion) {
+	this.preferredRectangularRegion = preferredRectangularRegion;
     }
 }

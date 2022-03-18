@@ -58,7 +58,7 @@ public class OffsetVelocitySeeker implements VelocityConstrainer
 
         return new ActiveVelocityConstraint()
         {
-            private Vector2D impulse = Vector2D.createZeroVector();
+            private Vector2D impulse = Vector2D.createZero();
 
             @Override public void updateImpulse() {
                 final Vector2D vel = body.getVelAt(offset);

@@ -8,7 +8,6 @@ import se.liu.jonla400.restructure.physics.implementation.collision.LineSegmentD
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 
 public class Runner
 {
@@ -45,7 +44,7 @@ public class Runner
                 0.5,
                 1,
                 0.01,
-                DrawRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10))
+                RectangularRegion.createFromIntervals(new Interval(-10, 10), new Interval(-10, 10))
         );
         final Level level = Level.createFromDefinition(levelDefinition);
 

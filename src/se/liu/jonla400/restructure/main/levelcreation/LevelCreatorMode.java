@@ -1,22 +1,14 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.RectangularRegion;
 
 import java.awt.*;
 
-// AddVertexState: magnetized, chain
-// MoveVertexState
-// RemoveLineSegmentState
-// ChangeLineSegmentTypeState
-public interface LevelCreatorMode
+public interface LevelCreatorMode extends LevelCreatorKeyListener
 {
-    void enter(LevelCreator levelCreator);
+    void cursorPressed(LevelCreator levelCreator);
 
-    void exit(LevelCreator levelCreator);
+    void cursorReleased(LevelCreator levelCreator);
 
-    void cursorPosChanged(LevelCreator levelCreator);
-
-    void cursorActionPerformed(LevelCreator levelCreator);
-
-    void draw(LevelCreator levelCreator, Graphics2D g, DrawRegion region);
+    void draw(LevelCreator levelCreator, Graphics2D g, RectangularRegion region);
 }

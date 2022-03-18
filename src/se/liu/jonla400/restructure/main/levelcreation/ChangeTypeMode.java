@@ -1,29 +1,18 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class ChangeTypeMode implements LevelCreatorMode
 {
-    @Override public void enter(final LevelCreator levelCreator) {
-    }
-
-    @Override public void exit(final LevelCreator levelCreator) {
-    }
-
-    @Override public void cursorPosChanged(final LevelCreator levelCreator) {
-    }
-
-    @Override public void cursorActionPerformed(final LevelCreator levelCreator) {
+    @Override public void cursorPressed(final LevelCreator levelCreator) {
         final Optional<IndexedLineSegment> lineSegmentToChange = levelCreator.getClosestLineSegmentToCursor();
         lineSegmentToChange.ifPresent(segment -> {
             final int index = segment.getIndex();
@@ -32,6 +21,12 @@ public class ChangeTypeMode implements LevelCreatorMode
         });
     }
 
+    @Override public void cursorReleased(final LevelCreator levelCreator) {}
+
+    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {}
+
+    @Override public void keyReleased(final LevelCreator levelCreator, final KeyEvent keyEvent) {}
+
     private LineSegmentType getNextType(final LineSegmentType type) {
         final List<LineSegmentType> orderedTypes = Arrays.asList(LineSegmentType.values());
         final int currentIndex = orderedTypes.indexOf(type);
@@ -39,13 +34,14 @@ public class ChangeTypeMode implements LevelCreatorMode
         return orderedTypes.get(newIndex);
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
         levelCreator.getClosestLineSegmentToCursor().ifPresent(segment -> {
             final Vector2D start = segment.getStart();
             final Vector2D end = segment.getEnd();
             final double radius = 0.3;
             final double diameter = 2 * radius;
             g.setColor(segment.getColor());
+            g.setStroke(new BasicStroke(0.1f));
             g.draw(new Ellipse2D.Double(start.getX() - radius, start.getY() - radius, diameter, diameter));
             g.draw(new Ellipse2D.Double(end.getX() - radius, end.getY() - radius, diameter, diameter));
         });

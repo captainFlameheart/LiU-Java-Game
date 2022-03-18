@@ -1,9 +1,10 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.Collections;
@@ -13,7 +14,31 @@ import java.util.Set;
 public class AddVertexMode implements LevelCreatorMode
 {
     private boolean chainsLineSegments;
+    private int chainsLineSegmentsKeyCode;
+
     private boolean magnetized;
+    private int magnetizedKeyCode;
+
+    private int removeInclompleteKeyCode;
+
+    public AddVertexMode(final boolean chainsLineSegments, final int chainsLineSegmentsKeyCode, final boolean magnetized,
+			 final int magnetizedKeyCode, final int removeInclompleteKeyCode)
+    {
+	this.chainsLineSegments = chainsLineSegments;
+	this.chainsLineSegmentsKeyCode = chainsLineSegmentsKeyCode;
+	this.magnetized = magnetized;
+	this.magnetizedKeyCode = magnetizedKeyCode;
+	this.removeInclompleteKeyCode = removeInclompleteKeyCode;
+    }
+
+    public static AddVertexMode createWithDefaultConfigAndKeys() {
+	final boolean chainsLineSegments = true;
+	final int chainsLineSegmentsKeyCode = KeyEvent.VK_C;
+	final boolean magnetized = false;
+	final int magnetizedKeyCode = KeyEvent.VK_SHIFT;
+	final int removeIncompleteKeyCode = KeyEvent.VK_ESCAPE;
+	return new AddVertexMode(chainsLineSegments, chainsLineSegmentsKeyCode, magnetized, magnetizedKeyCode, removeIncompleteKeyCode);
+    }
 
     public boolean chainsLineSegments() {
 	return chainsLineSegments;
@@ -31,14 +56,7 @@ public class AddVertexMode implements LevelCreatorMode
 	this.magnetized = magnetized;
     }
 
-    @Override public void enter(final LevelCreator levelCreator) {}
-
-    @Override public void exit(final LevelCreator levelCreator) {
-    }
-
-    @Override public void cursorPosChanged(final LevelCreator levelCreator) {}
-
-    @Override public void cursorActionPerformed(final LevelCreator levelCreator) {
+    @Override public void cursorPressed(final LevelCreator levelCreator) {
 	final Vector2D newVertex = getUpcomingVertex(levelCreator);
 	final AddVertexCommand addVertexCommand = new AddVertexCommand(newVertex);
 	levelCreator.execute(addVertexCommand);
@@ -47,14 +65,33 @@ public class AddVertexMode implements LevelCreatorMode
 	}
     }
 
-    public void deleteInclompleteLineSegment(final LevelCreator levelCreator) {
+    @Override public void cursorReleased(final LevelCreator levelCreator) {}
+
+    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
+	final int keyCode = keyEvent.getKeyCode();
+	if (keyCode == chainsLineSegmentsKeyCode) {
+	    chainsLineSegments = !chainsLineSegments;
+	} else if (keyCode == magnetizedKeyCode) {
+	    magnetized = true;
+	} else if (keyCode == removeInclompleteKeyCode) {
+	    removeInclompleteLineSegment(levelCreator);
+	}
+    }
+
+    @Override public void keyReleased(final LevelCreator levelCreator, final KeyEvent keyEvent) {
+	if (keyEvent.getKeyCode() == magnetizedKeyCode) {
+	    magnetized = false;
+	}
+    }
+
+    public void removeInclompleteLineSegment(final LevelCreator levelCreator) {
 	levelCreator.getIncompleteLineSegmentStart().ifPresent(start -> {
 	    final Command deleteStartCommand = new ReversedCommand(new AddVertexCommand(start));
 	    levelCreator.execute(deleteStartCommand);
 	});
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
 	final Vector2D upcomingVertex = getUpcomingVertex(levelCreator);
 
 	final double radius = 0.2;
@@ -90,5 +127,22 @@ public class AddVertexMode implements LevelCreatorMode
 	    magneticVertices.removeAll(levelCreator.getNeighboursTo(newLineSegmentStart));
 	});
 	return magneticVertices;
+    }
+
+    private static class AddVertexCommand implements Command
+    {
+	private Vector2D vertex;
+
+	private AddVertexCommand(final Vector2D vertex) {
+	    this.vertex = vertex;
+	}
+
+	@Override public void execute(final LevelCreator levelCreator) {
+	    levelCreator.add(vertex);
+	}
+
+	@Override public void undo(final LevelCreator levelCreator) {
+	    levelCreator.removeVertex();
+	}
     }
 }

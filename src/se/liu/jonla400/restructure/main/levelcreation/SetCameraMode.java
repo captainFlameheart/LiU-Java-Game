@@ -1,9 +1,10 @@
 package se.liu.jonla400.restructure.main.levelcreation;
 
-import se.liu.jonla400.restructure.main.DrawRegion;
+import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.math.Vector2D;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Optional;
 
 public class SetCameraMode implements LevelCreatorMode
@@ -14,29 +15,22 @@ public class SetCameraMode implements LevelCreatorMode
 	possibleStartPoint = Optional.empty();
     }
 
-    @Override public void enter(final LevelCreator levelCreator) {
-    }
-
-    @Override public void exit(final LevelCreator levelCreator) {
-    }
-
-    @Override public void cursorPosChanged(final LevelCreator levelCreator) {
-    }
-
-    @Override public void cursorActionPerformed(final LevelCreator levelCreator) {
-	levelCreator.execute(getCommand(levelCreator));
-    }
-
-    private Command getCommand(final LevelCreator levelCreator) {
-	final Vector2D cursorPos = levelCreator.getCursorPos();
+    @Override public void cursorPressed(final LevelCreator levelCreator) {
 	if (possibleStartPoint.isEmpty()) {
-	    return new PlaceStartCommand(cursorPos);
-	} else {
-	    final Vector2D startPoint = possibleStartPoint.get();
-	    final DrawRegion newCamera = DrawRegion.createFromCorners(startPoint, cursorPos);
-	    return new SetCameraCommand(levelCreator, newCamera, startPoint);
+	    levelCreator.execute(new PlaceStartCommand(levelCreator.getCursorPos()));
 	}
     }
+
+    @Override public void cursorReleased(final LevelCreator levelCreator) {
+	possibleStartPoint.ifPresent(start -> {
+	    final RectangularRegion newCamera = RectangularRegion.createFromCorners(start, levelCreator.getCursorPos());
+	    levelCreator.execute(new SetCameraCommand(levelCreator, newCamera, start));
+	});
+    }
+
+    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {}
+
+    @Override public void keyReleased(final LevelCreator levelCreator, final KeyEvent keyEvent) {}
 
     public void stopSettingCamera(final LevelCreator levelCreator) {
 	possibleStartPoint.ifPresent(start -> {
@@ -45,11 +39,11 @@ public class SetCameraMode implements LevelCreatorMode
 	});
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final DrawRegion region) {
-	possibleStartPoint.ifPresent(start -> drawUpcomingCamera(g, DrawRegion.createFromCorners(start, levelCreator.getCursorPos())));
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
+	possibleStartPoint.ifPresent(start -> drawUpcomingCamera(g, RectangularRegion.createFromCorners(start, levelCreator.getCursorPos())));
     }
 
-    private void drawUpcomingCamera(final Graphics2D g, final DrawRegion upcomingCamera) {
+    private void drawUpcomingCamera(final Graphics2D g, final RectangularRegion upcomingCamera) {
 	final Color color = new Color(0, 0, 0, 100);
 	final float strokeWidth = 0.1f;
 	final CameraDrawer cameraDrawer = CameraDrawer.createDashed(upcomingCamera, color, strokeWidth);
@@ -75,11 +69,11 @@ public class SetCameraMode implements LevelCreatorMode
 
     private class SetCameraCommand implements Command
     {
-	private DrawRegion camera;
-	private DrawRegion cameraBefore;
+	private RectangularRegion camera;
+	private RectangularRegion cameraBefore;
 	private Vector2D startPointBefore;
 
-	private SetCameraCommand(final LevelCreator levelCreator, final DrawRegion camera, final Vector2D startPointBefore) {
+	private SetCameraCommand(final LevelCreator levelCreator, final RectangularRegion camera, final Vector2D startPointBefore) {
 	    this.camera = camera;
 	    cameraBefore = levelCreator.getLevelCamera();
 	    this.startPointBefore = startPointBefore;

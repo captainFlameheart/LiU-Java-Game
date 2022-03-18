@@ -17,7 +17,7 @@ public class TranslatedCustomShapeDefinition
     }
 
     public static TranslatedCustomShapeDefinition createAtOrigin(final CustomShapeDefinition customShapeDefinition) {
-	return create(Vector2D.createZeroVector(), customShapeDefinition);
+	return create(Vector2D.createZero(), customShapeDefinition);
     }
 
     public Vector2D getTranslation() {

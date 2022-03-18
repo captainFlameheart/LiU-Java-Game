@@ -10,7 +10,6 @@ import se.liu.jonla400.restructure.physics.abstraction.main.PhysicsEngine;
 import se.liu.jonla400.restructure.physics.implementation.collision.CircleCollider;
 import se.liu.jonla400.restructure.physics.implementation.collision.CircleVsCustomCollisionDetector;
 import se.liu.jonla400.restructure.physics.implementation.collision.CustomCollider;
-import se.liu.jonla400.restructure.physics.implementation.collision.CustomShape;
 import se.liu.jonla400.restructure.physics.implementation.collision.TranslatedCustomShape;
 import se.liu.jonla400.restructure.physics.implementation.collision.TranslatedCustomShapeDefinition;
 import se.liu.jonla400.restructure.physics.implementation.constraint.AngularVelocitySeeker;
@@ -24,7 +23,7 @@ import java.util.Set;
 
 public class Level
 {
-    private DrawRegion preferredDrawRegion;
+    private RectangularRegion preferredRectangularRegion;
     private Vector2D cursorPos;
     private boolean pointAtCursorGrabbed;
     private double scaleFactor;
@@ -42,14 +41,14 @@ public class Level
     private double angularSpeed;
     private Set<RotationDirection> activeRotationDirections;
 
-    public Level(final DrawRegion preferredDrawRegion, final Vector2D cursorPos, final boolean pointAtCursorGrabbed,
-                 final double scaleFactor, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
-                 final CustomCollider levelCollider, final Body circleBody, final OffsetVelocitySeeker velSeeker,
-                 final double movementSpeed, final Set<MovementDirection> activeMovementDirections,
-                 final AngularVelocitySeeker angularVelSeeker, final double angularSpeed,
-                 final Set<RotationDirection> activeRotationDirections)
+    public Level(final RectangularRegion preferredRectangularRegion, final Vector2D cursorPos, final boolean pointAtCursorGrabbed,
+		 final double scaleFactor, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
+		 final CustomCollider levelCollider, final Body circleBody, final OffsetVelocitySeeker velSeeker,
+		 final double movementSpeed, final Set<MovementDirection> activeMovementDirections,
+		 final AngularVelocitySeeker angularVelSeeker, final double angularSpeed,
+		 final Set<RotationDirection> activeRotationDirections)
     {
-        this.preferredDrawRegion = preferredDrawRegion;
+        this.preferredRectangularRegion = preferredRectangularRegion;
         this.cursorPos = cursorPos;
         this.pointAtCursorGrabbed = pointAtCursorGrabbed;
         this.scaleFactor = scaleFactor;
@@ -66,7 +65,7 @@ public class Level
     }
 
     public static Level createFromDefinition(final LevelDefinition definition) {
-        final Vector2D cursorPos = Vector2D.createZeroVector();
+        final Vector2D cursorPos = Vector2D.createZero();
         final double scaleFactor = definition.getScaleFactor();
 
         final PhysicsEngine physicsEngine = new PhysicsEngine(10);
@@ -74,7 +73,7 @@ public class Level
 
         final Body levelBody = new Body();
         levelBody.setPos(definition.getLevelPos());
-        levelBody.setVel(Vector2D.createZeroVector());
+        levelBody.setVel(Vector2D.createZero());
         levelBody.setMass(definition.getLevelMass());
         levelBody.setAngle(0);
         levelBody.setAngularVel(0);
@@ -87,7 +86,7 @@ public class Level
 
         final Body circleBody = new Body();
         circleBody.setPos(definition.getCirclePos());
-        circleBody.setVel(Vector2D.createZeroVector());
+        circleBody.setVel(Vector2D.createZero());
         circleBody.setMass(definition.getCircleMass());
         circleBody.setAngle(0);
         circleBody.setAngularVel(0);
@@ -98,7 +97,7 @@ public class Level
 
         final double maxForce = definition.getLevelMass() * definition.getMaxMovementAcc();
         final OffsetVelocitySeeker velSeeker = new OffsetVelocitySeeker(
-                levelBody, Vector2D.createZeroVector(), Vector2D.createZeroVector(), maxForce);
+		levelBody, Vector2D.createZero(), Vector2D.createZero(), maxForce);
         final double movementSpeed = definition.getMovementSpeed();
         final Set<MovementDirection> activeMovementDirections = EnumSet.noneOf(MovementDirection.class);
 
@@ -138,10 +137,10 @@ public class Level
     public void setCursorPos(final Vector2D cursorPos) {
         if (pointAtCursorGrabbed) {
             final Vector2D deltaCameraPos = this.cursorPos.subtract(cursorPos);
-            final Vector2D cameraCenter = preferredDrawRegion.getCenter();
+            final Vector2D cameraCenter = preferredRectangularRegion.getCenter();
             final Vector2D newCameraCenter = cameraCenter.add(deltaCameraPos);
-            final Vector2D cameraSize = preferredDrawRegion.getSize();
-            preferredDrawRegion = DrawRegion.createFromCenter(newCameraCenter, cameraSize);
+            final Vector2D cameraSize = preferredRectangularRegion.getSize();
+	    preferredRectangularRegion = RectangularRegion.createFromCenter(newCameraCenter, cameraSize);
         } else {
             this.cursorPos.set(cursorPos);
         }
@@ -168,10 +167,10 @@ public class Level
     public void scale(final double count) {
         final double scale = Math.pow(scaleFactor, count);
 
-        final Vector2D size = preferredDrawRegion.getSize();
+        final Vector2D size = preferredRectangularRegion.getSize();
         final Vector2D newSize = size.multiply(scale);
-        final Vector2D center = preferredDrawRegion.getCenter();
-        preferredDrawRegion = DrawRegion.createFromCenter(center, newSize);
+        final Vector2D center = preferredRectangularRegion.getCenter();
+	preferredRectangularRegion = RectangularRegion.createFromCenter(center, newSize);
     }
 
 
@@ -192,11 +191,11 @@ public class Level
     }
 
     private void updateTargetVel() {
-        final Vector2D dirSum = Vector2D.createZeroVector();
+        final Vector2D dirSum = Vector2D.createZero();
         for (MovementDirection activeMovementDir : activeMovementDirections) {
             dirSum.addLocally(activeMovementDir.getDirVector());
         }
-        velSeeker.setTargetVel(dirSum.isZero() ? Vector2D.createZeroVector() : dirSum.setMagnitude(movementSpeed));
+        velSeeker.setTargetVel(dirSum.isZero() ? Vector2D.createZero() : dirSum.setMagnitude(movementSpeed));
     }
 
     public void startRotationInDirection(final RotationDirection direction) {
@@ -223,19 +222,19 @@ public class Level
         angularVelSeeker.setTargetAngularVel(dirSign * angularSpeed);
     }
 
-    public DrawRegion getPreferredDrawRegion() {
-        return preferredDrawRegion;
+    public RectangularRegion getPreferredDrawRegion() {
+        return preferredRectangularRegion;
     }
 
-    public void draw(final Graphics2D g, final DrawRegion drawRegion) {
-        drawBackground(g, drawRegion);
+    public void draw(final Graphics2D g, final RectangularRegion rectangularRegion) {
+        drawBackground(g, rectangularRegion);
         drawCursor(g);
         bodyDrawers.draw(g);
     }
 
-    private void drawBackground(final Graphics2D g, final DrawRegion drawRegion) {
+    private void drawBackground(final Graphics2D g, final RectangularRegion rectangularRegion) {
         g.setColor(Color.WHITE);
-        g.fill(new Rectangle2D.Double(drawRegion.getLeftX(), drawRegion.getBottomY(), drawRegion.getWidth(), drawRegion.getHeight()));
+        g.fill(new Rectangle2D.Double(rectangularRegion.getLeftX(), rectangularRegion.getBottomY(), rectangularRegion.getWidth(), rectangularRegion.getHeight()));
     }
 
     private void drawCursor(final Graphics2D g) {
