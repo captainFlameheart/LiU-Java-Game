@@ -2,6 +2,7 @@ package se.liu.jonla400.restructure.main.levelcreation;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import se.liu.jonla400.restructure.constants.CameraConstants;
 import se.liu.jonla400.restructure.main.FilmedWorld;
 import se.liu.jonla400.restructure.main.Level;
@@ -15,6 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -22,9 +24,10 @@ import java.util.Optional;
 public class LevelCreatorRunner
 {
     public static void main(String[] args) {
-	final Path path = Paths.get(System.getProperty("user.home"), "ANOTHER.txt");
+	final LevelFile levelFile = askUserForLevelFile();
+	final Path path = levelFile.path;
+	final Optional<LevelDefinition> levelDef = levelFile.levelDef;
 
-	final Optional<LevelDefinition> levelDef = getLevelDefFromFile(path);
 	final LevelBlueprint levelBlueprint;
 	final RectangularRegion camera;
 	if (levelDef.isPresent()) {
@@ -71,15 +74,7 @@ public class LevelCreatorRunner
 	    private void save() {
 		final LevelBlueprint currentLevelBlueprint = levelCreator.getBlueprint();
 		final LevelDefinition currentLevelDef = LevelDefinition.createFromBlueprint(currentLevelBlueprint);
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		final String defAsJson = gson.toJson(currentLevelDef);
-
-		try {
-		    Files.writeString(path, defAsJson);
-		} catch (IOException e) {
-		    e.printStackTrace(); // TEMPORARY
-		}
+		saveLevelOrMessageError(currentLevelDef, path);
 	    }
 	});
 
@@ -103,17 +98,61 @@ public class LevelCreatorRunner
 	tickTimer.start();
     }
 
-    private static Optional<LevelDefinition> getLevelDefFromFile(final Path path) {
-	if (!Files.exists(path)) {
-	    return Optional.empty();
+    private static LevelFile askUserForLevelFile() {
+	String pathString = "";
+	do {
+	    pathString = JOptionPane.showInputDialog("Please enter the path to the level file (new path = new level)", pathString);
+	    if (pathString == null) {
+		System.exit(0);
+	    }
+	    final Path path = Paths.get(System.getProperty("user.home"), pathString);
+
+	    try {
+		Optional<LevelDefinition> levelDef = readLevelDefFromFile(path);
+		return new LevelFile(path, levelDef);
+	    } catch (IOException ignored) {
+		showErrorMessage("The file could not be read!", "File error");
+	    } catch (JsonSyntaxException ignored) {
+		showErrorMessage("The file containts invalid syntax!", "Syntax error");
+	    }
+	} while (true);
+    }
+
+    private static void saveLevelOrMessageError(final LevelDefinition levelDef, final Path path) {
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	final String defAsJson = gson.toJson(levelDef);
+	try {
+	    Files.writeString(path, defAsJson);
+	} catch (IOException ignored) {
+	    showErrorMessage("Could not save the level to the file", "File error");
 	}
+    }
+
+    private static void showErrorMessage(final String message, final String title) {
+	JOptionPane.showMessageDialog(
+		null, message,
+		title, JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    private static Optional<LevelDefinition> readLevelDefFromFile(final Path path) throws IOException, JsonSyntaxException {
 	try {
 	    final String levelDefAsJson = Files.readString(path);
 	    final Gson gson = new GsonBuilder().create();
-	    return Optional.of(gson.fromJson(levelDefAsJson, LevelDefinition.class));
-	} catch (IOException e) {
-	    e.printStackTrace(); // TEMPORARY!
+	    return Optional.ofNullable(gson.fromJson(levelDefAsJson, LevelDefinition.class));
+	} catch (NoSuchFileException ignored) {
 	    return Optional.empty();
+	}
+    }
+
+    private static class LevelFile
+    {
+	private Path path;
+	private Optional<LevelDefinition> levelDef;
+
+	private LevelFile(final Path path, final Optional<LevelDefinition> levelDef) {
+	    this.path = path;
+	    this.levelDef = levelDef;
 	}
     }
 }
