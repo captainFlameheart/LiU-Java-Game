@@ -6,9 +6,12 @@ import se.liu.jonla400.restructure.main.drawing.CircleDrawer;
 import se.liu.jonla400.restructure.main.drawing.CrossDrawer;
 import se.liu.jonla400.restructure.main.drawing.CustomShapeDrawer;
 import se.liu.jonla400.restructure.main.levelcreation.LineSegmentType;
+import se.liu.jonla400.restructure.main.leveldefinition.LevelListener;
 import se.liu.jonla400.restructure.math.Vector2D;
+import se.liu.jonla400.restructure.physics.abstraction.collision.CollisionData;
 import se.liu.jonla400.restructure.physics.abstraction.collision.CollisionDetector;
 import se.liu.jonla400.restructure.physics.abstraction.collision.CollisionHandler;
+import se.liu.jonla400.restructure.physics.abstraction.collision.CollisionListener;
 import se.liu.jonla400.restructure.physics.abstraction.main.Body;
 import se.liu.jonla400.restructure.physics.abstraction.main.PhysicsEngine;
 import se.liu.jonla400.restructure.physics.implementation.collision.CircleCollider;
@@ -24,10 +27,12 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class Level implements World
+public class Level implements World, CollisionListener<LineSegmentType>
 {
     private Vector2D cursorPos;
 
@@ -44,12 +49,16 @@ public class Level implements World
     private double angularSpeed;
     private Set<RotationDirection> activeRotationDirections;
 
+    private Collection<LevelListener> listeners;
+
     public Level(final Vector2D cursorPos, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
 		 final CustomCollider<LineSegmentType> levelCollider, final Body circleBody,
                  final OffsetVelocitySeeker velSeeker,
 		 final Set<MovementDirection> activeMovementDirections,
 		 final AngularVelocitySeeker angularVelSeeker,
-		 final Set<RotationDirection> activeRotationDirections)
+		 final Set<RotationDirection> activeRotationDirections,
+                 final Collection<LevelListener> listeners
+                 )
     {
         this.cursorPos = cursorPos;
         this.physicsEngine = physicsEngine;
@@ -60,6 +69,7 @@ public class Level implements World
         this.activeMovementDirections = activeMovementDirections;
         this.angularVelSeeker = angularVelSeeker;
         this.activeRotationDirections = activeRotationDirections;
+        this.listeners = listeners;
     }
 
     public static Level createFromDefinition(final LevelDefinition definition) {
@@ -121,9 +131,12 @@ public class Level implements World
                         CrossDrawer.createWithDefaultColor(0.1, 0.05f)
         );
 
-        return new Level(cursorPos, physicsEngine, bodyDrawers,
+        final Collection<LevelListener> listeners = new ArrayList<>();
+        final Level level = new Level(cursorPos, physicsEngine, bodyDrawers,
 			 levelCollider, circleBody, velSeeker, activeMovementDirections, angularVelSeeker,
-			 activeRotationDirections);
+			 activeRotationDirections, listeners);
+        collisionHandler.addListener(level);
+        return level;
     }
 
     @Override public void cursorMoved(final Vector2D newCursorPos) {
@@ -255,10 +268,6 @@ public class Level implements World
         angularVelSeeker.setTargetAngularVel(dirSign * PhysicsConstants.getLevelAngularSpeed());
     }
 
-    /*public RectangularRegion getPreferredDrawRegion() {
-        return preferredRectangularRegion;
-    }*/
-
     public void draw(final Graphics2D g, final RectangularRegion rectangularRegion) {
         drawBackground(g, rectangularRegion);
         drawCursor(g);
@@ -275,5 +284,18 @@ public class Level implements World
         final double diameter = 2 * radius;
         g.setColor(Color.BLACK);
         g.fill(new Ellipse2D.Double(cursorPos.getX() - radius, cursorPos.getY() - radius, diameter, diameter));
+    }
+
+    public void addListener(final LevelListener listener) {
+        listeners.add(listener);
+    }
+
+    @Override public void collisionOccured(final CollisionData<LineSegmentType> collision) {
+        final LineSegmentType lineSegmentType = collision.getUserData();
+        if (lineSegmentType == LineSegmentType.LOOSE) {
+            listeners.forEach(LevelListener::levelFailed);
+        } else if (lineSegmentType == LineSegmentType.WIN) {
+            listeners.forEach(LevelListener::levelCompleted);
+        }
     }
 }

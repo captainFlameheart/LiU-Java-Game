@@ -14,6 +14,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.util.Optional;
 
 public class Screen extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener
 {
@@ -30,10 +31,6 @@ public class Screen extends JComponent implements MouseListener, MouseMotionList
         this.movingCamera = movingCamera;
     }
 
-    public void setFilmedWorld(final FilmedWorld filmedWorld) {
-        this.filmedWorld = filmedWorld;
-    }
-
     public static Screen create(final FilmedWorld filmedWorld) {
         final Screen screen = new Screen(filmedWorld, Vector2D.createZero(), false);
         screen.addMouseListener(screen);
@@ -44,6 +41,26 @@ public class Screen extends JComponent implements MouseListener, MouseMotionList
         return screen;
     }
 
+    public void start() {
+        final JFrame frame = new JFrame("Test!");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setContentPane(this);
+        frame.setSize(400, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
+
+        final int tickRate = 90;
+        final double deltaSecondsPerTick = 1.0 / tickRate;
+        final int deltaMillisecondsPerTick = 1000 / tickRate;
+        final Timer tickTimer = new Timer(deltaMillisecondsPerTick, e -> tick(deltaSecondsPerTick));
+        tickTimer.setCoalesce(true);
+        tickTimer.start();
+    }
+
+    public void setFilmedWorld(final FilmedWorld filmedWorld) {
+        this.filmedWorld = filmedWorld;
+    }
     Vector2D oldPos = Vector2D.createZero();
     double x = 0;
     public void tick(final double deltaTime) {

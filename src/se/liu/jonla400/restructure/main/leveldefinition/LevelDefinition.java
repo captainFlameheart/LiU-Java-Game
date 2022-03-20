@@ -1,5 +1,6 @@
 package se.liu.jonla400.restructure.main.leveldefinition;
 
+import se.liu.jonla400.restructure.constants.CameraConstants;
 import se.liu.jonla400.restructure.main.RectangularRegion;
 import se.liu.jonla400.restructure.main.levelcreation.IndexedLineSegment;
 import se.liu.jonla400.restructure.main.levelcreation.LevelBlueprint;
@@ -37,6 +38,10 @@ public class LevelDefinition
 	final Vector2D centerOfMass = blueprint.getCenterOfMass();
 	final RectangularRegion camera = blueprint.getCamera();
 	return new LevelDefinition(shape, centerOfMass, camera);
+    }
+
+    public static LevelDefinition createEmpty() {
+	return new LevelDefinition(CustomShapeDefinition.createEmpty(), Vector2D.createZero(), CameraConstants.getDefaultCamera());
     }
 
     public CustomShapeDefinition getShape() {

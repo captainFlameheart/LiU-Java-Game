@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import se.liu.jonla400.restructure.constants.CameraConstants;
+import se.liu.jonla400.restructure.filehandling.LevelIO;
 import se.liu.jonla400.restructure.main.FilmedWorld;
 import se.liu.jonla400.restructure.main.Level;
 import se.liu.jonla400.restructure.main.leveldefinition.LevelDefinition;
@@ -16,86 +17,38 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 public class LevelCreatorRunner
 {
     public static void main(String[] args) {
 	final LevelFile levelFile = askUserForLevelFile();
 	final Path path = levelFile.path;
-	final Optional<LevelDefinition> levelDef = levelFile.levelDef;
+	final LevelDefinition levelDef = levelFile.levelDef;
 
-	final LevelBlueprint levelBlueprint;
-	final RectangularRegion camera;
-	if (levelDef.isPresent()) {
-	    final LevelDefinition def = levelDef.get();
-	    levelBlueprint = LevelBlueprint.createFromDefinition(def);
-	    camera = def.getCamera();
-	} else {
-	    levelBlueprint = LevelBlueprint.createEmpty();
-	    camera = CameraConstants.getDefaultCamera();
-	}
+	final LevelBlueprint levelBlueprint = LevelBlueprint.createFromDefinition(levelDef);
+	final RectangularRegion camera = levelDef.getCamera();
 
 	final LevelCreatorConstructor constructor = new LevelCreatorConstructor();
 	final LevelCreator levelCreator = constructor.constructLevelCreator(levelBlueprint);
 
-	final FilmedWorld filmedWorld = new FilmedWorld(levelCreator, camera);
-	final Screen screen = Screen.create(filmedWorld);
+	final Screen screen = Screen.create(new FilmedWorld(levelCreator, camera));
 
+	final CreateToPlayToggler createToPlayToggler = new CreateToPlayToggler(levelCreator, screen, true);
+	final Saver saver = new Saver(levelCreator, path);
 	screen.addKeyListener(new KeyAdapter()
 	{
-	    boolean playTesting = false;
-
 	    @Override public void keyPressed(final KeyEvent e) {
 		final int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_ENTER) {
-		    togglePlayTesting();
+		    createToPlayToggler.toggle();
 		} else if (e.isControlDown() && keyCode == KeyEvent.VK_S) {
-		    save();
+		    saver.save();
 		}
-	    }
-
-	    private void togglePlayTesting() {
-		if (playTesting) {
-		    screen.setFilmedWorld(new FilmedWorld(levelCreator, levelCreator.getLevelCamera()));
-		    playTesting = false;
-		} else {
-		    final LevelBlueprint currentLevelBlueprint = levelCreator.getBlueprint();
-		    final LevelDefinition currentLevelDef = LevelDefinition.createFromBlueprint(currentLevelBlueprint);
-		    final Level level = Level.createFromDefinition(currentLevelDef);
-		    screen.setFilmedWorld(new FilmedWorld(level, currentLevelDef.getCamera()));
-		    playTesting = true;
-		}
-	    }
-
-	    private void save() {
-		final LevelBlueprint currentLevelBlueprint = levelCreator.getBlueprint();
-		final LevelDefinition currentLevelDef = LevelDefinition.createFromBlueprint(currentLevelBlueprint);
-		saveLevelOrMessageError(currentLevelDef, path);
 	    }
 	});
-
-	startScreen(screen);
-    }
-
-    private static void startScreen(final Screen screen) {
-	final JFrame frame = new JFrame("Test!");
-	frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	frame.setContentPane(screen);
-	frame.setSize(400, 400);
-	frame.setLocationRelativeTo(null);
-	frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-	frame.setVisible(true);
-
-	final int tickRate = 90;
-	final double deltaSecondsPerTick = 1.0 / tickRate;
-	final int deltaMillisecondsPerTick = 1000 / tickRate;
-	final Timer tickTimer = new Timer(deltaMillisecondsPerTick, e -> screen.tick(deltaSecondsPerTick));
-	tickTimer.setCoalesce(true);
-	tickTimer.start();
+	screen.start();
     }
 
     private static LevelFile askUserForLevelFile() {
@@ -105,10 +58,13 @@ public class LevelCreatorRunner
 	    if (pathString == null) {
 		System.exit(0);
 	    }
-	    final Path path = Paths.get(System.getProperty("user.home"), pathString);
 
+	    final Path path = Paths.get(System.getProperty("user.home"), pathString);
+	    if (Files.notExists(path)) {
+		return new LevelFile(path, LevelDefinition.createEmpty());
+	    }
 	    try {
-		Optional<LevelDefinition> levelDef = readLevelDefFromFile(path);
+		LevelDefinition levelDef = LevelIO.loadLevel(path);
 		return new LevelFile(path, levelDef);
 	    } catch (IOException ignored) {
 		showErrorMessage("The file could not be read!", "File error");
@@ -119,12 +75,10 @@ public class LevelCreatorRunner
     }
 
     private static void saveLevelOrMessageError(final LevelDefinition levelDef, final Path path) {
-	Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	final String defAsJson = gson.toJson(levelDef);
 	try {
-	    Files.writeString(path, defAsJson);
+	    LevelIO.saveLevel(levelDef, path);
 	} catch (IOException ignored) {
-	    showErrorMessage("Could not save the level to the file", "File error");
+	    showErrorMessage("Could not save the level to the file", "Save error");
 	}
     }
 
@@ -134,23 +88,59 @@ public class LevelCreatorRunner
 		title, JOptionPane.ERROR_MESSAGE);
     }
 
+    private static class CreateToPlayToggler
+    {
+	private LevelCreator levelCreator;
+	private Screen screen;
+	private boolean playNext;
 
-    private static Optional<LevelDefinition> readLevelDefFromFile(final Path path) throws IOException, JsonSyntaxException {
-	try {
-	    final String levelDefAsJson = Files.readString(path);
-	    final Gson gson = new GsonBuilder().create();
-	    return Optional.ofNullable(gson.fromJson(levelDefAsJson, LevelDefinition.class));
-	} catch (NoSuchFileException ignored) {
-	    return Optional.empty();
+	private CreateToPlayToggler(final LevelCreator levelCreator, final Screen screen, final boolean playNext) {
+	    this.levelCreator = levelCreator;
+	    this.screen = screen;
+	    this.playNext = playNext;
+	}
+
+	private void toggle() {
+	    if (playNext) {
+		final LevelBlueprint blueprint = levelCreator.getBlueprint();
+		final LevelDefinition levelDef = LevelDefinition.createFromBlueprint(blueprint);
+		final Level level = Level.createFromDefinition(levelDef);
+		screen.setFilmedWorld(new FilmedWorld(level, levelDef.getCamera()));
+		playNext = false;
+	    } else {
+		screen.setFilmedWorld(new FilmedWorld(levelCreator, levelCreator.getLevelCamera()));
+		playNext = true;
+	    }
+	}
+    }
+
+    private static class Saver
+    {
+	private LevelCreator levelCreator;
+	private Path path;
+
+	private Saver(final LevelCreator levelCreator, final Path path) {
+	    this.levelCreator = levelCreator;
+	    this.path = path;
+	}
+
+	private void save() {
+	    final LevelBlueprint blueprint = levelCreator.getBlueprint();
+	    final LevelDefinition levelDef = LevelDefinition.createFromBlueprint(blueprint);
+	    try {
+		LevelIO.saveLevel(levelDef, path);
+	    } catch (IOException ignored) {
+		showErrorMessage("Could not save the level to the file", "Save error");
+	    }
 	}
     }
 
     private static class LevelFile
     {
 	private Path path;
-	private Optional<LevelDefinition> levelDef;
+	private LevelDefinition levelDef;
 
-	private LevelFile(final Path path, final Optional<LevelDefinition> levelDef) {
+	private LevelFile(final Path path, final LevelDefinition levelDef) {
 	    this.path = path;
 	    this.levelDef = levelDef;
 	}

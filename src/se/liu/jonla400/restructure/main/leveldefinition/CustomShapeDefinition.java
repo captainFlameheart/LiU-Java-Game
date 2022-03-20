@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,10 @@ public class CustomShapeDefinition implements Iterable<LineSegmentDefinition>
 
     private CustomShapeDefinition(final Collection<LineSegmentDefinition> lineSegmentDefinitions) {
         this.lineSegmentDefinitions = lineSegmentDefinitions;
+    }
+
+    public static CustomShapeDefinition createEmpty() {
+        return new CustomShapeDefinition(Collections.emptyList());
     }
 
     public static CustomShapeDefinition copyFrom(final Collection<LineSegmentDefinition> lineSegmentDefinitions) {
