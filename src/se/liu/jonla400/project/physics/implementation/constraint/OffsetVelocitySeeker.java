@@ -20,13 +20,45 @@ public class OffsetVelocitySeeker implements VelocityConstrainer
         this.maxForce = maxForce;
     }
 
+    public Body getBody() {
+        return body;
+    }
+
+    public void setBody(final Body body) {
+        this.body = body;
+    }
+
+    public Vector2D getOffset() {
+        return offset;
+    }
+
+    public void setOffset(final Vector2D offset) {
+        this.offset = offset;
+    }
+
+    public Vector2D getTargetVel() {
+        return targetVel;
+    }
+
+    public void setTargetVel(final Vector2D targetVel) {
+        this.targetVel = targetVel;
+    }
+
+    public double getMaxForce() {
+        return maxForce;
+    }
+
+    public void setMaxForce(final double maxForce) {
+        this.maxForce = maxForce;
+    }
+
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
         final Matrix22 pointInvMass = body.getInvMassAt(offset);
         final double maxImpulse = maxForce * deltaTime;
 
         return new ActiveVelocityConstraint()
         {
-            private Vector2D impulse = Vector2D.createZeroVector();
+            private Vector2D impulse = Vector2D.createZero();
 
             @Override public void updateImpulse() {
                 final Vector2D vel = body.getVelAt(offset);

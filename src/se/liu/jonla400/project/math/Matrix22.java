@@ -105,7 +105,7 @@ public class Matrix22
 
 	double x = (a22 * b1 - a12 * b2) * invDet;
 	double y = (a11 * b2 - a21 * b1) * invDet;
-	return Vector2D.createCartesianVector(x, y);
+	return Vector2D.createCartesian(x, y);
     }
 
     @Override public String toString() {

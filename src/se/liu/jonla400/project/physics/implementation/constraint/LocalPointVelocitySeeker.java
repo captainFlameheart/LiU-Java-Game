@@ -21,7 +21,8 @@ public class LocalPointVelocitySeeker implements VelocityConstrainer
 
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
         final Vector2D offset = body.convertLocalVectorToGlobalVector(localPoint);
-        final OffsetVelocitySeeker offsetVelSeeker = new OffsetVelocitySeeker(body, offset, targetVel, maxForce);
+        final OffsetVelocitySeeker
+		offsetVelSeeker = new OffsetVelocitySeeker(body, offset, targetVel, maxForce);
         return offsetVelSeeker.generateConstraint(deltaTime);
     }
 }

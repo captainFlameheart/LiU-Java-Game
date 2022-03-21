@@ -1,10 +1,10 @@
 package se.liu.jonla400.project.physics.implementation.constraint;
 
 import se.liu.jonla400.project.math.Interval;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveImpulse1D;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
+import se.liu.jonla400.project.physics.abstraction.main.Body;
 
 
 /**

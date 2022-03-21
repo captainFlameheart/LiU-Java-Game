@@ -3,9 +3,9 @@ package se.liu.jonla400.project.physics.abstraction.collision;
 import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveImpulse1D;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
+import se.liu.jonla400.project.physics.abstraction.main.Body;
 
 /**
  * Represents an active velocity constraint between two colliding bodies.
@@ -31,7 +31,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     private ActiveImpulse1D tangentImpulse;
 
     public ActiveCollisionConstraint(final CollisionData collisionData, final double deltaTime,
-                                     final double penetrationTolerence, final double posCorrectionFraction)
+				     final double penetrationTolerence, final double posCorrectionFraction)
     {
         bodies = collisionData.getBodies();
         contactPointOffsets = collisionData.getContactPointOffsets();
@@ -51,7 +51,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     }
 
     private void initTargetNormalVel(final CollisionData collisionData, final double deltaTime,
-                                     final double penetrationTolerence, final double posCorrectionFraction)
+				     final double penetrationTolerence, final double posCorrectionFraction)
     {
         final double untoleratedPenetration = collisionData.getPenetration() - penetrationTolerence;
         final double targetNormalVelFromPenetration;

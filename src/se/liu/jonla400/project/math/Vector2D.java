@@ -1,5 +1,7 @@
 package se.liu.jonla400.project.math;
 
+import java.util.Objects;
+
 /**
  * Represents a 2D vector that supports typical vector operations.
  * Some of these operations act on the vector object itself, changing
@@ -7,10 +9,14 @@ package se.liu.jonla400.project.math;
  * that is operated upon. These operations instead returns a new vector
  * as the result.
  */
-public class Vector2D
+public class Vector2D implements ClosestPointFinder
 {
     private double x;
     private double y;
+
+    private Vector2D() {
+	// Used by gson
+    }
 
     private Vector2D(double x, double y) {
 	this.x = x;
@@ -24,7 +30,7 @@ public class Vector2D
      * @param y The y component of the vector
      * @return The created vector
      */
-    public static Vector2D createCartesianVector(final double x, final double y) {
+    public static Vector2D createCartesian(final double x, final double y) {
 	return new Vector2D(x, y);
     }
 
@@ -33,8 +39,8 @@ public class Vector2D
      *
      * @return The created vector
      */
-    public static Vector2D createZeroVector() {
-	return createCartesianVector(0, 0);
+    public static Vector2D createZero() {
+	return createCartesian(0, 0);
     }
 
     /**
@@ -57,7 +63,7 @@ public class Vector2D
      * @return The created vector
      */
     public static Vector2D createUnitVector(final double angle) {
-	return createCartesianVector(Math.cos(angle), Math.sin(angle));
+	return createCartesian(Math.cos(angle), Math.sin(angle));
     }
 
     /**
@@ -66,7 +72,7 @@ public class Vector2D
      * @return A copy of this vector
      */
     public Vector2D copy() {
-	return createCartesianVector(x, y);
+	return createCartesian(x, y);
     }
 
     /**
@@ -142,7 +148,7 @@ public class Vector2D
      * @param y The y component
      */
     public void setCartesianCoordinates(final double x, final double y) {
-	set(createCartesianVector(x, y));
+	set(createCartesian(x, y));
     }
 
     /**
@@ -183,14 +189,18 @@ public class Vector2D
 	rotateLocally(deltaAngle);
     }
 
+    public Vector2D setMagnitude(final double magnitude) {
+	final double magnitudeRatio = magnitude / getMagnitude();
+	return multiply(magnitudeRatio);
+    }
+
     /**
      * Set the magnitude of this vector
      *
      * @param angle The angle
      */
-    public void setMagnitude(final double magnitude) {
-	final double magnitudeRatio = magnitude / getMagnitude();
-	multiplyLocally(magnitudeRatio);
+    public void setMagnitudeLocally(final double magnitude) {
+	set(setMagnitude(magnitude));
     }
 
     /**
@@ -200,7 +210,7 @@ public class Vector2D
      * @return The result of the addition
      */
     public Vector2D add(final Vector2D other) {
-	return createCartesianVector(x + other.x, y + other.y);
+	return createCartesian(x + other.x, y + other.y);
     }
 
     /**
@@ -219,7 +229,7 @@ public class Vector2D
      * @return The result of the subtraction
      */
     public Vector2D subtract(final Vector2D other) {
-	return createCartesianVector(x - other.x, y - other.y);
+	return createCartesian(x - other.x, y - other.y);
     }
 
     /**
@@ -238,7 +248,7 @@ public class Vector2D
      * @return The result of the multiplication
      */
     public Vector2D multiply(final double scalar) {
-	return createCartesianVector(x * scalar, y * scalar);
+	return createCartesian(x * scalar, y * scalar);
     }
 
     /**
@@ -335,7 +345,7 @@ public class Vector2D
     public Vector2D rotate90Degrees(final RotationDirection direction) {
 	final double newY = direction.sign * x;
 	final double newX = -direction.sign * y;
-	return createCartesianVector(newX, newY);
+	return createCartesian(newX, newY);
     }
 
     /**
@@ -362,7 +372,7 @@ public class Vector2D
 
 	final double newX = x * cosDeltaAngle - y * sinDeltaAngle;
 	final double newY = x * sinDeltaAngle + y * cosDeltaAngle;
-	return createCartesianVector(newX, newY);
+	return createCartesian(newX, newY);
     }
 
     /**
@@ -406,8 +416,47 @@ public class Vector2D
 	return (x * other.y) - (y * other.x);
     }
 
+    /**
+     * Returns the square of the euclidean distance between this point and the other point
+     *
+     * @param other The other point
+     * @return The distance squared
+     */
+    public double getDistanceSquaredTo(final Vector2D other) {
+	return other.subtract(this).getMagnitudeSquared();
+    }
+
+    /**
+     * Returns the euclidean distance between this point and the other point
+     *
+     * @param other The other point
+     * @return The distance
+     */
+    public double getDistanceTo(final Vector2D other) {
+	return other.subtract(this).getMagnitude();
+    }
+
+    @Override public boolean equals(final Object o) {
+	if (this == o) {
+	    return true;
+	}
+	if (o == null || getClass() != o.getClass()) {
+	    return false;
+	}
+	final Vector2D vector2D = (Vector2D) o;
+	return Double.compare(vector2D.x, x) == 0 && Double.compare(vector2D.y, y) == 0;
+    }
+
+    @Override public int hashCode() {
+	return Objects.hash(x, y);
+    }
+
     @Override public String toString() {
 	return "Vector2D{" + "x=" + x + ", y=" + y + ", angle=" + getAngle() + ", magnitude=" + getMagnitude() + '}';
+    }
+
+    @Override public Vector2D findClosestPointTo(final Vector2D point) {
+	return this;
     }
 
     /**

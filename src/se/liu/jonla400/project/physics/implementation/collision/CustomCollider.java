@@ -2,12 +2,12 @@ package se.liu.jonla400.project.physics.implementation.collision;
 
 import se.liu.jonla400.project.physics.abstraction.main.Body;
 
-public class CustomCollider
+public class CustomCollider<T>
 {
     private Body body;
-    private CustomShape shape;
+    private TranslatedCustomShape<T> shape;
 
-    public CustomCollider(final Body body, final CustomShape customShape) {
+    public CustomCollider(final Body body, final TranslatedCustomShape<T> customShape) {
 	this.body = body;
 	this.shape = customShape;
     }
@@ -16,7 +16,7 @@ public class CustomCollider
 	return body;
     }
 
-    public CustomShape getShape() {
+    public TranslatedCustomShape<T> getShape() {
 	return shape;
     }
 }

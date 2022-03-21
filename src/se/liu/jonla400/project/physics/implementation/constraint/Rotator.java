@@ -62,7 +62,8 @@ public class Rotator implements VelocityConstrainer
 	final double leverLength = targetPointAlongLever - rotationPointAlongLever;
 	final Vector2D pulledLocalPoint = localRotationPoint.add(leverDir.multiply(leverLength));
 
-	final PointSeeker leverEndToTargetSeeker = new PointSeeker(body, pulledLocalPoint, targetGlobalPoint, 1, maxForce);
+	final PointSeeker
+		leverEndToTargetSeeker = new PointSeeker(body, pulledLocalPoint, targetGlobalPoint, 1, maxForce);
 	return leverEndToTargetSeeker.generateConstraint(deltaTime);
     }
 }

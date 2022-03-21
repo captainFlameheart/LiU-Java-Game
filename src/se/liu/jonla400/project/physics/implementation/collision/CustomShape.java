@@ -3,28 +3,22 @@ package se.liu.jonla400.project.physics.implementation.collision;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class CustomShape implements Iterable<LineSegment>
+public class CustomShape<T> implements Iterable<LineSegment<T>>
 {
-    private LineSegment[] lineSegments;
+    private Collection<LineSegment<T>> lineSegments;
 
-    // TEMPORARY
-    public CustomShape(final LineSegment... lineSegments) {
-	this.lineSegments = lineSegments.clone();
+    private CustomShape(final Collection<LineSegment<T>> lineSegments) {
+	this.lineSegments = lineSegments;
     }
 
-    public static CustomShape createFromDefinition(final CustomShapeDefinition definition) {
-	final Collection<LineSegment> lineSegments = new ArrayList<>();
-	for (LineSegmentDefinition lineSegmentDefinition : definition) {
-	    lineSegments.add(LineSegment.createFromDefinition(lineSegmentDefinition));
-	}
-	return new CustomShape(lineSegments.toArray(new LineSegment[0]));
+    public static <T> CustomShape<T> copyFrom(final Collection<LineSegment<T>> lineSegments) {
+	return new CustomShape<>(new ArrayList<>(lineSegments));
     }
 
-    @NotNull @Override public Iterator<LineSegment> iterator() {
-	return Arrays.stream(lineSegments).iterator();
+    @NotNull @Override public Iterator<LineSegment<T>> iterator() {
+	return lineSegments.iterator();
     }
 }

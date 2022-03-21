@@ -1,19 +1,19 @@
 package se.liu.jonla400.project.physics.implementation.collision;
 
 import se.liu.jonla400.project.math.Vector2D;
+import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionDetector;
 import se.liu.jonla400.project.physics.abstraction.main.Body;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CircleVsCustomCollisionDetector implements CollisionDetector
+public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 {
     private CircleCollider circleCollider;
-    private CustomCollider customCollider;
+    private CustomCollider<T> customCollider;
 
-    public CircleVsCustomCollisionDetector(final CircleCollider circleCollider, final CustomCollider customCollider) {
+    public CircleVsCustomCollisionDetector(final CircleCollider circleCollider, final CustomCollider<T> customCollider) {
 	this.circleCollider = circleCollider;
 	this.customCollider = customCollider;
     }
@@ -23,17 +23,20 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 	return customCollider.getBody().convertGlobalPointToLocalPoint(globalCirclePos);
     }
 
-    @Override public Collection<CollisionData> detectCollisions() {
-	final Collection<CollisionData> collisions = new ArrayList<>();
+    @Override public Collection<CollisionData<T>> detectCollisions() {
+	final Collection<CollisionData<T>> collisions = new ArrayList<>();
 
 	final Body circleBody = circleCollider.getBody();
+	final double radius = circleCollider.getRadius();
 	final Body customColliderBody = customCollider.getBody();
+	final TranslatedCustomShape<T> translatedCustomShape = customCollider.getShape();
+	final Vector2D customShapeTranslation = translatedCustomShape.getTranslation();
 
 	final Vector2D localCirclePos = customColliderBody.convertGlobalPointToLocalPoint(circleBody.getPos());
-	final double radius = circleCollider.getRadius();
+	localCirclePos.subtractLocally(customShapeTranslation);
 
-	for (LineSegment lineSegment : customCollider.getShape()) {
-	    final Vector2D closestPoint = lineSegment.getClosestPointTo(localCirclePos);
+	for (LineSegment<T> lineSegment : translatedCustomShape.getShape()) {
+	    final Vector2D closestPoint = lineSegment.findClosestPointTo(localCirclePos);
 	    final Vector2D circleOffsetFromClosestPoint = localCirclePos.subtract(closestPoint);
 	    final double dist = circleOffsetFromClosestPoint.getMagnitude();
 	    if (dist == 0) {
@@ -48,14 +51,16 @@ public class CircleVsCustomCollisionDetector implements CollisionDetector
 
 	    final Vector2D collisionNormal = customColliderBody.convertLocalVectorToGlobalVector(localCollisionNormal);
 	    final Vector2D circleContactPoint = customColliderBody.convertLocalVectorToGlobalVector(localCircleContactPoint);
-	    final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(closestPoint);
+	    final Vector2D customColliderContactPoint = customColliderBody.convertLocalVectorToGlobalVector(
+		    customShapeTranslation.add(closestPoint));
 
 	    final double bounceCoefficient = 0.3;
 	    final double frictionCoefficient = 1;
 
-	    collisions.add(new CollisionData(
+	    final T userData = lineSegment.getUserData();
+	    collisions.add(new CollisionData<>(
 		    circleBody, circleContactPoint, customColliderBody, customColliderContactPoint,
-		    collisionNormal, penetration, bounceCoefficient, frictionCoefficient
+		    collisionNormal, penetration, bounceCoefficient, frictionCoefficient, userData
 	    ));
 	}
 	return collisions;

@@ -18,6 +18,30 @@ public class AngularVelocitySeeker implements VelocityConstrainer
 	this.maxTorque = maxTorque;
     }
 
+    public Body getBody() {
+	return body;
+    }
+
+    public void setBody(final Body body) {
+	this.body = body;
+    }
+
+    public double getTargetAngularVel() {
+	return targetAngularVel;
+    }
+
+    public void setTargetAngularVel(final double targetAngularVel) {
+	this.targetAngularVel = targetAngularVel;
+    }
+
+    public double getMaxTorque() {
+	return maxTorque;
+    }
+
+    public void setMaxTorque(final double maxTorque) {
+	this.maxTorque = maxTorque;
+    }
+
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
 	final double maxAngularImpulse = maxTorque * deltaTime;
 	final Interval angularImpulseRange = new Interval(-maxAngularImpulse, maxAngularImpulse);
