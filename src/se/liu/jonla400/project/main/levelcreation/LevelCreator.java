@@ -2,16 +2,18 @@ package se.liu.jonla400.project.main.levelcreation;
 
 import se.liu.jonla400.project.main.LineSegmentType;
 import se.liu.jonla400.project.main.RectangularRegion;
-import se.liu.jonla400.project.main.World;
+import se.liu.jonla400.project.main.temp.World;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-public class LevelCreator implements World
+public class LevelCreator implements World, se.liu.jonla400.project.main.World
 {
     private DrawableLevelBlueprint blueprint;
     private CommandTimeLine commandTimeLine;
@@ -49,6 +51,10 @@ public class LevelCreator implements World
 	this.currentMode = currentMode;
     }
 
+    @Override public void updateMousePos(final Vector2D newMousePos) {
+	cursorMoved(newMousePos);
+    }
+
     @Override public void cursorMoved(final Vector2D newCursorPos) {
 	this.cursorPos.set(newCursorPos);
     }
@@ -57,13 +63,27 @@ public class LevelCreator implements World
 	return cursorPos.copy();
     }
 
-    @Override public void cursorPressed() {
+    @Override public void mousePressed(final MouseEvent mouseEvent) {
+	if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+	    cursorPressed();
+	}
+    }
+
+    public void cursorPressed() {
 	currentMode.cursorPressed(this);
     }
 
-    @Override public void cursorReleased() {
+    @Override public void mouseReleased(final MouseEvent mouseEvent) {
+	if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+	    cursorReleased();
+	}
+    }
+
+    public void cursorReleased() {
 	currentMode.cursorReleased(this);
     }
+
+    @Override public void mouseWheelMoved(final MouseWheelEvent mouseWheelEvent) {}
 
     @Override public void keyPressed(final KeyEvent keyEvent) {
 	keyListener.keyPressed(this, keyEvent);
@@ -77,7 +97,7 @@ public class LevelCreator implements World
 
     @Override public void tick(final double deltaTime) {}
 
-    public void draw(final Graphics2D g, final RectangularRegion region) {
+    @Override public void draw(final Graphics2D g, final RectangularRegion region) {
 	blueprint.draw(g, region);
 	currentMode.draw(this, g, region);
     }

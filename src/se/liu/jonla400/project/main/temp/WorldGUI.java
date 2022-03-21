@@ -145,27 +145,22 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
     @Override public void mousePressed(final MouseEvent e) {
 	eventHandlingQueue.offer(() -> filmedWorld.mousePressed(e));
-	//filmedWorld.mousePressed(e);
     }
 
     @Override public void mouseReleased(final MouseEvent e) {
 	eventHandlingQueue.offer(() -> filmedWorld.mouseReleased(e));
-	//filmedWorld.mouseReleased(e);
     }
 
     @Override public void mouseWheelMoved(final MouseWheelEvent e) {
 	eventHandlingQueue.offer(() -> filmedWorld.mouseWheelMoved(e));
-	//filmedWorld.mouseWheelMoved(e);
     }
 
     @Override public void keyPressed(final KeyEvent e) {
 	eventHandlingQueue.offer(() -> filmedWorld.keyPressed(e));
-	//filmedWorld.keyPressed(e);
     }
 
     @Override public void keyReleased(final KeyEvent e) {
 	eventHandlingQueue.offer(() -> filmedWorld.keyReleased(e));
-	//filmedWorld.keyReleased(e);
     }
 
     @Override public void mouseClicked(final MouseEvent e) {}

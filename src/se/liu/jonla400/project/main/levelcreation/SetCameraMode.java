@@ -4,6 +4,7 @@ import se.liu.jonla400.project.main.RectangularRegion;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Optional;
 
 public class SetCameraMode extends AdaptingMode
@@ -24,6 +25,12 @@ public class SetCameraMode extends AdaptingMode
 	markedStart.ifPresent(start -> levelCreator.execute(
 		new SetCameraAndUnmarkStartCommand(levelCreator.getCamera(), start, levelCreator.getCursorPos()))
 	);
+    }
+
+    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
+	if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	    stopSettingCamera(levelCreator);
+	}
     }
 
     public void stopSettingCamera(final LevelCreator levelCreator) {

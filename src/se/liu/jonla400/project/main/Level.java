@@ -22,6 +22,8 @@ import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class Level implements World, CollisionListener<LineSegmentType>
+public class Level implements World, se.liu.jonla400.project.main.temp.World, CollisionListener<LineSegmentType>
 {
     private final static double LEVEL_MASS = 50;
     private final static double LEVEL_SPEED = 10;
@@ -156,6 +158,24 @@ public class Level implements World, CollisionListener<LineSegmentType>
     }
 
     @Override public void cursorReleased() {}
+
+    @Override public void updateMousePos(final Vector2D newMousePos) {
+        cursorMoved(newMousePos);
+    }
+
+    @Override public void mousePressed(final MouseEvent mouseEvent) {
+        if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+            cursorPressed();
+        }
+    }
+
+    @Override public void mouseReleased(final MouseEvent mouseEvent) {
+        if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+            cursorReleased();
+        }
+    }
+
+    @Override public void mouseWheelMoved(final MouseWheelEvent mouseWheelEvent) {}
 
     @Override public void keyPressed(final KeyEvent keyEvent) {
         final int keyCode = keyEvent.getKeyCode();

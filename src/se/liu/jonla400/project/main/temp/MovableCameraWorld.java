@@ -8,25 +8,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public class MovableCameraWorld implements FilmedWorld
+public class MovableCameraWorld<T extends World> implements FilmedWorld
 {
     private final static int DRAG_WORLD_MOUSE_BUTTON = MouseEvent.BUTTON3;
 
-    private World world;
+    private T world;
     private RectangularRegion camera;
 
     private boolean worldFollowsMouse;
     private Vector2D mousePos;
 
-    private MovableCameraWorld(final World world, final RectangularRegion camera, final boolean worldFollowsMouse, final Vector2D mousePos) {
+    private MovableCameraWorld(final T world, final RectangularRegion camera, final boolean worldFollowsMouse, final Vector2D mousePos) {
 	this.world = world;
 	this.camera = camera;
 	this.worldFollowsMouse = worldFollowsMouse;
 	this.mousePos = mousePos;
     }
 
-    public static MovableCameraWorld create(final World world, final RectangularRegion camera) {
-	return new MovableCameraWorld(world, camera, false, Vector2D.createZero());
+    public static <T extends World> MovableCameraWorld<T> create(final T world, final RectangularRegion camera) {
+	return new MovableCameraWorld<>(world, camera, false, Vector2D.createZero());
+    }
+
+    public T getWorld() {
+	return world;
     }
 
     @Override public RectangularRegion getCamera() {
