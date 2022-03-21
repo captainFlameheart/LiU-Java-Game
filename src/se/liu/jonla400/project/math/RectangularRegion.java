@@ -1,7 +1,4 @@
-package se.liu.jonla400.project.main;
-
-import se.liu.jonla400.project.math.Interval;
-import se.liu.jonla400.project.math.Vector2D;
+package se.liu.jonla400.project.math;
 
 public class RectangularRegion
 {
@@ -19,7 +16,7 @@ public class RectangularRegion
         this.size = size;
     }
 
-    public static RectangularRegion create(final Vector2D cornerPos, final Vector2D size) {
+    public static RectangularRegion createFromCornerAndSize(final Vector2D cornerPos, final Vector2D size) {
         final PosAndDimensionPair leftXAndPositiveWidth = requirePositiveDimension(cornerPos.getX(), size.getX());
         final PosAndDimensionPair bottomYAndPositiveHeight = requirePositiveDimension(cornerPos.getY(), size.getY());
 
@@ -49,19 +46,19 @@ public class RectangularRegion
         }
     }
 
-    public static RectangularRegion createFromIntervals(final Interval startToEndX, final Interval startToEndY) {
+    public static RectangularRegion createFromCoordinateRanges(final Interval startToEndX, final Interval startToEndY) {
         final Vector2D startPos = Vector2D.createCartesian(startToEndX.getStart(), startToEndY.getStart());
         final Vector2D size = Vector2D.createCartesian(startToEndX.getStartToEndDisplacement(), startToEndY.getStartToEndDisplacement());
-        return create(startPos, size);
+        return createFromCornerAndSize(startPos, size);
     }
 
     public static RectangularRegion createFromCenter(final Vector2D center, final Vector2D size) {
         final Vector2D cornerPos = center.subtract(size.divide(2));
-        return create(cornerPos, size);
+        return createFromCornerAndSize(cornerPos, size);
     }
 
     public static RectangularRegion createFromCorners(final Vector2D start, final Vector2D end) {
-        return createFromIntervals(new Interval(start.getX(), end.getX()), new Interval(start.getY(), end.getY()));
+        return createFromCoordinateRanges(new Interval(start.getX(), end.getX()), new Interval(start.getY(), end.getY()));
     }
 
     public double getLeftX() {
@@ -86,14 +83,6 @@ public class RectangularRegion
 
     public double getHeight() {
         return size.getY();
-    }
-
-    public Interval getMinToMaxX() {
-        return new Interval(getLeftX(), getRightX());
-    }
-
-    public Interval getMinToMaxY() {
-        return new Interval(getTopY(), getBottomY());
     }
 
     public Vector2D getSize() {

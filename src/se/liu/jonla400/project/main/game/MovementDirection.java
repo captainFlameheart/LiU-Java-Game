@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.math.Vector2D;
 

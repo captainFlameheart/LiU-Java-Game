@@ -1,9 +1,9 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.main.game;
 
 import com.google.gson.JsonSyntaxException;
 import se.liu.jonla400.project.main.filehandling.LevelIO;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
-import se.liu.jonla400.project.main.temp.WorldGUI;
+import se.liu.jonla400.project.main.world.WorldGUI;
 
 import javax.swing.*;
 import java.io.IOException;

@@ -1,6 +1,7 @@
 package se.liu.jonla400.project.main.levelcreation;
 
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
+import se.liu.jonla400.project.main.drawing.CameraDrawer;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;

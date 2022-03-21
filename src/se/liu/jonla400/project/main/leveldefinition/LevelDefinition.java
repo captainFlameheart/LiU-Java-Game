@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.main.leveldefinition;
 
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.levelcreation.IndexedLineSegment;
 import se.liu.jonla400.project.main.levelcreation.LevelBlueprint;
 import se.liu.jonla400.project.math.Interval;
@@ -18,6 +18,9 @@ public class LevelDefinition
 
     private LevelDefinition() {
 	// Used by gson
+	shape = null;
+	centerOfMass = null;
+	camera = null;
     }
 
     private LevelDefinition(final CustomShapeDefinition shape, final Vector2D centerOfMass, final RectangularRegion camera) {
@@ -29,7 +32,7 @@ public class LevelDefinition
     public static LevelDefinition createEmpty() {
 	final CustomShapeDefinition shape = CustomShapeDefinition.createEmpty();
 	final Vector2D centerOfMass = Vector2D.createZero();
-	final RectangularRegion camera = RectangularRegion.createFromIntervals(
+	final RectangularRegion camera = RectangularRegion.createFromCoordinateRanges(
 		new Interval(-10, 10),
 		new Interval(-10, 10)
 	);

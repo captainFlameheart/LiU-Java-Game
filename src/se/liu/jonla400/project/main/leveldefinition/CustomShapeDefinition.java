@@ -1,6 +1,5 @@
 package se.liu.jonla400.project.main.leveldefinition;
 
-import se.liu.jonla400.project.main.LineSegmentType;
 import se.liu.jonla400.project.physics.implementation.collision.CustomShape;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ public class CustomShapeDefinition implements Iterable<LineSegmentDefinition>
 
     private CustomShapeDefinition() {
         // Used by gson
+        lineSegmentDefinitions = null;
     }
 
     private CustomShapeDefinition(final Collection<LineSegmentDefinition> lineSegmentDefinitions) {

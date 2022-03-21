@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.main.levelcreation;
 
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

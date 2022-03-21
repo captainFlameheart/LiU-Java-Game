@@ -1,8 +1,8 @@
 package se.liu.jonla400.project.main.levelcreation;
 
-import se.liu.jonla400.project.main.LineSegmentType;
+import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentDefinition;
 import se.liu.jonla400.project.math.ClosestPointFinder;
 import se.liu.jonla400.project.math.Vector2D;

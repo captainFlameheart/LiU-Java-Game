@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.main.leveldefinition;
 
 import java.awt.*;
 

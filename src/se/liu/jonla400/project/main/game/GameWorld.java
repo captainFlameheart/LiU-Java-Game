@@ -1,8 +1,9 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.main.game;
 
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
-import se.liu.jonla400.project.main.temp.FilmedWorld;
-import se.liu.jonla400.project.main.temp.MovableCameraWorld;
+import se.liu.jonla400.project.main.world.FilmedWorld;
+import se.liu.jonla400.project.main.world.WorldWithMovableCamera;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
@@ -16,10 +17,10 @@ public class GameWorld implements FilmedWorld, LevelListener
 {
     private List<LevelDefinition> levelDefinitions;
     private int currentLevelIndex;
-    private MovableCameraWorld<LevelWorld> currentLevelWithMovableCamera;
+    private WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera;
 
     private GameWorld(final List<LevelDefinition> levelDefinitions, final int currentLevelIndex,
-		      final MovableCameraWorld<LevelWorld> currentLevelWithMovableCamera) {
+		      final WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera) {
 	this.levelDefinitions = levelDefinitions;
 	this.currentLevelIndex = currentLevelIndex;
 	this.currentLevelWithMovableCamera = currentLevelWithMovableCamera;
@@ -89,7 +90,7 @@ public class GameWorld implements FilmedWorld, LevelListener
 	final LevelWorld currentLevelWorld = LevelWorld.createFromDefinition(currentLevelDef);
 	final RectangularRegion camera = currentLevelDef.getCamera();
 
-	currentLevelWithMovableCamera = MovableCameraWorld.create(currentLevelWorld, camera);
+	currentLevelWithMovableCamera = WorldWithMovableCamera.create(currentLevelWorld, camera);
 	currentLevelWorld.addListener(this);
     }
 }

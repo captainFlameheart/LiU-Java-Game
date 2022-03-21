@@ -1,7 +1,6 @@
-package se.liu.jonla400.project.main.levelcreation;
+package se.liu.jonla400.project.main.drawing;
 
-import se.liu.jonla400.project.main.RectangularRegion;
-import se.liu.jonla400.project.main.drawing.Drawer;
+import se.liu.jonla400.project.math.RectangularRegion;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

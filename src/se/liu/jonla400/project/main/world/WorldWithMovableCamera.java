@@ -1,6 +1,6 @@
-package se.liu.jonla400.project.main.temp;
+package se.liu.jonla400.project.main.world;
 
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
@@ -8,25 +8,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public class MovableCameraWorld<T extends World> implements FilmedWorld
+public class WorldWithMovableCamera<T extends World> implements FilmedWorld
 {
-    private final static int DRAG_WORLD_MOUSE_BUTTON = MouseEvent.BUTTON3;
-
     private T world;
     private RectangularRegion camera;
+    private int dragWorldMouseButton;
 
     private boolean worldFollowsMouse;
     private Vector2D mousePos;
 
-    private MovableCameraWorld(final T world, final RectangularRegion camera, final boolean worldFollowsMouse, final Vector2D mousePos) {
+    public WorldWithMovableCamera(final T world, final RectangularRegion camera, final int dragWorldMouseButton,
+				  final boolean worldFollowsMouse, final Vector2D mousePos)
+    {
 	this.world = world;
 	this.camera = camera;
+	this.dragWorldMouseButton = dragWorldMouseButton;
 	this.worldFollowsMouse = worldFollowsMouse;
 	this.mousePos = mousePos;
     }
 
-    public static <T extends World> MovableCameraWorld<T> create(final T world, final RectangularRegion camera) {
-	return new MovableCameraWorld<>(world, camera, false, Vector2D.createZero());
+    public static <T extends World> WorldWithMovableCamera<T> create(final T world, final RectangularRegion camera) {
+	return new WorldWithMovableCamera<>(world, camera, MouseEvent.BUTTON3, false, Vector2D.createZero());
     }
 
     public T getWorld() {
@@ -49,17 +51,17 @@ public class MovableCameraWorld<T extends World> implements FilmedWorld
     }
 
     @Override public void mousePressed(final MouseEvent mouseEvent) {
-	setWorldFollowsMouseIfCorrectMouseButton(mouseEvent, true);
+	setWorldFollowsMouseIfCorrectButton(mouseEvent, true);
 	world.mousePressed(mouseEvent);
     }
 
     @Override public void mouseReleased(final MouseEvent mouseEvent) {
-	setWorldFollowsMouseIfCorrectMouseButton(mouseEvent, false);
+	setWorldFollowsMouseIfCorrectButton(mouseEvent, false);
 	world.mouseReleased(mouseEvent);
     }
 
-    private void setWorldFollowsMouseIfCorrectMouseButton(final MouseEvent mouseEvent, boolean pressed) {
-	if (mouseEvent.getButton() == DRAG_WORLD_MOUSE_BUTTON) {
+    private void setWorldFollowsMouseIfCorrectButton(final MouseEvent mouseEvent, boolean pressed) {
+	if (mouseEvent.getButton() == dragWorldMouseButton) {
 	    worldFollowsMouse = pressed;
 	}
     }

@@ -1,11 +1,13 @@
-package se.liu.jonla400.project.main;
+package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.constants.Constants;
+import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.drawing.BodyDrawerSet;
 import se.liu.jonla400.project.main.drawing.BallDrawer;
 import se.liu.jonla400.project.main.drawing.CrossDrawer;
 import se.liu.jonla400.project.main.drawing.CustomShapeDrawer;
-import se.liu.jonla400.project.main.temp.AdaptingWorld;
+import se.liu.jonla400.project.main.world.AdaptingWorld;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionHandler;

@@ -1,9 +1,11 @@
 package se.liu.jonla400.project.main.levelcreation;
 
 import se.liu.jonla400.project.constants.Constants;
-import se.liu.jonla400.project.main.LineSegmentType;
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
+import se.liu.jonla400.project.math.RectangularRegion;
+import se.liu.jonla400.project.main.drawing.CameraDrawer;
 import se.liu.jonla400.project.main.drawing.CrossDrawer;
+import se.liu.jonla400.project.main.drawing.TranslatedDrawer;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;

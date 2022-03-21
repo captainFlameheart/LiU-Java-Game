@@ -1,10 +1,10 @@
 package se.liu.jonla400.project.main.levelcreation;
 
-import se.liu.jonla400.project.main.LevelWorld;
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.main.game.LevelWorld;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
-import se.liu.jonla400.project.main.temp.FilmedWorld;
-import se.liu.jonla400.project.main.temp.MovableCameraWorld;
+import se.liu.jonla400.project.main.world.FilmedWorld;
+import se.liu.jonla400.project.main.world.WorldWithMovableCamera;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
@@ -14,12 +14,12 @@ import java.awt.event.MouseWheelEvent;
 
 public class CreateAndPlaytestWorld implements FilmedWorld
 {
-    private MovableCameraWorld<LevelCreator> levelCreatorWithMovableCamera;
+    private WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera;
     private FilmedWorld currentWorld;
     private int togglePlaytestingKeyCode;
 
-    private CreateAndPlaytestWorld(final MovableCameraWorld<LevelCreator> levelCreatorWithMovableCamera, final FilmedWorld currentWorld,
-				  final int togglePlaytestingKeyCode)
+    private CreateAndPlaytestWorld(final WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera, final FilmedWorld currentWorld,
+				   final int togglePlaytestingKeyCode)
     {
 	this.levelCreatorWithMovableCamera = levelCreatorWithMovableCamera;
 	this.currentWorld = currentWorld;
@@ -31,7 +31,7 @@ public class CreateAndPlaytestWorld implements FilmedWorld
 	final LevelCreator levelCreator = new LevelCreatorBuilder().buildLevelCreator(blueprint);
 
 	final RectangularRegion camera = levelDef.getCamera();
-	final MovableCameraWorld<LevelCreator> levelCreatorWithMovableCamera = MovableCameraWorld.create(levelCreator, camera);
+	final WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera = WorldWithMovableCamera.create(levelCreator, camera);
 
 	final int togglePlaytestingMouseButton = KeyEvent.VK_ENTER;
 	return new CreateAndPlaytestWorld(levelCreatorWithMovableCamera, levelCreatorWithMovableCamera, togglePlaytestingMouseButton);
@@ -75,7 +75,7 @@ public class CreateAndPlaytestWorld implements FilmedWorld
 	    final LevelDefinition levelDef = getLevelDef();
 	    final LevelWorld levelWorld = LevelWorld.createFromDefinition(levelDef);
 	    final RectangularRegion camera = levelDef.getCamera();
-	    currentWorld = MovableCameraWorld.create(levelWorld, camera);
+	    currentWorld = WorldWithMovableCamera.create(levelWorld, camera);
 	} else {
 	    currentWorld = levelCreatorWithMovableCamera;
 	}

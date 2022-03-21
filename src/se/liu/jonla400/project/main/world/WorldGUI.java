@@ -1,6 +1,6 @@
-package se.liu.jonla400.project.main.temp;
+package se.liu.jonla400.project.main.world;
 
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -88,24 +88,19 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 	if (mousePoint == null) {
 	    return Optional.empty();
 	}
-	final Vector2D mouseVec = Vector2D.createCartesian(mousePoint.x, mousePoint.y);
-	return Optional.of(convertToWorldPoint(mouseVec));
-    }
-
-    private Vector2D convertToWorldPoint(final Vector2D screenPoint) {
-	// WRONG!
-
-	final Interval screenXInterval = new Interval(0, getWidth());
-	final Interval screenYInterval = new Interval(0, getHeight());
 
 	final RectangularRegion drawRegion = encloseCameraWithCurrentAspectRatio();
-	final Interval worldXInterval = drawRegion.getMinToMaxX();
-	final Interval worldYInterval = drawRegion.getMinToMaxY();
 
-	return Vector2D.createCartesian(
-		screenXInterval.mapValueToOtherInterval(screenPoint.getX(), worldXInterval),
-		screenYInterval.mapValueToOtherInterval(screenPoint.getY(), worldYInterval)
-	);
+	final Interval xInterval = new Interval(0, getWidth());
+	final Interval xIntervalMappedTo = new Interval(drawRegion.getLeftX(), drawRegion.getRightX());
+
+	final Interval yInterval = new Interval(0, getHeight());
+	final Interval yIntervalMappedTo = new Interval(drawRegion.getTopY(), drawRegion.getBottomY());
+
+	return Optional.of(Vector2D.createCartesian(
+		xInterval.mapValueToOtherInterval(mousePoint.x, xIntervalMappedTo),
+		yInterval.mapValueToOtherInterval(mousePoint.y, yIntervalMappedTo)
+	));
     }
 
     @Override protected void paintComponent(final Graphics g) {

@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.main.levelcreation;
 
-import se.liu.jonla400.project.main.RectangularRegion;
+import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.ClosestPointFinder;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -29,17 +29,17 @@ public class MoveVertexMode extends AdaptingMode
 	getCursorPressedCommand(levelCreator).ifPresent(levelCreator::execute);
     }
 
-    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
-	if (keyEvent.getKeyCode() == unmarkVertexKeyCode) {
-	    unmarkVertex(levelCreator);
-	}
-    }
-
     private Optional<Command> getCursorPressedCommand(final LevelCreator levelCreator) {
 	if (possibleMarkedVertex.isEmpty()) {
 	    return getClosestVertexToCursor(levelCreator).map(MarkVertexCommand::new);
 	}
 	return Optional.of(new MoveAndUnmarkVertexCommand(possibleMarkedVertex.get(), levelCreator.getCursorPos()));
+    }
+
+    @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
+	if (keyEvent.getKeyCode() == unmarkVertexKeyCode) {
+	    unmarkVertex(levelCreator);
+	}
     }
 
     public void unmarkVertex(final LevelCreator levelCreator) {
