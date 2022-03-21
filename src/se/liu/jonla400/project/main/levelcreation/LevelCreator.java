@@ -2,30 +2,31 @@ package se.liu.jonla400.project.main.levelcreation;
 
 import se.liu.jonla400.project.main.LineSegmentType;
 import se.liu.jonla400.project.main.RectangularRegion;
-import se.liu.jonla400.project.main.temp.World;
+import se.liu.jonla400.project.main.temp.AdaptingWorld;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-public class LevelCreator implements World, se.liu.jonla400.project.main.World
+public class LevelCreator extends AdaptingWorld
 {
     private DrawableLevelBlueprint blueprint;
     private CommandTimeLine commandTimeLine;
+    private int cursorActionButton;
     private Mode currentMode;
     private Vector2D cursorPos;
     private KeyListener keyListener;
 
-    public LevelCreator(final DrawableLevelBlueprint blueprint, final CommandTimeLine commandTimeLine, final Mode currentMode,
-			final Vector2D cursorPos, final KeyListener keyListener)
+    public LevelCreator(final DrawableLevelBlueprint blueprint, final CommandTimeLine commandTimeLine, final int cursorActionButton,
+			final Mode currentMode, final Vector2D cursorPos, final KeyListener keyListener)
     {
 	this.blueprint = blueprint;
 	this.commandTimeLine = commandTimeLine;
+	this.cursorActionButton = cursorActionButton;
 	this.currentMode = currentMode;
 	this.cursorPos = cursorPos;
 	this.keyListener = keyListener;
@@ -52,11 +53,7 @@ public class LevelCreator implements World, se.liu.jonla400.project.main.World
     }
 
     @Override public void updateMousePos(final Vector2D newMousePos) {
-	cursorMoved(newMousePos);
-    }
-
-    @Override public void cursorMoved(final Vector2D newCursorPos) {
-	this.cursorPos.set(newCursorPos);
+	this.cursorPos.set(newMousePos);
     }
 
     public Vector2D getCursorPos() {
@@ -64,26 +61,16 @@ public class LevelCreator implements World, se.liu.jonla400.project.main.World
     }
 
     @Override public void mousePressed(final MouseEvent mouseEvent) {
-	if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-	    cursorPressed();
+	if (mouseEvent.getButton() == cursorActionButton) {
+	    currentMode.cursorPressed(this);
 	}
-    }
-
-    public void cursorPressed() {
-	currentMode.cursorPressed(this);
     }
 
     @Override public void mouseReleased(final MouseEvent mouseEvent) {
-	if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-	    cursorReleased();
+	if (mouseEvent.getButton() == cursorActionButton) {
+	    currentMode.cursorReleased(this);
 	}
     }
-
-    public void cursorReleased() {
-	currentMode.cursorReleased(this);
-    }
-
-    @Override public void mouseWheelMoved(final MouseWheelEvent mouseWheelEvent) {}
 
     @Override public void keyPressed(final KeyEvent keyEvent) {
 	keyListener.keyPressed(this, keyEvent);
@@ -94,8 +81,6 @@ public class LevelCreator implements World, se.liu.jonla400.project.main.World
 	keyListener.keyReleased(this, keyEvent);
 	currentMode.keyReleased(this, keyEvent);
     }
-
-    @Override public void tick(final double deltaTime) {}
 
     @Override public void draw(final Graphics2D g, final RectangularRegion region) {
 	blueprint.draw(g, region);

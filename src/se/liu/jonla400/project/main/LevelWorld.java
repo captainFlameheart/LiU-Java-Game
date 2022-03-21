@@ -5,6 +5,7 @@ import se.liu.jonla400.project.main.drawing.BodyDrawerSet;
 import se.liu.jonla400.project.main.drawing.BallDrawer;
 import se.liu.jonla400.project.main.drawing.CrossDrawer;
 import se.liu.jonla400.project.main.drawing.CustomShapeDrawer;
+import se.liu.jonla400.project.main.temp.AdaptingWorld;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionHandler;
@@ -23,7 +24,6 @@ import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class Level implements World, se.liu.jonla400.project.main.temp.World, CollisionListener<LineSegmentType>
+public class LevelWorld extends AdaptingWorld implements CollisionListener<LineSegmentType>
 {
     private final static double LEVEL_MASS = 50;
     private final static double LEVEL_SPEED = 10;
@@ -61,13 +61,13 @@ public class Level implements World, se.liu.jonla400.project.main.temp.World, Co
 
     private Collection<LevelListener> listeners;
 
-    public Level(final Vector2D cursorPos, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
-		 final CustomCollider<LineSegmentType> levelCollider, final Body circleBody,
-                 final OffsetVelocitySeeker velSeeker,
-		 final Set<MovementDirection> activeMovementDirections,
-		 final AngularVelocitySeeker angularVelSeeker,
-		 final Set<RotationDirection> activeRotationDirections,
-                 final Collection<LevelListener> listeners
+    public LevelWorld(final Vector2D cursorPos, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
+                      final CustomCollider<LineSegmentType> levelCollider, final Body circleBody,
+                      final OffsetVelocitySeeker velSeeker,
+                      final Set<MovementDirection> activeMovementDirections,
+                      final AngularVelocitySeeker angularVelSeeker,
+                      final Set<RotationDirection> activeRotationDirections,
+                      final Collection<LevelListener> listeners
                  )
     {
         this.cursorPos = cursorPos;
@@ -82,7 +82,7 @@ public class Level implements World, se.liu.jonla400.project.main.temp.World, Co
         this.listeners = listeners;
     }
 
-    public static Level createFromDefinition(final LevelDefinition definition) {
+    public static LevelWorld createFromDefinition(final LevelDefinition definition) {
         final Vector2D cursorPos = Vector2D.createZero();
         final double scaleFactor = 1.1;
 
@@ -142,40 +142,22 @@ public class Level implements World, se.liu.jonla400.project.main.temp.World, Co
         );
 
         final Collection<LevelListener> listeners = new ArrayList<>();
-        final Level level = new Level(cursorPos, physicsEngine, bodyDrawers,
-			 levelCollider, circleBody, velSeeker, activeMovementDirections, angularVelSeeker,
-			 activeRotationDirections, listeners);
-        collisionHandler.addListener(level);
-        return level;
+        final LevelWorld levelWorld = new LevelWorld(cursorPos, physicsEngine, bodyDrawers,
+                                                     levelCollider, circleBody, velSeeker, activeMovementDirections, angularVelSeeker,
+                                                     activeRotationDirections, listeners);
+        collisionHandler.addListener(levelWorld);
+        return levelWorld;
     }
-
-    @Override public void cursorMoved(final Vector2D newCursorPos) {
-        cursorPos.set(newCursorPos);
-    }
-
-    @Override public void cursorPressed() {
-        setCenterOfMassAtCursor();
-    }
-
-    @Override public void cursorReleased() {}
 
     @Override public void updateMousePos(final Vector2D newMousePos) {
-        cursorMoved(newMousePos);
+        cursorPos.set(newMousePos);
     }
 
     @Override public void mousePressed(final MouseEvent mouseEvent) {
         if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-            cursorPressed();
+            setCenterOfMassAtCursor();
         }
     }
-
-    @Override public void mouseReleased(final MouseEvent mouseEvent) {
-        if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-            cursorReleased();
-        }
-    }
-
-    @Override public void mouseWheelMoved(final MouseWheelEvent mouseWheelEvent) {}
 
     @Override public void keyPressed(final KeyEvent keyEvent) {
         final int keyCode = keyEvent.getKeyCode();
@@ -208,26 +190,6 @@ public class Level implements World, se.liu.jonla400.project.main.temp.World, Co
         physicsEngine.tick(deltaTime);
     }
 
-    /*public void setCursorPos(final Vector2D cursorPos) {
-        if (pointAtCursorGrabbed) {
-            final Vector2D deltaCameraPos = this.cursorPos.subtract(cursorPos);
-            final Vector2D cameraCenter = preferredRectangularRegion.getCenter();
-            final Vector2D newCameraCenter = cameraCenter.add(deltaCameraPos);
-            final Vector2D cameraSize = preferredRectangularRegion.getSize();
-	    preferredRectangularRegion = RectangularRegion.createFromCenter(newCameraCenter, cameraSize);
-        } else {
-            this.cursorPos.set(cursorPos);
-        }
-    }*/
-
-    /*public Vector2D getCursorPos() {
-        return cursorPos;
-    }*/
-
-    /*public void setPointAtCursorGrabbed(final boolean pointAtCursorGrabbed) {
-        this.pointAtCursorGrabbed = pointAtCursorGrabbed;
-    }*/
-
     public void setCenterOfMassAtCursor() {
         final Body levelBody = levelCollider.getBody();
         final TranslatedCustomShape<LineSegmentType> shape = levelCollider.getShape();
@@ -236,16 +198,6 @@ public class Level implements World, se.liu.jonla400.project.main.temp.World, Co
         levelBody.setPos(cursorPos);
         shape.setTranslation(levelBody.convertGlobalPointToLocalPoint(globalShapePos));
     }
-
-    /*public void scale(final double count) {
-        final double scale = Math.pow(scaleFactor, count);
-
-        final Vector2D size = preferredRectangularRegion.getSize();
-        final Vector2D newSize = size.multiply(scale);
-        final Vector2D center = preferredRectangularRegion.getCenter();
-	preferredRectangularRegion = RectangularRegion.createFromCenter(center, newSize);
-    }*/
-
 
     public void startMovementInDirection(final MovementDirection direction) {
         if (activeMovementDirections.contains(direction)) {

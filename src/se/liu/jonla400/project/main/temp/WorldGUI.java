@@ -22,16 +22,26 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
     private FilmedWorld filmedWorld;
     private Queue<Runnable> eventHandlingQueue;
 
-    private WorldGUI(final FilmedWorld filmedWorld, final Queue<Runnable> eventHandlingQueue) {
+    private boolean hasStarted;
+
+    private WorldGUI(final FilmedWorld filmedWorld, final Queue<Runnable> eventHandlingQueue, final boolean hasStarted) {
 	this.filmedWorld = filmedWorld;
 	this.eventHandlingQueue = eventHandlingQueue;
+	this.hasStarted = hasStarted;
     }
 
-    public static void createAndStart(final FilmedWorld filmedWorld) {
-	final WorldGUI gui = new WorldGUI(filmedWorld, new LinkedList<>());
-	gui.listenToUserInput();
-	gui.putInFrame();
-	gui.startTickTimer();
+    public static WorldGUI createFor(final FilmedWorld filmedWorld) {
+	return new WorldGUI(filmedWorld, new LinkedList<>(), false);
+    }
+
+    public void start() {
+	if (hasStarted) {
+	    throw new IllegalStateException("Has already started!");
+	}
+	hasStarted = true;
+	listenToUserInput();
+	putInFrame();
+	startTickTimer();
     }
 
     private void listenToUserInput() {

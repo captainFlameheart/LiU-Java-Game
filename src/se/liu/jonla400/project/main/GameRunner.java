@@ -3,6 +3,7 @@ package se.liu.jonla400.project.main;
 import com.google.gson.JsonSyntaxException;
 import se.liu.jonla400.project.main.filehandling.LevelIO;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
+import se.liu.jonla400.project.main.temp.WorldGUI;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -17,34 +18,9 @@ public class GameRunner
 {
     public static void main(String[] args) {
 	final List<LevelDefinition> levelDefinitions = getAtleastOneLevelOrElseQuit();
-
-	final LevelDefinition firstLevelDef = levelDefinitions.get(0);
-	final Level firstLevel = Level.createFromDefinition(firstLevelDef);
-	final Screen screen = Screen.create(new FilmedWorld(firstLevel, firstLevelDef.getCamera()));
-	firstLevel.addListener(new LevelListener()
-	{
-	    int currentIndex = 0;
-
-	    @Override public void levelCompleted() {
-		if (currentIndex == levelDefinitions.size() - 1) {
-		    return;
-		}
-		currentIndex++;
-		startCurrentLevel();
-	    }
-
-	    @Override public void levelFailed() {
-		startCurrentLevel();
-	    }
-
-	    private void startCurrentLevel() {
-		final LevelDefinition levelDef = levelDefinitions.get(currentIndex);
-		final Level level = Level.createFromDefinition(levelDef);
-		level.addListener(this);
-		screen.setFilmedWorld(new FilmedWorld(level, levelDef.getCamera()));
-	    }
-	});
-	screen.start();
+	final GameWorld gameWorld = GameWorld.createAndStartWithFirstLevel(levelDefinitions);
+	final WorldGUI gui = WorldGUI.createFor(gameWorld);
+	gui.start();
     }
 
     private static List<LevelDefinition> getAtleastOneLevelOrElseQuit() {

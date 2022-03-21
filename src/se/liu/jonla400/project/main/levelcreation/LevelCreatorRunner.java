@@ -2,11 +2,8 @@ package se.liu.jonla400.project.main.levelcreation;
 
 import com.google.gson.JsonSyntaxException;
 import se.liu.jonla400.project.main.filehandling.LevelIO;
-import se.liu.jonla400.project.main.FilmedWorld;
-import se.liu.jonla400.project.main.Level;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
-import se.liu.jonla400.project.main.RectangularRegion;
-import se.liu.jonla400.project.main.Screen;
+import se.liu.jonla400.project.main.temp.WorldGUI;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -23,28 +20,17 @@ public class LevelCreatorRunner
 	final Path path = levelFile.path;
 	final LevelDefinition levelDef = levelFile.levelDef;
 
-	final LevelBlueprint levelBlueprint = LevelBlueprint.createFromDefinition(levelDef);
-	final RectangularRegion camera = levelDef.getCamera();
-
-	final LevelCreatorConstructor constructor = new LevelCreatorConstructor();
-	final LevelCreator levelCreator = constructor.constructLevelCreator(levelBlueprint);
-
-	final Screen screen = Screen.create(new FilmedWorld(levelCreator, camera));
-
-	final CreateToPlayToggler createToPlayToggler = new CreateToPlayToggler(levelCreator, screen, true);
-	final Saver saver = new Saver(levelCreator, path);
-	screen.addKeyListener(new KeyAdapter()
+	final CreateAndPlaytestWorld createAndPlaytestWorld = CreateAndPlaytestWorld.createFromLevelDef(levelDef);
+	final WorldGUI gui = WorldGUI.createFor(createAndPlaytestWorld);
+	gui.addKeyListener(new KeyAdapter()
 	{
 	    @Override public void keyPressed(final KeyEvent e) {
-		final int keyCode = e.getKeyCode();
-		if (keyCode == KeyEvent.VK_ENTER) {
-		    createToPlayToggler.toggle();
-		} else if (e.isControlDown() && keyCode == KeyEvent.VK_S) {
-		    saver.save();
+		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+		    saveLevelOrMessageError(createAndPlaytestWorld.getLevelDef(), path);
 		}
 	    }
 	});
-	screen.start();
+	gui.start();
     }
 
     private static LevelFile askUserForLevelFile() {
@@ -73,62 +59,14 @@ public class LevelCreatorRunner
     private static void saveLevelOrMessageError(final LevelDefinition levelDef, final Path path) {
 	try {
 	    LevelIO.saveLevel(levelDef, path);
+	    System.out.println("Level saved at " + path);
 	} catch (IOException ignored) {
-	    showErrorMessage("Could not save the level to the file", "Save error");
+	    showErrorMessage("Could not save the level at " + path, "Save error");
 	}
     }
 
     private static void showErrorMessage(final String message, final String title) {
-	JOptionPane.showMessageDialog(
-		null, message,
-		title, JOptionPane.ERROR_MESSAGE);
-    }
-
-    private static class CreateToPlayToggler
-    {
-	private LevelCreator levelCreator;
-	private Screen screen;
-	private boolean playNext;
-
-	private CreateToPlayToggler(final LevelCreator levelCreator, final Screen screen, final boolean playNext) {
-	    this.levelCreator = levelCreator;
-	    this.screen = screen;
-	    this.playNext = playNext;
-	}
-
-	private void toggle() {
-	    if (playNext) {
-		final LevelBlueprint blueprint = levelCreator.getBlueprint();
-		final LevelDefinition levelDef = LevelDefinition.createFromBlueprint(blueprint);
-		final Level level = Level.createFromDefinition(levelDef);
-		screen.setFilmedWorld(new FilmedWorld(level, levelDef.getCamera()));
-		playNext = false;
-	    } else {
-		screen.setFilmedWorld(new FilmedWorld(levelCreator, levelCreator.getCamera()));
-		playNext = true;
-	    }
-	}
-    }
-
-    private static class Saver
-    {
-	private LevelCreator levelCreator;
-	private Path path;
-
-	private Saver(final LevelCreator levelCreator, final Path path) {
-	    this.levelCreator = levelCreator;
-	    this.path = path;
-	}
-
-	private void save() {
-	    final LevelBlueprint blueprint = levelCreator.getBlueprint();
-	    final LevelDefinition levelDef = LevelDefinition.createFromBlueprint(blueprint);
-	    try {
-		LevelIO.saveLevel(levelDef, path);
-	    } catch (IOException ignored) {
-		showErrorMessage("Could not save the level to the file", "Save error");
-	    }
-	}
+	JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
     private static class LevelFile
