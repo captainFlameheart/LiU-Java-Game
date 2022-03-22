@@ -18,7 +18,7 @@ public class LevelCreatorBuilder
         final RemoveLineSegmentMode removeLineSegmentMode = new RemoveLineSegmentMode();
         final ChangeTypeMode changeTypeMode = new ChangeTypeMode();
         final SetCenterOfMassMode setCenterOfMassMode = new SetCenterOfMassMode();
-        final SetCameraMode setCameraMode = new SetCameraMode();
+        final SetCameraMode setCameraMode = SetCameraMode.createWithDefaultUnmarkKey();
 
         final Mode currentMode = addVertexMode;
 

@@ -33,20 +33,22 @@ public class MoveVertexMode extends AdaptingMode
 	if (possibleMarkedVertex.isEmpty()) {
 	    return getClosestVertexToCursor(levelCreator).map(MarkVertexCommand::new);
 	}
-	return Optional.of(new MoveAndUnmarkVertexCommand(possibleMarkedVertex.get(), levelCreator.getCursorPos()));
+	final Vector2D markedVertex = possibleMarkedVertex.get();
+	final Command moveAndUnmarkVertexCommand = CombinedCommand.create(
+		new MoveVertexCommand(markedVertex, levelCreator.getCursorPos()),
+		getUnmarkVertexCommand(markedVertex)
+	);
+	return Optional.of(moveAndUnmarkVertexCommand);
     }
 
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
 	if (keyEvent.getKeyCode() == unmarkVertexKeyCode) {
-	    unmarkVertex(levelCreator);
+	    possibleMarkedVertex.ifPresent(markedVertex -> levelCreator.execute(getUnmarkVertexCommand(markedVertex)));
 	}
     }
 
-    public void unmarkVertex(final LevelCreator levelCreator) {
-	possibleMarkedVertex.ifPresent(markedVertex -> {
-	    final Command unmarkVertexCommand = new ReversedCommand(new MarkVertexCommand(markedVertex));
-	    levelCreator.execute(unmarkVertexCommand);
-	});
+    private Command getUnmarkVertexCommand(final Vector2D vertex) {
+	return new ReversedCommand(new MarkVertexCommand(vertex));
     }
 
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
@@ -101,24 +103,22 @@ public class MoveVertexMode extends AdaptingMode
 	}
     }
 
-    private class MoveAndUnmarkVertexCommand implements Command
+    private static class MoveVertexCommand implements Command
     {
 	private Vector2D oldVertex;
 	private Vector2D newVertex;
 
-	private MoveAndUnmarkVertexCommand(final Vector2D oldVertex, final Vector2D newVertex) {
+	private MoveVertexCommand(final Vector2D oldVertex, final Vector2D newVertex) {
 	    this.oldVertex = oldVertex;
 	    this.newVertex = newVertex;
 	}
 
 	@Override public void execute(final LevelCreator levelCreator) {
 	    levelCreator.moveVertex(oldVertex, newVertex);
-	    possibleMarkedVertex = Optional.empty();
 	}
 
 	@Override public void undo(final LevelCreator levelCreator) {
 	    levelCreator.moveVertex(newVertex, oldVertex);
-	    possibleMarkedVertex = Optional.of(oldVertex);
 	}
     }
 }
