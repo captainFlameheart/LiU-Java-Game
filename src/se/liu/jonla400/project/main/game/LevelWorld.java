@@ -129,7 +129,7 @@ public class LevelWorld extends AdaptingWorld implements CollisionListener<LineS
         physicsEngine.add(angularVelSeeker);
         physicsEngine.add(circleBody);
         final CollisionHandler<LineSegmentType> collisionHandler = CollisionHandler.createWithDefaultConfig(
-                new CircleVsCustomCollisionDetector<>(circleCollider, levelCollider)
+                CircleVsCustomCollisionDetector.createWithDefaultUniformMaterial(circleCollider, levelCollider)
         );/*new CollisionHandler<>(
                 new CircleVsCustomCollisionDetector<>(circleCollider, levelCollider)
         );*/

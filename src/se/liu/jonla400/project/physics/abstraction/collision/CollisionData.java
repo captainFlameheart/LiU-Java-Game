@@ -12,32 +12,30 @@ public class CollisionData<T>
     private Vector2D normal;
     private double penetration;
 
-    private double bounceCoefficient;
-    private double frictionCoefficient;
+    private Material material;
 
     private T userData;
 
     public CollisionData(final OffsetBodyPointPair contactPoints, final Vector2D normal, final double penetration,
-			 final double bounceCoefficient, final double frictionCoefficient, final T userData)
+			 final Material material, final T userData)
     {
 	this.contactPoints = contactPoints;
 	this.normal = normal.copy();
 	this.penetration = penetration;
-	this.bounceCoefficient = bounceCoefficient;
-	this.frictionCoefficient = frictionCoefficient;
+	this.material = material;
 	this.userData = userData;
     }
 
     public static <T> CollisionData<T> create(
 	    final Body bodyA, final Vector2D contactPointOffsetA, final Body bodyB, final Vector2D contactPointOffsetB,
-	    final Vector2D normal, final double penetration, final double bounceCoefficient, final double frictionCoefficient,
+	    final Vector2D normal, final double penetration, final Material material,
 	    final T userData)
     {
 	final OffsetBodyPointPair contactPoints = new OffsetBodyPointPair(
 		OffsetBodyPoint.copyOffset(bodyA, contactPointOffsetA),
 		OffsetBodyPoint.copyOffset(bodyB, contactPointOffsetB)
 	);
-	return new CollisionData<>(contactPoints, normal.copy(), penetration, bounceCoefficient, frictionCoefficient, userData);
+	return new CollisionData<>(contactPoints, normal.copy(), penetration, material, userData);
     }
 
     public OffsetBodyPointPair getContactPoints() {
@@ -53,11 +51,11 @@ public class CollisionData<T>
     }
 
     public double getBounceCoefficient() {
-	return bounceCoefficient;
+	return material.getBounceCoefficient();
     }
 
     public double getFrictionCoefficient() {
-	return frictionCoefficient;
+	return material.getFrictionCoefficient();
     }
 
     public T getUserData() {

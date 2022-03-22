@@ -3,20 +3,40 @@ package se.liu.jonla400.project.physics.implementation.collision;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
 import se.liu.jonla400.project.physics.abstraction.collision.CollisionDetector;
+import se.liu.jonla400.project.physics.abstraction.collision.Material;
 import se.liu.jonla400.project.physics.abstraction.main.Body;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 {
     private CircleCollider circleCollider;
     private CustomCollider<T> customCollider;
+    private Function<T, Material> materialProvider;
 
-    public CircleVsCustomCollisionDetector(final CircleCollider circleCollider, final CustomCollider<T> customCollider) {
+    private CircleVsCustomCollisionDetector(final CircleCollider circleCollider, final CustomCollider<T> customCollider,
+					   final Function<T, Material> materialProvider)
+    {
 	this.circleCollider = circleCollider;
 	this.customCollider = customCollider;
+	this.materialProvider = materialProvider;
+    }
+
+    public static <T> CircleVsCustomCollisionDetector<T> createWithUniformMaterial(
+	    final CircleCollider circleCollider, final CustomCollider<T> customCollider, final Material material)
+    {
+	final Function<T, Material> materialProvider = ignoredUserData -> material;
+	return new CircleVsCustomCollisionDetector<>(circleCollider, customCollider, materialProvider);
+    }
+
+    public static <T> CircleVsCustomCollisionDetector<T> createWithDefaultUniformMaterial(
+	    final CircleCollider circleCollider, final CustomCollider<T> customCollider)
+    {
+	final Material material = new Material(0.3, 1);
+	return createWithUniformMaterial(circleCollider, customCollider, material);
     }
 
     @Override public Collection<CollisionData<T>> detectCollisions() {
@@ -29,12 +49,9 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 		final Vector2D customContactPointOffset = convertCustomShapePointToGlobalVec(c.segmentContactPoint);
 		final Vector2D normal = convertCustomShapeVecToGlobalVec(c.normal);
 
-		final double bounceCoefficient = 0.3;
-		final double frictionCoefficient = 1;
-
 		collisions.add(CollisionData.create(
 			circleCollider.getBody(), circleContactPointOffset, customCollider.getBody(), customContactPointOffset,
-			normal, c.penetration, bounceCoefficient, frictionCoefficient, segment.getUserData()));
+			normal, c.penetration, getMaterialOf(segment), segment.getUserData()));
 	    });
 	}
 	return collisions;
@@ -53,7 +70,9 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return customCollider.getShape().getShape();
     }
 
-    private static Optional<CircleVsSegmentCollision> detectCircleVsSegmentCollision(final Vector2D circlePos, final double circleRadius, final LineSegment<?> segment) {
+    private static Optional<CircleVsSegmentCollision> detectCircleVsSegmentCollision(
+	    final Vector2D circlePos, final double circleRadius, final LineSegment<?> segment)
+    {
 	final Vector2D closestSegmentPoint = segment.findClosestPointTo(circlePos);
 	final Vector2D circleOffsetFromClosestPoint = circlePos.subtract(closestSegmentPoint);
 	final double dist = circleOffsetFromClosestPoint.getMagnitude();
@@ -82,6 +101,10 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return customBody.convertLocalToGlobalVector(customColliderPoint);
     }
 
+    private Material getMaterialOf(final LineSegment<T> segment) {
+	return materialProvider.apply(segment.getUserData());
+    }
+
     private static class CircleVsSegmentCollision
     {
 	private Vector2D circleContactPointOffset;
@@ -90,7 +113,7 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	private double penetration;
 
 	private CircleVsSegmentCollision(final Vector2D circleContactPointOffset, final Vector2D segmentContactPoint, final Vector2D normal,
-					final double penetration)
+		final double penetration)
 	{
 	    this.circleContactPointOffset = circleContactPointOffset;
 	    this.segmentContactPoint = segmentContactPoint;
