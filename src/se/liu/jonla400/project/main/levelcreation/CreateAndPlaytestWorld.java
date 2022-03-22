@@ -73,7 +73,7 @@ public class CreateAndPlaytestWorld implements FilmedWorld
     private void togglePlaytesting() {
 	if (currentWorld.equals(levelCreatorWithMovableCamera)) {
 	    final LevelDefinition levelDef = getLevelDef();
-	    final LevelWorld levelWorld = LevelWorld.createFromDefinition(levelDef);
+	    final LevelWorld levelWorld = LevelWorld.createFromDef(levelDef);
 	    final RectangularRegion camera = levelDef.getCamera();
 	    currentWorld = WorldWithMovableCamera.create(levelWorld, camera);
 	} else {

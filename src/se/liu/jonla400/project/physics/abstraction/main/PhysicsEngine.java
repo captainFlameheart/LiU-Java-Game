@@ -1,11 +1,10 @@
 package se.liu.jonla400.project.physics.abstraction.main;
 
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionDetector;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionHandler;
 import se.liu.jonla400.project.physics.abstraction.constraint.IterativeVelocityConstrainer;
 import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class PhysicsEngine
@@ -13,30 +12,25 @@ public class PhysicsEngine
     private Collection<Body> bodies;
     private IterativeVelocityConstrainer iterativeVelConstrainer;
 
-    public PhysicsEngine(final int velConstraintIterations) {
-	bodies = new ArrayList<>();
-	iterativeVelConstrainer = new IterativeVelocityConstrainer(velConstraintIterations);
+    private PhysicsEngine(final Collection<Body> bodies, final IterativeVelocityConstrainer iterativeVelConstrainer) {
+	this.bodies = bodies;
+	this.iterativeVelConstrainer = iterativeVelConstrainer;
     }
 
-    public void add(final Body body) {
-	bodies.add(body);
+    public static PhysicsEngine createWithDefaultVelIterations() {
+	return new PhysicsEngine(new ArrayList<>(), new IterativeVelocityConstrainer(10));
     }
 
-    public void remove(final Body body) {
-	bodies.remove(body);
+    public void add(final Body... bodies) {
+	this.bodies.addAll(Arrays.asList(bodies));
     }
 
-    public void add(final VelocityConstrainer velConstrainer) {
+    public void add(final VelocityConstrainer... velConstrainer) {
 	iterativeVelConstrainer.add(velConstrainer);
-    }
-
-    public void remove(final VelocityConstrainer velConstrainer) {
-	iterativeVelConstrainer.remove(velConstrainer);
     }
 
     public void tick(final double deltaTime) {
 	iterativeVelConstrainer.generateConstraint(deltaTime).updateImpulse();
 	bodies.forEach(b -> b.tick(deltaTime));
     }
-
 }

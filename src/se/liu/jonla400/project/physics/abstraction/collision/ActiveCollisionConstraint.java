@@ -5,7 +5,6 @@ import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveImpulse1D;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
-import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPoint;
 import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPointPair;
 
 /**
@@ -106,10 +105,10 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
         final double dirX = dir.getX();
         final double dirY = dir.getY();
         final double commonWeight = dirX * dirY;
-        final Matrix22 weights = new Matrix22(new double[][]{
-                {dirX * dirX, commonWeight},
-                {commonWeight, dirY * dirY}
-        });
+        final Matrix22 weights = Matrix22.create(
+                dirX * dirX, commonWeight,
+                commonWeight, dirY * dirY
+        );
 
         final double invProjectedMass = invMass.getWeightedSum(weights);
         return 1 / invProjectedMass;

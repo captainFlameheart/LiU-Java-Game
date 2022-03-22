@@ -18,6 +18,10 @@ public class AngularVelocitySeeker implements VelocityConstrainer
 	this.maxTorque = maxTorque;
     }
 
+    public static AngularVelocitySeeker createStartingAsAngularFriction(final Body body, final double maxTorque) {
+	return new AngularVelocitySeeker(body, 0, maxTorque);
+    }
+
     public void setTargetAngularVel(final double targetAngularVel) {
 	this.targetAngularVel = targetAngularVel;
     }

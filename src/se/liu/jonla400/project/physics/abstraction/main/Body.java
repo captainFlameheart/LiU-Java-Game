@@ -19,7 +19,7 @@ public class Body
      * dependent on the default values since the values can change at a later time.
      * To control the values, use the setter-methods after creating this point mass.
      */
-    public Body() {
+    private Body() {
 	pos = Vector2D.createZero();
 	vel = Vector2D.createZero();
 	mass = 1;
@@ -38,6 +38,10 @@ public class Body
 	this.angle = angle;
 	this.angularVel = angularVel;
 	this.angularMass = angularMass;
+    }
+
+    public static Body create(final Vector2D pos, final double mass, final double angularMass) {
+	return new Body(pos.copy(), Vector2D.createZero(), mass, 0, 0, angularMass);
     }
 
     /**
@@ -288,10 +292,10 @@ public class Body
 	final double offsetY = offset.getY();
 
 	final double commonValue = -offsetX * offsetY * invAngularMass;
-	return new Matrix22(new double[][]{
-		{invMass + offsetY * offsetY * invAngularMass, commonValue},
-		{commonValue, invMass + offsetX * offsetX * invAngularMass}
-	});
+	return Matrix22.create(
+		invMass + offsetY * offsetY * invAngularMass, commonValue,
+		commonValue, invMass + offsetX * offsetX * invAngularMass
+	);
     }
 
     /**

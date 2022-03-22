@@ -11,10 +11,14 @@ public class VelocitySeeker implements VelocityConstrainer
     private Vector2D targetVel;
     private double maxForce;
 
-    public VelocitySeeker(final Body body, final Vector2D targetVel, final double maxForce) {
+    private VelocitySeeker(final Body body, final Vector2D targetVel, final double maxForce) {
 	this.body = body;
 	this.targetVel = targetVel;
 	this.maxForce = maxForce;
+    }
+
+    public static VelocitySeeker createStartingAsFriction(final Body body, final double maxForce) {
+	return new VelocitySeeker(body, Vector2D.createZero(), maxForce);
     }
 
     public void setTargetVel(final Vector2D targetVel) {

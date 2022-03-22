@@ -1,6 +1,7 @@
 package se.liu.jonla400.project.physics.abstraction.constraint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class ActiveVelocityConstraintList implements ActiveVelocityConstraint
 
     public static ActiveVelocityConstraintList createWithSingleIteration(final Collection<ActiveVelocityConstraint> subConstraints) {
 	return create(subConstraints, 1);
+    }
+
+    public static ActiveVelocityConstraintList createWithSingleIteration(final ActiveVelocityConstraint... subConstraints) {
+	return createWithSingleIteration(Arrays.asList(subConstraints));
     }
 
     @Override public void updateImpulse() {

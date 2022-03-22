@@ -87,7 +87,7 @@ public class GameWorld implements FilmedWorld, LevelListener
 
     private void startCurrentLevel() {
 	final LevelDefinition currentLevelDef = levelDefinitions.get(currentLevelIndex);
-	final LevelWorld currentLevelWorld = LevelWorld.createFromDefinition(currentLevelDef);
+	final LevelWorld currentLevelWorld = LevelWorld.createFromDef(currentLevelDef);
 	final RectangularRegion camera = currentLevelDef.getCamera();
 
 	currentLevelWithMovableCamera = WorldWithMovableCamera.create(currentLevelWorld, camera);

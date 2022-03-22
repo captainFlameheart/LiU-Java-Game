@@ -39,8 +39,8 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
      *
      * @param subConstrainer The velocity constrainer to be added
      */
-    public void add(final VelocityConstrainer subConstrainer) {
-	subConstrainers.add(subConstrainer);
+    public void add(final VelocityConstrainer... subConstrainer) {
+	subConstrainers.addAll(Arrays.asList(subConstrainer));
     }
 
     /**
