@@ -20,8 +20,8 @@ import se.liu.jonla400.project.physics.implementation.collision.CustomCollider;
 import se.liu.jonla400.project.physics.implementation.collision.CustomShape;
 import se.liu.jonla400.project.physics.implementation.collision.TranslatedCustomShape;
 import se.liu.jonla400.project.physics.implementation.constraint.AngularVelocitySeeker;
-import se.liu.jonla400.project.physics.implementation.constraint.OffsetVelocitySeeker;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
+import se.liu.jonla400.project.physics.implementation.constraint.VelocitySeeker;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -53,7 +53,7 @@ public class LevelWorld extends AdaptingWorld implements CollisionListener<LineS
     private CustomCollider<LineSegmentType> levelCollider;
     private Body circleBody;
 
-    private OffsetVelocitySeeker velSeeker;
+    private VelocitySeeker velSeeker;
     private double movementSpeed;
     private Set<MovementDirection> activeMovementDirections;
 
@@ -65,7 +65,7 @@ public class LevelWorld extends AdaptingWorld implements CollisionListener<LineS
 
     public LevelWorld(final Vector2D cursorPos, final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers,
                       final CustomCollider<LineSegmentType> levelCollider, final Body circleBody,
-                      final OffsetVelocitySeeker velSeeker,
+                      final VelocitySeeker velSeeker,
                       final Set<MovementDirection> activeMovementDirections,
                       final AngularVelocitySeeker angularVelSeeker,
                       final Set<RotationDirection> activeRotationDirections,
@@ -116,8 +116,7 @@ public class LevelWorld extends AdaptingWorld implements CollisionListener<LineS
         final CircleCollider circleCollider = new CircleCollider(circleBody, circleRadius);
 
         final double maxForce = Constants.getLevelMass() * Constants.getLevelMaxAcc();
-        final OffsetVelocitySeeker velSeeker = new OffsetVelocitySeeker(
-		levelBody, Vector2D.createZero(), Vector2D.createZero(), maxForce);
+        final VelocitySeeker velSeeker = new VelocitySeeker(levelBody, Vector2D.createZero(), maxForce);
         final Set<MovementDirection> activeMovementDirections = EnumSet.noneOf(MovementDirection.class);
 
         final double maxTorque = Constants.getLevelAngularMass() * Constants.getLevelMaxAngularAcc();
