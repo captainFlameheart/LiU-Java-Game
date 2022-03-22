@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.physics.abstraction.collision;
 
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveIterativeVelocityConstraint;
+import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraintList;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
 
@@ -11,18 +11,23 @@ import java.util.List;
 public class CollisionHandler<T> implements VelocityConstrainer
 {
     private CollisionDetector<T> collisionDetector;
-    private int iterations;
-
+    private double penetrationTolerence;
+    private double penetrationCorrectionFraction;
     private List<CollisionListener<T>> listeners;
 
-    public CollisionHandler(final CollisionDetector<T> collisionDetector, final int iterations) {
+    public CollisionHandler(final CollisionDetector<T> collisionDetector, final double penetrationTolerence,
+			    final double penetrationCorrectionFraction, final List<CollisionListener<T>> listeners)
+    {
 	this.collisionDetector = collisionDetector;
-	this.iterations = iterations;
-	listeners = new ArrayList<>();
+	this.penetrationTolerence = penetrationTolerence;
+	this.penetrationCorrectionFraction = penetrationCorrectionFraction;
+	this.listeners = listeners;
     }
 
-    public CollisionHandler(final CollisionDetector<T> collisionDetector) {
-	this(collisionDetector, 1);
+    public static <T> CollisionHandler<T> createWithDefaultConfig(final CollisionDetector<T> collisionDetector) {
+	final double penetrationTolerence = 0.05;
+	final double penetrationCorrectionFraction = 0.1;
+	return new CollisionHandler<>(collisionDetector, penetrationTolerence, penetrationCorrectionFraction, new ArrayList<>());
     }
 
     public void addListener(final CollisionListener<T> listener) {
@@ -37,14 +42,15 @@ public class CollisionHandler<T> implements VelocityConstrainer
 
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
 	final Collection<ActiveVelocityConstraint> subConstraints = detectCollisionsAndGenerateConstraints(deltaTime);
-	return new ActiveIterativeVelocityConstraint(iterations, subConstraints);
+	return ActiveVelocityConstraintList.createWithSingleIteration(subConstraints);
     }
 
     private Collection<ActiveVelocityConstraint> detectCollisionsAndGenerateConstraints(final double deltaTime) {
 	final Collection<ActiveVelocityConstraint> subConstraints = new ArrayList<>();
 	for (CollisionData<T> collision : collisionDetector.detectCollisions()) {
 	    notifyListeners(collision);
-	    subConstraints.add(new ActiveCollisionConstraint(collision, deltaTime, 0.05, 0.1));
+	    subConstraints.add(ActiveCollisionConstraint.createFromCollisionData(
+		    collision, deltaTime, penetrationTolerence, penetrationCorrectionFraction));
 	}
 	return subConstraints;
     }

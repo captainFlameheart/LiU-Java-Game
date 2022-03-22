@@ -128,9 +128,11 @@ public class LevelWorld extends AdaptingWorld implements CollisionListener<LineS
         physicsEngine.add(velSeeker);
         physicsEngine.add(angularVelSeeker);
         physicsEngine.add(circleBody);
-        final CollisionHandler<LineSegmentType> collisionHandler = new CollisionHandler<>(
+        final CollisionHandler<LineSegmentType> collisionHandler = CollisionHandler.createWithDefaultConfig(
                 new CircleVsCustomCollisionDetector<>(circleCollider, levelCollider)
-        );
+        );/*new CollisionHandler<>(
+                new CircleVsCustomCollisionDetector<>(circleCollider, levelCollider)
+        );*/
         physicsEngine.add(collisionHandler);
 
         bodyDrawers.add(levelBody,
@@ -197,7 +199,7 @@ public class LevelWorld extends AdaptingWorld implements CollisionListener<LineS
 
         final Vector2D globalShapePos = levelBody.convertLocalPointToGlobalPoint(shape.getTranslation());
         levelBody.setPos(cursorPos);
-        shape.setTranslation(levelBody.convertGlobalPointToLocalPoint(globalShapePos));
+        shape.setTranslation(levelBody.convertGlobalToLocalPoint(globalShapePos));
     }
 
     public void startMovementInDirection(final MovementDirection direction) {

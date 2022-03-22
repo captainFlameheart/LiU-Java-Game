@@ -165,7 +165,7 @@ public class Body
      * @param localPoint The point in local space
      * @return The offset from the position of this point mass
      */
-    public Vector2D convertLocalVectorToGlobalVector(final Vector2D localPoint) {
+    public Vector2D convertLocalToGlobalVector(final Vector2D localPoint) {
 	return localPoint.rotate(angle);
     }
 
@@ -189,7 +189,7 @@ public class Body
      * @return The point in global space
      */
     public Vector2D convertLocalPointToGlobalPoint(final Vector2D localPoint) {
-	final Vector2D offset = convertLocalVectorToGlobalVector(localPoint);
+	final Vector2D offset = convertLocalToGlobalVector(localPoint);
 	return convertOffsetToGlobalPoint(offset);
     }
 
@@ -226,7 +226,7 @@ public class Body
      * @param globalPoint The point in global space
      * @return The point in local space
      */
-    public Vector2D convertGlobalPointToLocalPoint(final Vector2D globalPoint) {
+    public Vector2D convertGlobalToLocalPoint(final Vector2D globalPoint) {
 	final Vector2D offset = convertGlobalPointToOffset(globalPoint);
 	return convertOffsetToLocalPoint(offset);
     }

@@ -1,12 +1,13 @@
 package se.liu.jonla400.project.physics.abstraction.collision;
 
 import se.liu.jonla400.project.math.Vector2D;
+import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPoint;
+import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPointPair;
 import se.liu.jonla400.project.physics.abstraction.main.Body;
 
 public class CollisionData<T>
 {
-    private Body[] bodies;
-    private Vector2D[] contactPointOffsets;
+    private OffsetBodyPointPair contactPoints;
 
     private Vector2D normal;
     private double penetration;
@@ -14,14 +15,12 @@ public class CollisionData<T>
     private double bounceCoefficient;
     private double frictionCoefficient;
 
-    T userData;
+    private T userData;
 
-    public CollisionData(final Body bodyA, final Vector2D contactPointOffsetA, final Body bodyB, final Vector2D contactPointOffsetB,
-			 final Vector2D normal, final double penetration, final double bounceCoefficient, final double frictionCoefficient,
-			 T userData)
+    public CollisionData(final OffsetBodyPointPair contactPoints, final Vector2D normal, final double penetration,
+			 final double bounceCoefficient, final double frictionCoefficient, final T userData)
     {
-	bodies = new Body[]{bodyA, bodyB};
-	contactPointOffsets = new Vector2D[]{contactPointOffsetA, contactPointOffsetB};
+	this.contactPoints = contactPoints;
 	this.normal = normal.copy();
 	this.penetration = penetration;
 	this.bounceCoefficient = bounceCoefficient;
@@ -29,12 +28,20 @@ public class CollisionData<T>
 	this.userData = userData;
     }
 
-    public Body[] getBodies() {
-	return bodies.clone();
+    public static <T> CollisionData<T> create(
+	    final Body bodyA, final Vector2D contactPointOffsetA, final Body bodyB, final Vector2D contactPointOffsetB,
+	    final Vector2D normal, final double penetration, final double bounceCoefficient, final double frictionCoefficient,
+	    final T userData)
+    {
+	final OffsetBodyPointPair contactPoints = new OffsetBodyPointPair(
+		OffsetBodyPoint.copyOffset(bodyA, contactPointOffsetA),
+		OffsetBodyPoint.copyOffset(bodyB, contactPointOffsetB)
+	);
+	return new CollisionData<>(contactPoints, normal.copy(), penetration, bounceCoefficient, frictionCoefficient, userData);
     }
 
-    public Vector2D[] getContactPointOffsets() {
-	return contactPointOffsets.clone();
+    public OffsetBodyPointPair getContactPoints() {
+	return contactPoints;
     }
 
     public Vector2D getNormal() {

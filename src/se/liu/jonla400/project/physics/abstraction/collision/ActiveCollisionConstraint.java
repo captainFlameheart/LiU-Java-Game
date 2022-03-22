@@ -5,7 +5,8 @@ import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveImpulse1D;
 import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPoint;
+import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPointPair;
 
 /**
  * Represents an active velocity constraint between two colliding bodies.
@@ -15,8 +16,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     // Can only push the points in contact along the normal, not pull them
     private final static Interval NORMAL_IMPULSE_RANGE = new Interval(0, Double.POSITIVE_INFINITY);
 
-    private Body[] bodies;
-    private Vector2D[] contactPointOffsets;
+    private OffsetBodyPointPair contactPoints;
 
     private Vector2D normal;
     private Vector2D tangent;
@@ -30,54 +30,78 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     private ActiveImpulse1D normalImpulse;
     private ActiveImpulse1D tangentImpulse;
 
-    public ActiveCollisionConstraint(final CollisionData collisionData, final double deltaTime,
-				     final double penetrationTolerence, final double posCorrectionFraction)
+    private ActiveCollisionConstraint(final OffsetBodyPointPair contactPoints, final Vector2D normal, final Vector2D tangent,
+                                      final double targetNormalVel, final double frictionCoefficient, final double normalMass,
+                                      final double tangentMass, final ActiveImpulse1D normalImpulse, final ActiveImpulse1D tangentImpulse)
     {
-        bodies = collisionData.getBodies();
-        contactPointOffsets = collisionData.getContactPointOffsets();
-
-        normal = collisionData.getNormal();
-        tangent = normal.rotate90Degrees(Vector2D.RotationDirection.Y_TO_X);
-
-        initTargetNormalVel(collisionData, deltaTime, penetrationTolerence, posCorrectionFraction);
-        frictionCoefficient = collisionData.getFrictionCoefficient();
-
-        final Matrix22 collisionInvMass = getInvMassOfContactPoint(0).add(getInvMassOfContactPoint(1));
-        normalMass = projectMassAlongDirection(collisionInvMass, normal);
-        tangentMass = projectMassAlongDirection(collisionInvMass, tangent);
-
-        normalImpulse = new ActiveImpulse1D();
-        tangentImpulse = new ActiveImpulse1D();
+        this.contactPoints = contactPoints;
+        this.normal = normal;
+        this.tangent = tangent;
+        this.targetNormalVel = targetNormalVel;
+        this.frictionCoefficient = frictionCoefficient;
+        this.normalMass = normalMass;
+        this.tangentMass = tangentMass;
+        this.normalImpulse = normalImpulse;
+        this.tangentImpulse = tangentImpulse;
     }
 
-    private void initTargetNormalVel(final CollisionData collisionData, final double deltaTime,
-				     final double penetrationTolerence, final double posCorrectionFraction)
+    public static ActiveCollisionConstraint createFromCollisionData(
+            final CollisionData<?> collisionData, final double deltaTime,
+            final double penetrationTolerence, final double penetrationCorrectionFraction)
     {
-        final double untoleratedPenetration = collisionData.getPenetration() - penetrationTolerence;
-        final double targetNormalVelFromPenetration;
-        if (untoleratedPenetration > 0) {
-            final double posCorrection = posCorrectionFraction * untoleratedPenetration;
-            targetNormalVelFromPenetration = posCorrection / deltaTime;
-        } else {
-            targetNormalVelFromPenetration = 0;
-        }
+        final OffsetBodyPointPair contactPoints = collisionData.getContactPoints();
+        final Vector2D normal = collisionData.getNormal();
+        final Vector2D tangent = normal.rotate90Degrees(Vector2D.RotationDirection.Y_TO_X); // Temp
 
-        final double initNormalVel = getNormalVel();
-        final double targetNormalVelFromBounce;
-        if (initNormalVel < 0) {
-            targetNormalVelFromBounce = -collisionData.getBounceCoefficient() * initNormalVel;
-        } else {
-            targetNormalVelFromBounce = 0;
-        }
+        final double targetNormalVel = getTargetNormalVel(
+                contactPoints, normal, collisionData.getPenetration(), penetrationTolerence, penetrationCorrectionFraction,
+                collisionData.getBounceCoefficient(), deltaTime
+        );
 
-        targetNormalVel = Math.max(targetNormalVelFromPenetration, targetNormalVelFromBounce);
+        final Matrix22 invMass = contactPoints.getInvMass();
+        final double normalMass = projectMassAlongDirection(invMass, normal);
+        final double tangentMass = projectMassAlongDirection(invMass, tangent);
+
+        final ActiveImpulse1D normalImpulse = new ActiveImpulse1D();
+        final ActiveImpulse1D tangentImpulse = new ActiveImpulse1D();
+
+        return new ActiveCollisionConstraint(
+                contactPoints, normal, tangent, targetNormalVel, collisionData.getFrictionCoefficient(), normalMass, tangentMass,
+                normalImpulse, tangentImpulse);
     }
 
-    private Matrix22 getInvMassOfContactPoint(final int pointIndex) {
-        return bodies[pointIndex].getInvMassAt(contactPointOffsets[pointIndex]);
+    private static double getTargetNormalVel(
+            final OffsetBodyPointPair contactPoints, final Vector2D normal,
+            final double penetration, final double penetrationTolerence, final double penetrationCorrectionFraction,
+            final double bounceCoefficient, final double deltaTime)
+    {
+        final double penetrationCorrectionVel =
+                getPenetrationCorrectionVel(penetration, penetrationTolerence, penetrationCorrectionFraction, deltaTime);
+        final double bounceVel = getBounceVel(contactPoints, normal, bounceCoefficient);
+        return Math.max(penetrationCorrectionVel, bounceVel);
     }
 
-    private double projectMassAlongDirection(final Matrix22 invMass, final Vector2D dir) {
+    private static double getPenetrationCorrectionVel(
+            final double penetration, final double penetrationTolerence, final double penetrationCorrectionFraction,
+            final double deltaTime)
+    {
+        final double untoleratedPenetration = penetration - penetrationTolerence;
+        if (untoleratedPenetration <= 0) {
+            return 0;
+        }
+        final double penetrationCorrection = penetrationCorrectionFraction * untoleratedPenetration;
+        return penetrationCorrection / deltaTime;
+    }
+
+    private static double getBounceVel(final OffsetBodyPointPair contactPoints, final Vector2D normal, final double bounceCoefficient) {
+        final double initNormalVel = getVelAlong(normal, contactPoints);
+        if (initNormalVel >= 0) {
+            return 0;
+        }
+        return -bounceCoefficient * initNormalVel;
+    }
+
+    private static double projectMassAlongDirection(final Matrix22 invMass, final Vector2D dir) {
         // See derivation in report
         final double dirX = dir.getX();
         final double dirY = dir.getY();
@@ -101,7 +125,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     }
 
     private void updateNormalImpulse() {
-        final double targetDeltaNormalVel = targetNormalVel - getNormalVel();
+        final double targetDeltaNormalVel = targetNormalVel - getVelAlong(normal);
         final double deltaNormalImpulse = normalImpulse.update(targetDeltaNormalVel, normalMass, NORMAL_IMPULSE_RANGE);
         applyImpulse(normal, deltaNormalImpulse);
     }
@@ -110,35 +134,20 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
         final double maxTangentImpulse = frictionCoefficient * normalImpulse.get();
         final Interval tangentImpulseRange = new Interval(-maxTangentImpulse, maxTangentImpulse);
 
-        final double targetDeltaTangentVel = -getTangentVel();
+        final double targetDeltaTangentVel = -getVelAlong(tangent);
         final double deltaTangentImpulse = tangentImpulse.update(targetDeltaTangentVel, tangentMass, tangentImpulseRange);
         applyImpulse(tangent, deltaTangentImpulse);
     }
 
-    private double getNormalVel() {
-        return getRelativeContactPointVelAlong(normal);
+    private double getVelAlong(final Vector2D dir) {
+        return getVelAlong(dir, contactPoints);
     }
 
-    private double getTangentVel() {
-        return getRelativeContactPointVelAlong(tangent);
+    private static double getVelAlong(final Vector2D dir, final OffsetBodyPointPair contactPoints) {
+        return dir.dot(contactPoints.getVel());
     }
 
-    private double getRelativeContactPointVelAlong(final Vector2D dir) {
-        final Vector2D relativeContactPointVel = getContactPointVel(0).subtract(getContactPointVel(1));
-        return dir.dot(relativeContactPointVel);
+    private void applyImpulse(final Vector2D dir, final double magnitude) {
+        contactPoints.applyImpulse(dir.multiply(magnitude));
     }
-
-    private Vector2D getContactPointVel(final int pointIndex) {
-        return bodies[pointIndex].getVelAt(contactPointOffsets[pointIndex]);
-    }
-
-    private void applyImpulse(final Vector2D dir, final double impulse) {
-        applyImpulse(0, dir, impulse);
-        applyImpulse(1, dir, -impulse);
-    }
-
-    private void applyImpulse(final int pointIndex, final Vector2D dir, final double impulse) {
-        bodies[pointIndex].applyOffsetImpulse(contactPointOffsets[pointIndex], dir.multiply(impulse));
-    }
-
 }

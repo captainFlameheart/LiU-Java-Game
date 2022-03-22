@@ -30,10 +30,6 @@ public class PhysicsEngine
 	iterativeVelConstrainer.add(velConstrainer);
     }
 
-    public void add(final CollisionDetector collisionDetector) {
-	add(new CollisionHandler(collisionDetector));
-    }
-
     public void remove(final VelocityConstrainer velConstrainer) {
 	iterativeVelConstrainer.remove(velConstrainer);
     }

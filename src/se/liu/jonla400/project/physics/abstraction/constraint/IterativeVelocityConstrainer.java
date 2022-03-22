@@ -65,7 +65,7 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
 
 	// Return an active velocity constraint that, when its solution is updated,
 	// iterates over and solves each sub constraint separately
-	return new ActiveIterativeVelocityConstraint(iterations, subConstraints);
+	return ActiveVelocityConstraintList.create(subConstraints, iterations);//new ActiveVelocityConstraintList(iterations, subConstraints);
     }
 
     private List<ActiveVelocityConstraint> generateSubConstraints(final double deltaTime) {
