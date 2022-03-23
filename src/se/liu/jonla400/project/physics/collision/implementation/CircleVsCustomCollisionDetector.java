@@ -1,10 +1,10 @@
-package se.liu.jonla400.project.physics.implementation.collision;
+package se.liu.jonla400.project.physics.collision.implementation;
 
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionDetector;
-import se.liu.jonla400.project.physics.abstraction.collision.Material;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.collision.CollisionData;
+import se.liu.jonla400.project.physics.collision.CollisionDetector;
+import se.liu.jonla400.project.physics.collision.Material;
+import se.liu.jonla400.project.physics.main.Body;
 
 import java.util.ArrayList;
 import java.util.Collection;

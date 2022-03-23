@@ -1,10 +1,10 @@
-package se.liu.jonla400.project.physics.implementation.constraint;
+package se.liu.jonla400.project.physics.constraint.implementation;
 
 import se.liu.jonla400.project.math.Interval;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveImpulse1D;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
-import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.constraint.ActiveImpulse1D;
+import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraint;
+import se.liu.jonla400.project.physics.constraint.VelocityConstrainer;
+import se.liu.jonla400.project.physics.main.Body;
 
 public class AngularVelocitySeeker implements VelocityConstrainer
 {

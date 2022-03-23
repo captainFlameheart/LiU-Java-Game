@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.physics.abstraction.main;
+package se.liu.jonla400.project.physics.main;
 
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;

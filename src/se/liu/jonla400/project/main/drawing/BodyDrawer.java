@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.main.drawing;
 
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.main.Body;
 
 import java.awt.*;
 

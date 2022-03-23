@@ -1,8 +1,8 @@
-package se.liu.jonla400.project.physics.abstraction.constraint;
+package se.liu.jonla400.project.physics.constraint;
 
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.main.Body;
 
 public class OffsetBodyPoint
 {

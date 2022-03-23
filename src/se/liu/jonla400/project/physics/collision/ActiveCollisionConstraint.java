@@ -1,11 +1,11 @@
-package se.liu.jonla400.project.physics.abstraction.collision;
+package se.liu.jonla400.project.physics.collision;
 
 import se.liu.jonla400.project.math.Interval;
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveImpulse1D;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
-import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPointPair;
+import se.liu.jonla400.project.physics.constraint.ActiveImpulse1D;
+import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraint;
+import se.liu.jonla400.project.physics.constraint.OffsetBodyPointPair;
 
 /**
  * Represents an active velocity constraint between two colliding bodies.

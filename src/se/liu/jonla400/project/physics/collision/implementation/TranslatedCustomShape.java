@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.physics.implementation.collision;
+package se.liu.jonla400.project.physics.collision.implementation;
 
 import se.liu.jonla400.project.math.Vector2D;
 

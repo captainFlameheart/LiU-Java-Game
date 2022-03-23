@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.physics.abstraction.constraint;
+package se.liu.jonla400.project.physics.constraint;
 
 import java.util.ArrayList;
 import java.util.Arrays;

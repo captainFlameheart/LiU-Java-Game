@@ -1,6 +1,5 @@
 package se.liu.jonla400.project.main.levelcreation;
 
-import se.liu.jonla400.project.constants.Constants;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -20,7 +19,7 @@ public class RemoveLineSegmentMode extends AdaptingMode
             final Vector2D start = segment.getStart();
             final Vector2D end = segment.getEnd();
             g.setColor(Color.RED);
-            g.setStroke(new BasicStroke(2 * Constants.getDefaultStrokeWidth()));
+            g.setStroke(new BasicStroke(0.3f));
             g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
         });
     }

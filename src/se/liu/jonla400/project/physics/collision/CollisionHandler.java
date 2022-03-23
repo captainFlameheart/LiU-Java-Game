@@ -1,8 +1,8 @@
-package se.liu.jonla400.project.physics.abstraction.collision;
+package se.liu.jonla400.project.physics.collision;
 
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraintList;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
-import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
+import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraintList;
+import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraint;
+import se.liu.jonla400.project.physics.constraint.VelocityConstrainer;
 
 import java.util.ArrayList;
 import java.util.Collection;

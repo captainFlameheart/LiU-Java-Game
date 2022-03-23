@@ -1,9 +1,9 @@
 package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
-import se.liu.jonla400.project.physics.implementation.collision.CustomCollider;
-import se.liu.jonla400.project.physics.implementation.collision.TranslatedCustomShape;
+import se.liu.jonla400.project.physics.main.Body;
+import se.liu.jonla400.project.physics.collision.implementation.CustomCollider;
+import se.liu.jonla400.project.physics.collision.implementation.TranslatedCustomShape;
 
 import java.awt.event.MouseEvent;
 

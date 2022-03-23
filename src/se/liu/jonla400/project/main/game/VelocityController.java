@@ -1,12 +1,12 @@
 package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraint;
-import se.liu.jonla400.project.physics.abstraction.constraint.ActiveVelocityConstraintList;
-import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
-import se.liu.jonla400.project.physics.implementation.constraint.AngularVelocitySeeker;
-import se.liu.jonla400.project.physics.implementation.constraint.VelocitySeeker;
+import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraint;
+import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraintList;
+import se.liu.jonla400.project.physics.constraint.VelocityConstrainer;
+import se.liu.jonla400.project.physics.main.Body;
+import se.liu.jonla400.project.physics.constraint.implementation.AngularVelocitySeeker;
+import se.liu.jonla400.project.physics.constraint.implementation.VelocitySeeker;
 
 import java.awt.event.KeyEvent;
 import java.util.EnumSet;

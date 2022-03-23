@@ -1,6 +1,6 @@
 package se.liu.jonla400.project.main.leveldefinition;
 
-import se.liu.jonla400.project.physics.implementation.collision.CustomShape;
+import se.liu.jonla400.project.physics.collision.implementation.CustomShape;
 
 import org.jetbrains.annotations.NotNull;
 

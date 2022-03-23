@@ -1,8 +1,8 @@
 package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionData;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionListener;
+import se.liu.jonla400.project.physics.collision.CollisionData;
+import se.liu.jonla400.project.physics.collision.CollisionListener;
 
 import java.util.ArrayList;
 import java.util.Collection;

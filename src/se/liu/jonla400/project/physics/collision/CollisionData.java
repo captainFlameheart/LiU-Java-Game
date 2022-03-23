@@ -1,9 +1,9 @@
-package se.liu.jonla400.project.physics.abstraction.collision;
+package se.liu.jonla400.project.physics.collision;
 
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPoint;
-import se.liu.jonla400.project.physics.abstraction.constraint.OffsetBodyPointPair;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.constraint.OffsetBodyPoint;
+import se.liu.jonla400.project.physics.constraint.OffsetBodyPointPair;
+import se.liu.jonla400.project.physics.main.Body;
 
 public class CollisionData<T>
 {

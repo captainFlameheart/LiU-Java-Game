@@ -1,6 +1,5 @@
 package se.liu.jonla400.project.main.game;
 
-import se.liu.jonla400.project.constants.Constants;
 import se.liu.jonla400.project.main.drawing.BodyDrawer;
 import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.main.drawing.DrawerList;
@@ -9,14 +8,14 @@ import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.drawing.CustomShapeDrawer;
 import se.liu.jonla400.project.main.world.AdaptingWorld;
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.abstraction.collision.CollisionHandler;
-import se.liu.jonla400.project.physics.abstraction.main.Body;
-import se.liu.jonla400.project.physics.abstraction.main.PhysicsEngine;
-import se.liu.jonla400.project.physics.implementation.collision.CircleCollider;
-import se.liu.jonla400.project.physics.implementation.collision.CircleVsCustomCollisionDetector;
-import se.liu.jonla400.project.physics.implementation.collision.CustomCollider;
-import se.liu.jonla400.project.physics.implementation.collision.CustomShape;
-import se.liu.jonla400.project.physics.implementation.collision.TranslatedCustomShape;
+import se.liu.jonla400.project.physics.collision.CollisionHandler;
+import se.liu.jonla400.project.physics.main.Body;
+import se.liu.jonla400.project.physics.main.PhysicsEngine;
+import se.liu.jonla400.project.physics.collision.implementation.CircleCollider;
+import se.liu.jonla400.project.physics.collision.implementation.CircleVsCustomCollisionDetector;
+import se.liu.jonla400.project.physics.collision.implementation.CustomCollider;
+import se.liu.jonla400.project.physics.collision.implementation.CustomShape;
+import se.liu.jonla400.project.physics.collision.implementation.TranslatedCustomShape;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 
 import java.awt.*;
@@ -35,7 +34,7 @@ public class LevelWorld extends AdaptingWorld
 
     private LevelEventSender levelEventSender;
 
-    public LevelWorld(final PhysicsEngine physicsEngine, final DrawerList bodyDrawers, final Body circleBody,
+    private LevelWorld(final PhysicsEngine physicsEngine, final DrawerList bodyDrawers, final Body circleBody,
                       final CenterOfMassController centerOfMassController, final VelocityController velController,
                       final LevelEventSender levelEventSender)
     {
@@ -54,7 +53,7 @@ public class LevelWorld extends AdaptingWorld
         final TranslatedCustomShape<LineSegmentType> translatedShape = new TranslatedCustomShape<>(shapeTranslation, shape);
         final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, translatedShape);
 
-        final Body circleBody = Body.create(Constants.getBallSpawnPos(), 1, 0.01);
+        final Body circleBody = Body.create(def.getBallPos(), 1, 0.01);
         final double radius = def.getBallRadius();
         final CircleCollider circleCollider = new CircleCollider(circleBody, radius);
 

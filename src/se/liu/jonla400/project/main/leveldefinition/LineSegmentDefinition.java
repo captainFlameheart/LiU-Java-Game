@@ -2,7 +2,7 @@ package se.liu.jonla400.project.main.leveldefinition;
 
 import se.liu.jonla400.project.math.ClosestPointFinder;
 import se.liu.jonla400.project.math.Vector2D;
-import se.liu.jonla400.project.physics.implementation.collision.LineSegment;
+import se.liu.jonla400.project.physics.collision.implementation.LineSegment;
 
 public class LineSegmentDefinition implements ClosestPointFinder
 {

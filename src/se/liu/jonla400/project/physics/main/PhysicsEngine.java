@@ -1,7 +1,7 @@
-package se.liu.jonla400.project.physics.abstraction.main;
+package se.liu.jonla400.project.physics.main;
 
-import se.liu.jonla400.project.physics.abstraction.constraint.IterativeVelocityConstrainer;
-import se.liu.jonla400.project.physics.abstraction.constraint.VelocityConstrainer;
+import se.liu.jonla400.project.physics.constraint.IterativeVelocityConstrainer;
+import se.liu.jonla400.project.physics.constraint.VelocityConstrainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

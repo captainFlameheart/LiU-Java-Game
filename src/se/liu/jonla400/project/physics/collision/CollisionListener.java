@@ -1,4 +1,4 @@
-package se.liu.jonla400.project.physics.abstraction.collision;
+package se.liu.jonla400.project.physics.collision;
 
 public interface CollisionListener<T>
 {

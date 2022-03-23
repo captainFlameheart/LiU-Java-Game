@@ -1,6 +1,6 @@
-package se.liu.jonla400.project.physics.implementation.collision;
+package se.liu.jonla400.project.physics.collision.implementation;
 
-import se.liu.jonla400.project.physics.abstraction.main.Body;
+import se.liu.jonla400.project.physics.main.Body;
 
 public class CircleCollider
 {

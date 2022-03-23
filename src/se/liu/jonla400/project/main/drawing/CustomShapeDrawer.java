@@ -2,8 +2,8 @@ package se.liu.jonla400.project.main.drawing;
 
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentDefinition;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
-import se.liu.jonla400.project.physics.implementation.collision.LineSegment;
-import se.liu.jonla400.project.physics.implementation.collision.TranslatedCustomShape;
+import se.liu.jonla400.project.physics.collision.implementation.LineSegment;
+import se.liu.jonla400.project.physics.collision.implementation.TranslatedCustomShape;
 
 import java.awt.*;
 
