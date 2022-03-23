@@ -1,23 +1,36 @@
 package se.liu.jonla400.project.main.levelcreation;
 
+import se.liu.jonla400.project.main.drawing.Drawer;
+import se.liu.jonla400.project.main.drawing.Transform;
+import se.liu.jonla400.project.main.drawing.TransformedDrawer;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.drawing.CrossDrawer;
-import se.liu.jonla400.project.main.drawing.TranslatedDrawer;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
 
 public class SetCenterOfMassMode extends AdaptingMode
 {
+    private Drawer upcomingCenterOfMassDrawer;
+
+    private SetCenterOfMassMode(final Drawer upcomingCenterOfMassDrawer) {
+	this.upcomingCenterOfMassDrawer = upcomingCenterOfMassDrawer;
+    }
+
+    public static SetCenterOfMassMode createWithDefaultDrawing() {
+	final Drawer drawer = CrossDrawer.create(Color.RED, 0.05f).setRadius(0.2f);
+	return new SetCenterOfMassMode(drawer);
+    }
+
     @Override public void cursorPressed(final LevelCreator levelCreator) {
 	levelCreator.execute(SetCenterOfMassCommand.createFromCurrentToCursor(levelCreator));
     }
 
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
-	final Vector2D pos = levelCreator.getCursorPos();
-	final CrossDrawer drawerAtPos = CrossDrawer.create(1, new Color(0, 0, 0, 100), 0.1f);
-	final TranslatedDrawer drawer = new TranslatedDrawer(pos, drawerAtPos);
-	drawer.draw(g);
+	TransformedDrawer.draw(
+		g, Transform.createWithTranslation(levelCreator.getCursorPos()),
+		upcomingCenterOfMassDrawer
+	);
     }
 
     private static class SetCenterOfMassCommand implements Command

@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.main.levelcreation;
 
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.world.AdaptingWorld;
@@ -89,6 +90,10 @@ public class LevelCreator extends AdaptingWorld
 
     public LevelBlueprint getBlueprint() {
 	return blueprint.getBlueprint();
+    }
+
+    public DrawConfiguration getDrawConfig() {
+	return blueprint.getDrawConfig();
     }
 
     public Set<Vector2D> getAllVertices() {

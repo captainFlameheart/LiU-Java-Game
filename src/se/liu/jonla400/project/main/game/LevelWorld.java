@@ -1,11 +1,11 @@
 package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.constants.Constants;
+import se.liu.jonla400.project.main.drawing.BodyDrawer;
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
+import se.liu.jonla400.project.main.drawing.DrawerList;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
 import se.liu.jonla400.project.math.RectangularRegion;
-import se.liu.jonla400.project.main.drawing.BodyDrawerSet;
-import se.liu.jonla400.project.main.drawing.BallDrawer;
-import se.liu.jonla400.project.main.drawing.CrossDrawer;
 import se.liu.jonla400.project.main.drawing.CustomShapeDrawer;
 import se.liu.jonla400.project.main.world.AdaptingWorld;
 import se.liu.jonla400.project.math.Vector2D;
@@ -23,13 +23,11 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class LevelWorld extends AdaptingWorld
 {
     private PhysicsEngine physicsEngine;
-    private BodyDrawerSet bodyDrawers;
+    private DrawerList bodyDrawers;
     private Body circleBody;
 
     private CenterOfMassController centerOfMassController;
@@ -37,7 +35,7 @@ public class LevelWorld extends AdaptingWorld
 
     private LevelEventSender levelEventSender;
 
-    public LevelWorld(final PhysicsEngine physicsEngine, final BodyDrawerSet bodyDrawers, final Body circleBody,
+    public LevelWorld(final PhysicsEngine physicsEngine, final DrawerList bodyDrawers, final Body circleBody,
                       final CenterOfMassController centerOfMassController, final VelocityController velController,
                       final LevelEventSender levelEventSender)
     {
@@ -49,7 +47,7 @@ public class LevelWorld extends AdaptingWorld
         this.levelEventSender = levelEventSender;
     }
 
-    public static LevelWorld createFromDef(final LevelDefinition def) {
+    public static LevelWorld create(final LevelDefinition def, final DrawConfiguration drawConfig) {
         final Body levelBody = Body.create(def.getCenterOfMass(), 50, 50);
         final Vector2D shapeTranslation = levelBody.getPos().negate();
         final CustomShape<LineSegmentType> shape = def.getShape().convertToCollidableShape();
@@ -57,7 +55,8 @@ public class LevelWorld extends AdaptingWorld
         final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, translatedShape);
 
         final Body circleBody = Body.create(Constants.getBallSpawnPos(), 1, 0.01);
-        final CircleCollider circleCollider = new CircleCollider(circleBody, Constants.getBallRadius());
+        final double radius = def.getBallRadius();
+        final CircleCollider circleCollider = new CircleCollider(circleBody, radius);
 
         final VelocityController velController = VelocityController.createWithDefaultConfigFor(levelBody);
         final CenterOfMassController centerOfMassController = CenterOfMassController.createWithDefaultConfigFor(levelCollider);
@@ -72,11 +71,14 @@ public class LevelWorld extends AdaptingWorld
         physicsEngine.add(levelBody, circleBody);
         physicsEngine.add(velController, collisionHandler);
 
-        final BodyDrawerSet bodyDrawers = BodyDrawerSet.create();
-        bodyDrawers.add(levelBody, new CustomShapeDrawer(translatedShape), CrossDrawer.createWithDefaultColor(1, 0.1f));
-        bodyDrawers.add(circleBody, new BallDrawer(), CrossDrawer.createWithDefaultColor(0.1, 0.05f));
+        final DrawerList bodyDrawers = DrawerList.create(
+                new BodyDrawer(levelBody, DrawerList.create(
+                        new CustomShapeDrawer(translatedShape, drawConfig.getLineSegmentDrawer()),
+                        drawConfig.getCenterOfMassDrawer()
+                )),
+                new BodyDrawer(circleBody, drawConfig.getBallDrawer(radius))
+        );
 
-        final Collection<LevelListener> listeners = new ArrayList<>();
         return new LevelWorld(physicsEngine, bodyDrawers, circleBody, centerOfMassController, velController, levelEventSender);
     }
 

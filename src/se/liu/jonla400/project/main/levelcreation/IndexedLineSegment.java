@@ -5,8 +5,6 @@ import se.liu.jonla400.project.main.leveldefinition.LineSegmentDefinition;
 import se.liu.jonla400.project.math.ClosestPointFinder;
 import se.liu.jonla400.project.math.Vector2D;
 
-import java.awt.*;
-
 public class IndexedLineSegment implements ClosestPointFinder
 {
     private int index;
@@ -35,10 +33,6 @@ public class IndexedLineSegment implements ClosestPointFinder
 
     public LineSegmentType getType() {
 	return lineSegment.getType();
-    }
-
-    public Color getColor() {
-	return getType().getColor();
     }
 
     public LineSegmentDefinition removeIndex() {

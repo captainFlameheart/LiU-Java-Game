@@ -1,10 +1,8 @@
 package se.liu.jonla400.project.main.drawing;
 
-import se.liu.jonla400.project.math.Vector2D;
 import se.liu.jonla400.project.physics.abstraction.main.Body;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public class BodyDrawer implements Drawer
 {
@@ -17,13 +15,9 @@ public class BodyDrawer implements Drawer
     }
 
     @Override public void draw(final Graphics2D g) {
-        final AffineTransform oldTransform = g.getTransform();
-
-        final Vector2D pos = body.getPos();
-        g.translate(pos.getX(), pos.getY());
-        g.rotate(body.getAngle());
-        localSpaceDrawer.draw(g);
-
-        g.setTransform(oldTransform);
+        TransformedDrawer.draw(
+                g, Transform.createWithTranslationAndRotation(body.getPos(), body.getAngle()),
+                localSpaceDrawer
+        );
     }
 }

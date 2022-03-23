@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.main.levelcreation;
 
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.main.game.LevelWorld;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
@@ -26,9 +27,9 @@ public class CreateAndPlaytestWorld implements FilmedWorld
 	this.togglePlaytestingKeyCode = togglePlaytestingKeyCode;
     }
 
-    public static CreateAndPlaytestWorld createFromLevelDef(final LevelDefinition levelDef) {
+    public static CreateAndPlaytestWorld createFromLevelDef(final LevelDefinition levelDef, final DrawConfiguration drawConfig) {
 	final LevelBlueprint blueprint = LevelBlueprint.createFromDefinition(levelDef);
-	final LevelCreator levelCreator = new LevelCreatorBuilder().buildLevelCreator(blueprint);
+	final LevelCreator levelCreator = new LevelCreatorBuilder().buildLevelCreator(blueprint, drawConfig);
 
 	final RectangularRegion camera = levelDef.getCamera();
 	final WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera = WorldWithMovableCamera.create(levelCreator, camera);
@@ -38,7 +39,7 @@ public class CreateAndPlaytestWorld implements FilmedWorld
     }
 
     public LevelDefinition getLevelDef() {
-	final LevelBlueprint levelBlueprint = levelCreatorWithMovableCamera.getWorld().getBlueprint();
+	final LevelBlueprint levelBlueprint = getLevelCreator().getBlueprint();
 	return LevelDefinition.createFromBlueprint(levelBlueprint);
     }
 
@@ -73,7 +74,7 @@ public class CreateAndPlaytestWorld implements FilmedWorld
     private void togglePlaytesting() {
 	if (currentWorld.equals(levelCreatorWithMovableCamera)) {
 	    final LevelDefinition levelDef = getLevelDef();
-	    final LevelWorld levelWorld = LevelWorld.createFromDef(levelDef);
+	    final LevelWorld levelWorld = LevelWorld.create(levelDef, getDrawConfig());
 	    final RectangularRegion camera = levelDef.getCamera();
 	    currentWorld = WorldWithMovableCamera.create(levelWorld, camera);
 	} else {
@@ -91,5 +92,13 @@ public class CreateAndPlaytestWorld implements FilmedWorld
 
     @Override public void draw(final Graphics2D g, final RectangularRegion region) {
 	currentWorld.draw(g, region);
+    }
+
+    private DrawConfiguration getDrawConfig() {
+	return getLevelCreator().getDrawConfig();
+    }
+
+    private LevelCreator getLevelCreator() {
+	return levelCreatorWithMovableCamera.getWorld();
     }
 }

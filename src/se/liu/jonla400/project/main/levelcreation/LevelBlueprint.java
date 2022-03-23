@@ -21,29 +21,35 @@ public class LevelBlueprint
     private List<Vector2D> vertices;
     private List<LineSegmentType> lineSegmentTypes;
     private Vector2D centerOfMass;
+    private Vector2D ballPos;
+    private double ballRadius;
     private RectangularRegion camera;
 
     private LevelBlueprint(final List<Vector2D> vertices, final List<LineSegmentType> lineSegmentTypes, final Vector2D centerOfMass,
-                           final RectangularRegion camera)
+                          final Vector2D ballPos, final double ballRadius, final RectangularRegion camera)
     {
         this.vertices = vertices;
         this.lineSegmentTypes = lineSegmentTypes;
         this.centerOfMass = centerOfMass;
+        this.ballPos = ballPos;
+        this.ballRadius = ballRadius;
         this.camera = camera;
     }
 
     public static LevelBlueprint createFromDefinition(final LevelDefinition def) {
         final List<Vector2D> vertices = new ArrayList<>();
-        final List<LineSegmentType> types = new ArrayList<>();
+        final List<LineSegmentType> lineSegmentTypes = new ArrayList<>();
         for (LineSegmentDefinition segment : def.getShape()) {
             vertices.add(segment.getStart());
             vertices.add(segment.getEnd());
-            types.add(segment.getType());
+            lineSegmentTypes.add(segment.getType());
         }
 
         final Vector2D centerOfMass = def.getCenterOfMass();
+        final Vector2D ballPos = def.getBallPos();
+        final double ballRadius = def.getBallRadius();
         final RectangularRegion camera = def.getCamera();
-        return new LevelBlueprint(vertices, types, centerOfMass, camera);
+        return new LevelBlueprint(vertices, lineSegmentTypes, centerOfMass, ballPos, ballRadius, camera);
     }
 
     public Set<Vector2D> getAllVertices() {
@@ -111,6 +117,14 @@ public class LevelBlueprint
 
     public void setCamera(final RectangularRegion camera) {
         this.camera = camera.copy();
+    }
+
+    public Vector2D getBallPos() {
+        return ballPos.copy();
+    }
+
+    public double getBallRadius() {
+        return ballRadius;
     }
 
     public boolean hasIncompleteLineSegment() {

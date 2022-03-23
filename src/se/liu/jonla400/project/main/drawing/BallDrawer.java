@@ -1,20 +1,35 @@
 package se.liu.jonla400.project.main.drawing;
 
-import se.liu.jonla400.project.constants.Constants;
-
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 
-public class BallDrawer implements Drawer
+public class BallDrawer
 {
-    @Override public void draw(final Graphics2D g) {
-        final double radius = Constants.getBallRadius();
-        final double diameter = 2 * radius;
-        final Shape shape = new Ellipse2D.Double(-radius, -radius, diameter, diameter);
-        g.setColor(Constants.getBallFillColor());
-        g.fill(shape);
-        g.setColor(Constants.getBallStrokeColor());
-        g.setStroke(new BasicStroke(Constants.getDefaultStrokeWidth()));
-        g.draw(shape);
+    private CircleDrawer circleDrawer;
+    private CrossDrawer crossDrawer;
+
+    private BallDrawer(final CircleDrawer circleDrawer, final CrossDrawer crossDrawer) {
+        this.circleDrawer = circleDrawer;
+        this.crossDrawer = crossDrawer;
+    }
+
+    public static BallDrawer createDefault() {
+        final Color fillColor = Color.RED;
+        final Color strokeColor = Color.BLACK;
+        final float strokeWidth = 0.1f;
+        final CircleDrawer circleDrawer = CircleDrawer.create(fillColor, strokeColor, strokeWidth);
+
+        final float crossStrokeWidth = 0.03f;
+        final CrossDrawer crossDrawer = CrossDrawer.create(Color.BLACK, crossStrokeWidth);
+
+        return new BallDrawer(circleDrawer, crossDrawer);
+    }
+
+    public Drawer setRadius(final double radius) {
+        return g -> draw(g, radius);
+    }
+
+    public void draw(final Graphics2D g, final double radius) {
+        circleDrawer.draw(g, radius);
+        crossDrawer.draw(g, 0.3 * radius);
     }
 }

@@ -1,6 +1,7 @@
 package se.liu.jonla400.project.main.levelcreation;
 
 import com.google.gson.JsonSyntaxException;
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.main.filehandling.LevelIO;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 import se.liu.jonla400.project.main.world.WorldGUI;
@@ -13,14 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class LevelCreatorRunner
+public class CreatorRunner
 {
-    public static void main(String[] args) {
+    public static void run(final DrawConfiguration drawConfig) {
 	final LevelFile levelFile = askUserForLevelFile();
 	final Path path = levelFile.path;
 	final LevelDefinition levelDef = levelFile.levelDef;
 
-	final CreateAndPlaytestWorld createAndPlaytestWorld = CreateAndPlaytestWorld.createFromLevelDef(levelDef);
+	final CreateAndPlaytestWorld createAndPlaytestWorld = CreateAndPlaytestWorld.createFromLevelDef(levelDef, drawConfig);
 	final WorldGUI gui = WorldGUI.createFor(createAndPlaytestWorld);
 	gui.addKeyListener(new KeyAdapter()
 	{

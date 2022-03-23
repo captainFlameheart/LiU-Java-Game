@@ -27,6 +27,10 @@ public class LineSegmentDefinition implements ClosestPointFinder
 	return new LineSegmentDefinition(start.copy(), end.copy(), type);
     }
 
+    public static LineSegmentDefinition createFromCollidableSegment(final LineSegment<LineSegmentType> collidableSegment) {
+	return new LineSegmentDefinition(collidableSegment.getStart(), collidableSegment.getEnd(), collidableSegment.getUserData());
+    }
+
     public Vector2D getStart() {
 	return start.copy();
     }

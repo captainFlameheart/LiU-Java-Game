@@ -16,10 +16,6 @@ public class DrawerList implements Drawer
 	return new DrawerList(Arrays.asList(drawers));
     }
 
-    public void add(final Drawer drawer) {
-	drawers.add(drawer);
-    }
-
     @Override public void draw(final Graphics2D g) {
 	drawers.forEach(d -> d.draw(g));
     }

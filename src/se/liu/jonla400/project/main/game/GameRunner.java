@@ -1,6 +1,7 @@
 package se.liu.jonla400.project.main.game;
 
 import com.google.gson.JsonSyntaxException;
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.main.filehandling.LevelIO;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 import se.liu.jonla400.project.main.world.WorldGUI;
@@ -16,9 +17,9 @@ import java.util.stream.Collectors;
 
 public class GameRunner
 {
-    public static void main(String[] args) {
+    public static void run(final DrawConfiguration drawConfig) {
 	final List<LevelDefinition> levelDefinitions = getAtleastOneLevelOrElseQuit();
-	final GameWorld gameWorld = GameWorld.createAndStartWithFirstLevel(levelDefinitions);
+	final GameWorld gameWorld = GameWorld.createAndStartWithFirstLevel(drawConfig, levelDefinitions);
 	final WorldGUI gui = WorldGUI.createFor(gameWorld);
 	gui.start();
     }
@@ -56,7 +57,7 @@ public class GameRunner
     }
 
     private static List<Path> getLevelPaths() {
-	final String[] names = {"level0.txt", "level1.txt", "level2.txt", "level3.txt", "level4.txt"};
+	final String[] names = {"foo.txt", "level1.txt", "level2.txt", "level3.txt", "level4.txt", "level5.txt", "level6.txt", "level7.txt", "level8.txt", "level9.txt"};
 	final String homeDir = System.getProperty("user.home");
 	return Arrays.stream(names).map(name -> Paths.get(homeDir, name)).collect(Collectors.toList());
     }

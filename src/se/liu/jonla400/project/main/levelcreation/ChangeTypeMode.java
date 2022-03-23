@@ -35,7 +35,7 @@ public class ChangeTypeMode extends AdaptingMode
             final Vector2D end = segment.getEnd();
             final double radius = 0.3;
             final double diameter = 2 * radius;
-            g.setColor(segment.getColor());
+            g.setColor(Color.BLACK);
             g.setStroke(new BasicStroke(0.1f));
             g.draw(new Ellipse2D.Double(start.getX() - radius, start.getY() - radius, diameter, diameter));
             g.draw(new Ellipse2D.Double(end.getX() - radius, end.getY() - radius, diameter, diameter));

@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.main.levelcreation;
 
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.event.KeyEvent;
@@ -7,8 +8,8 @@ import java.awt.event.MouseEvent;
 
 public class LevelCreatorBuilder
 {
-    public LevelCreator buildLevelCreator(final LevelBlueprint blueprint) {
-        final DrawableLevelBlueprint drawableBlueprint = new DrawableLevelBlueprint(blueprint);
+    public LevelCreator buildLevelCreator(final LevelBlueprint blueprint, final DrawConfiguration drawConfig) {
+        final DrawableLevelBlueprint drawableBlueprint = new DrawableLevelBlueprint(blueprint, drawConfig);
         final CommandTimeLine commandTimeLine = CommandTimeLine.createEmpty();
 
         final int cursorActionButton = MouseEvent.BUTTON1;
@@ -17,7 +18,7 @@ public class LevelCreatorBuilder
         final MoveVertexMode moveVertexMode = MoveVertexMode.createWithDefaultUnmarkKey();
         final RemoveLineSegmentMode removeLineSegmentMode = new RemoveLineSegmentMode();
         final ChangeTypeMode changeTypeMode = new ChangeTypeMode();
-        final SetCenterOfMassMode setCenterOfMassMode = new SetCenterOfMassMode();
+        final SetCenterOfMassMode setCenterOfMassMode = SetCenterOfMassMode.createWithDefaultDrawing();
         final SetCameraMode setCameraMode = SetCameraMode.createWithDefaultUnmarkKey();
 
         final Mode currentMode = addVertexMode;

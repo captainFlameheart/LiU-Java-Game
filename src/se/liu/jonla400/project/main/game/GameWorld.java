@@ -1,5 +1,6 @@
 package se.liu.jonla400.project.main.game;
 
+import se.liu.jonla400.project.main.drawing.DrawConfiguration;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 import se.liu.jonla400.project.main.world.FilmedWorld;
@@ -15,24 +16,31 @@ import java.util.List;
 
 public class GameWorld implements FilmedWorld, LevelListener
 {
+    private DrawConfiguration drawConfig;
     private List<LevelDefinition> levelDefinitions;
     private int currentLevelIndex;
     private WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera;
+    private int restartKeyCode;
 
-    private GameWorld(final List<LevelDefinition> levelDefinitions, final int currentLevelIndex,
-		      final WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera) {
+    public GameWorld(final DrawConfiguration drawConfig, final List<LevelDefinition> levelDefinitions, final int currentLevelIndex,
+		     final WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera, final int restartKeyCode)
+    {
+	this.drawConfig = drawConfig;
 	this.levelDefinitions = levelDefinitions;
 	this.currentLevelIndex = currentLevelIndex;
 	this.currentLevelWithMovableCamera = currentLevelWithMovableCamera;
+	this.restartKeyCode = restartKeyCode;
     }
 
-    public static GameWorld createAndStartWithFirstLevel(final List<LevelDefinition> levelDefinitions) {
+    public static GameWorld createAndStartWithFirstLevel(final DrawConfiguration drawConfig, final List<LevelDefinition> levelDefinitions) {
 	if (levelDefinitions.isEmpty()) {
 	    throw new IllegalArgumentException("No levels");
 	}
 
 	final int currentLevelIndex = 0;
-	final GameWorld gameWorld = new GameWorld(new ArrayList<>(levelDefinitions), currentLevelIndex, null);
+	final int restartKeyCode = KeyEvent.VK_ENTER;
+	final GameWorld gameWorld = new GameWorld(
+		drawConfig, new ArrayList<>(levelDefinitions), currentLevelIndex, null, restartKeyCode);
 	gameWorld.startCurrentLevel();
 	return gameWorld;
     }
@@ -58,7 +66,11 @@ public class GameWorld implements FilmedWorld, LevelListener
     }
 
     @Override public void keyPressed(final KeyEvent keyEvent) {
-	currentLevelWithMovableCamera.keyPressed(keyEvent);
+	if (keyEvent.getKeyCode() == restartKeyCode) {
+	    startCurrentLevel();
+	} else {
+	    currentLevelWithMovableCamera.keyPressed(keyEvent);
+	}
     }
 
     @Override public void keyReleased(final KeyEvent keyEvent) {
@@ -87,7 +99,7 @@ public class GameWorld implements FilmedWorld, LevelListener
 
     private void startCurrentLevel() {
 	final LevelDefinition currentLevelDef = levelDefinitions.get(currentLevelIndex);
-	final LevelWorld currentLevelWorld = LevelWorld.createFromDef(currentLevelDef);
+	final LevelWorld currentLevelWorld = LevelWorld.create(currentLevelDef, drawConfig);
 	final RectangularRegion camera = currentLevelDef.getCamera();
 
 	currentLevelWithMovableCamera = WorldWithMovableCamera.create(currentLevelWorld, camera);
