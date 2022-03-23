@@ -4,7 +4,6 @@ import se.liu.jonla400.project.main.levelcreation.IndexedLineSegment;
 import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import se.liu.jonla400.project.main.levelcreation.commands.Command;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
-import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
@@ -32,7 +31,7 @@ public class ChangeTypeMode extends AdaptingMode
         return orderedTypes.get(newIndex);
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
         levelCreator.getClosestLineSegmentToCursor().ifPresent(segment -> {
             final Vector2D start = segment.getStart();
             final Vector2D end = segment.getEnd();

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Matrix22
 {
-    public final static int DIMENSION = 2;
+    private final static int DIMENSION = 2;
 
     private double[][] values;
 

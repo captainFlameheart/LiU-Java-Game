@@ -17,13 +17,8 @@ public class OffsetBodyPointPair
 	return bodyPointA.getVel().subtract(bodyPointB.getVel());
     }
 
-    public Matrix22 getInvMass() {
-	return bodyPointA.getInvMass().add(bodyPointB.getInvMass());
-    }
-
-    public void applyImpulse(final Vector2D dir, final double impulse) {
-	bodyPointA.applyImpulse(dir.multiply(impulse));
-	bodyPointB.applyImpulse(dir.multiply(-impulse));
+    public Matrix22 getInvertedMass() {
+	return bodyPointA.getInvertedMass().add(bodyPointB.getInvertedMass());
     }
 
     public void applyImpulse(final Vector2D impulse) {

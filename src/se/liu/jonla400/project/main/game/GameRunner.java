@@ -8,60 +8,48 @@ import se.liu.jonla400.project.main.world.WorldGUI;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameRunner
 {
-    private final static String[] LEVEL_RESOURCE_NAMES;
-
-    static {
-	final String[] levelNames = {
-		"level0", "level1", "level2", "level3", "level4", "level5", "level6", "level7", "level8", "level9"
-	};
-	LEVEL_RESOURCE_NAMES = new String[levelNames.length];
-	for (int i = 0; i < levelNames.length; i++) {
-	    LEVEL_RESOURCE_NAMES[i] = "levels/" + levelNames[i] + ".json";
-	}
-    }
-
     public static void run(final DrawConfiguration drawConfig) {
-	final List<LevelDefinition> levelDefinitions = getAtleastOneLevelOrElseQuit();
+	final List<LevelDefinition> levelDefinitions = getLevelsOrElseQuit();
 	final GameWorld gameWorld = GameWorld.createAndStartWithFirstLevel(drawConfig, levelDefinitions);
 	final WorldGUI gui = WorldGUI.createFor(gameWorld);
 	gui.start();
     }
 
-    private static List<LevelDefinition> getAtleastOneLevelOrElseQuit() {
-	final Path levelListPath = Paths.get("temp.txt");
-	do {
-	    final List<LevelDefinition> levelDefs = getLevelsOrElseQuit(levelListPath);
-	    if (!levelDefs.isEmpty()) {
-		return levelDefs;
-	    }
-	    verifyWishToRetryOrElseQuit("No levels exist in " + levelListPath, "No levels");
-	} while (true);
-    }
-
-    private static List<LevelDefinition> getLevelsOrElseQuit(final Path levelListPath) {
+    private static List<LevelDefinition> getLevelsOrElseQuit() {
 	final List<LevelDefinition> levels = new ArrayList<>();
 
-	for (String levelResourceName : LEVEL_RESOURCE_NAMES) {
+	for (String levelResourceName : getLevelResourceNames()) {
 	    boolean levelLoaded = false;
 	    while (!levelLoaded) {
 		try {
 		    levels.add(LevelIO.loadLevelFromResource(levelResourceName));
 		    levelLoaded = true;
-		} catch (IOException ignored) {
+		} catch (IOException e) {
+		    e.printStackTrace();
 		    verifyWishToRetryOrElseQuit("The level " + levelResourceName + " could not be read!", "Failed to read level");
-		} catch (JsonSyntaxException ignored) {
+		} catch (JsonSyntaxException e) {
+		    e.printStackTrace();
 		    verifyWishToRetryOrElseQuit("The level " + levelResourceName + " contains invalid syntax!", "Invalid syntax");
 		}
 	    }
 	}
 	return levels;
+    }
+
+    private static String[] getLevelResourceNames() {
+	final String[] levelNames = {
+		"level0", "level1", "level2", "level3", "level4", "level5", "level6", "level7", "level8", "level9"
+	};
+	final String[] levelResourceNames = new String[levelNames.length];
+	for (int i = 0; i < levelNames.length; i++) {
+	    levelResourceNames[i] = "levels/" + levelNames[i] + ".json";
+	}
+	return levelResourceNames;
     }
 
     private static void verifyWishToRetryOrElseQuit(final String message, final String title) {

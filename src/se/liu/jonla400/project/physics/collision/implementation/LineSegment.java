@@ -37,7 +37,7 @@ public class LineSegment<T> implements ClosestPointFinder
 	    throw new IllegalArgumentException("The start and end points are the same: " + start);
 	}
 	final Vector2D tangent = startToEnd.normalize();
-	final Vector2D normal = tangent.rotate90Degrees(Vector2D.RotationDirection.X_TO_Y);
+	final Vector2D normal = tangent.rotate90Degrees();
 
 	final double normalPos = normal.dot(start);
 	final double tangentStart = tangent.dot(start);

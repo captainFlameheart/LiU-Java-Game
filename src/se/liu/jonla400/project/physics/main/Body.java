@@ -13,22 +13,6 @@ public class Body
     private double angularVel;
     private double angularMass;
 
-    /**
-     * Creates a point mass with default values. These default values are
-     * left unspecified in order to minimize the risk of external code being
-     * dependent on the default values since the values can change at a later time.
-     * To control the values, use the setter-methods after creating this point mass.
-     */
-    private Body() {
-	pos = Vector2D.createZero();
-	vel = Vector2D.createZero();
-	mass = 1;
-
-	angle = 0;
-	angularVel = 0;
-	angularMass = 1;
-    }
-
     private Body(final Vector2D pos, final Vector2D vel, final double mass, final double angle, final double angularVel,
 		final double angularMass)
     {
@@ -59,7 +43,7 @@ public class Body
      * @param pos The position to copy
      */
     public void setPos(final Vector2D pos) {
-	this.pos = pos.copy();
+	this.pos.set(pos);
     }
 
     /**
@@ -77,7 +61,7 @@ public class Body
      * @param vel The velocity to copy
      */
     public void setVel(final Vector2D vel) {
-	this.vel = vel.copy();
+	this.vel.set(vel.copy());
     }
 
     /**
@@ -87,18 +71,6 @@ public class Body
      */
     public double getMass() {
 	return mass;
-    }
-
-    /**
-     * Sets the mass
-     *
-     * @param mass The mass
-     */
-    public void setMass(final double mass) {
-	if (mass <= 0) {
-	    throw new IllegalArgumentException("Non-positive mass: " + mass);
-	}
-	this.mass = mass;
     }
 
     /**
@@ -116,6 +88,7 @@ public class Body
      * @param angle The angle
      */
     public void setAngle(final double angle) {
+	// This method is likely used in the future
 	this.angle = angle;
     }
 
@@ -135,6 +108,7 @@ public class Body
      * @param angularVel The angular velocity
      */
     public void setAngularVel(final double angularVel) {
+	// This method is likely used in the future
 	this.angularVel = angularVel;
     }
 
@@ -148,29 +122,17 @@ public class Body
     }
 
     /**
-     * Set the angular mass
-     *
-     * @param angularMass The angular mass
-     */
-    public void setAngularMass(final double angularMass) {
-	if (angularMass <= 0) {
-	    throw new IllegalArgumentException("Non-positive angular mass: " + angularMass);
-	}
-	this.angularMass = angularMass;
-    }
-
-    /**
      * Converts a point in the local space of this point mass into an offset
      * from the point mass's position.
      *
      * The local space of a point mass has its origin at the point mass's position
      * and has the same angle as the point mass.
      *
-     * @param localPoint The point in local space
+     * @param localVector The point in local space
      * @return The offset from the position of this point mass
      */
-    public Vector2D convertLocalToGlobalVector(final Vector2D localPoint) {
-	return localPoint.rotate(angle);
+    public Vector2D convertLocalToGlobalVector(final Vector2D localVector) {
+	return localVector.rotate(angle);
     }
 
     /**
@@ -214,11 +176,11 @@ public class Body
      * The local space of a point mass has its origin at the point mass's position
      * and has the same angle as the point mass.
      *
-     * @param offset The offset from the position of this point mass
+     * @param globalVector The offset from the position of this point mass
      * @return The point in local space
      */
-    public Vector2D convertOffsetToLocalPoint(final Vector2D offset) {
-	return offset.rotate(-angle);
+    public Vector2D convertGlobalToLocalVector(final Vector2D globalVector) {
+	return globalVector.rotate(-angle);
     }
 
     /**
@@ -232,7 +194,7 @@ public class Body
      */
     public Vector2D convertGlobalToLocalPoint(final Vector2D globalPoint) {
 	final Vector2D offset = convertGlobalPointToOffset(globalPoint);
-	return convertOffsetToLocalPoint(offset);
+	return convertGlobalToLocalVector(offset);
     }
 
     /**
@@ -282,19 +244,18 @@ public class Body
      * @param offset The offset from the position of this point mass
      * @return The inverse of the mass at the offset
      */
-    public Matrix22 getInvMassAt(final Vector2D offset) {
+    public Matrix22 getInvertedMassAt(final Vector2D offset) {
 	// See derivation in report
-
-	final double invMass = 1 / mass;
-	final double invAngularMass = 1 / angularMass;
+	final double invertedMass = 1 / mass;
+	final double invertedAngularMass = 1 / angularMass;
 
 	final double offsetX = offset.getX();
 	final double offsetY = offset.getY();
 
-	final double commonValue = -offsetX * offsetY * invAngularMass;
+	final double commonValue = -offsetX * offsetY * invertedAngularMass;
 	return Matrix22.create(
-		invMass + offsetY * offsetY * invAngularMass, commonValue,
-		commonValue, invMass + offsetX * offsetX * invAngularMass
+		invertedMass + offsetY * offsetY * invertedAngularMass, commonValue,
+		commonValue, invertedMass + offsetX * offsetX * invertedAngularMass
 	);
     }
 

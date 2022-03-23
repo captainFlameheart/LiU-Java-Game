@@ -3,7 +3,6 @@ package se.liu.jonla400.project.main.levelcreation.modes;
 import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import se.liu.jonla400.project.main.levelcreation.commands.ReversedCommand;
 import se.liu.jonla400.project.main.levelcreation.commands.Command;
-import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.ClosestPointFinder;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -23,16 +22,16 @@ public class AddVertexMode extends AdaptingMode
     private boolean magnetized;
     private int magnetizedKeyCode;
 
-    private int removeInclompleteKeyCode;
+    private int removeIncompleteKeyCode;
 
     private AddVertexMode(final boolean chainsLineSegments, final int chainsLineSegmentsKeyCode, final boolean magnetized,
-			 final int magnetizedKeyCode, final int removeInclompleteKeyCode)
+			 final int magnetizedKeyCode, final int removeIncompleteKeyCode)
     {
 	this.chainsLineSegments = chainsLineSegments;
 	this.chainsLineSegmentsKeyCode = chainsLineSegmentsKeyCode;
 	this.magnetized = magnetized;
 	this.magnetizedKeyCode = magnetizedKeyCode;
-	this.removeInclompleteKeyCode = removeInclompleteKeyCode;
+	this.removeIncompleteKeyCode = removeIncompleteKeyCode;
     }
 
     public static AddVertexMode createWithDefaultConfigAndKeys() {
@@ -42,22 +41,6 @@ public class AddVertexMode extends AdaptingMode
 	final int magnetizedKeyCode = KeyEvent.VK_SHIFT;
 	final int removeIncompleteKeyCode = KeyEvent.VK_ESCAPE;
 	return new AddVertexMode(chainsLineSegments, chainsLineSegmentsKeyCode, magnetized, magnetizedKeyCode, removeIncompleteKeyCode);
-    }
-
-    public boolean chainsLineSegments() {
-	return chainsLineSegments;
-    }
-
-    public void setChainsLineSegments(final boolean chainsLineSegments) {
-	this.chainsLineSegments = chainsLineSegments;
-    }
-
-    public boolean isMagnetized() {
-	return magnetized;
-    }
-
-    public void setMagnetized(final boolean magnetized) {
-	this.magnetized = magnetized;
     }
 
     @Override public void cursorPressed(final LevelCreator levelCreator) {
@@ -72,11 +55,20 @@ public class AddVertexMode extends AdaptingMode
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
 	final int keyCode = keyEvent.getKeyCode();
 	if (keyCode == chainsLineSegmentsKeyCode) {
-	    chainsLineSegments = !chainsLineSegments;
+	    toggleChainsLineSegments(levelCreator);
 	} else if (keyCode == magnetizedKeyCode) {
 	    magnetized = true;
-	} else if (keyCode == removeInclompleteKeyCode) {
+	} else if (keyCode == removeIncompleteKeyCode) {
 	    removeIncompleteLineSegment(levelCreator);
+	}
+    }
+
+    private void toggleChainsLineSegments(final LevelCreator levelCreator) {
+	if (chainsLineSegments) {
+	    removeIncompleteLineSegment(levelCreator);
+	    chainsLineSegments = false;
+	} else {
+	    chainsLineSegments = true;
 	}
     }
 
@@ -93,7 +85,7 @@ public class AddVertexMode extends AdaptingMode
 	});
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
 	final Vector2D upcomingVertex = getUpcomingVertex(levelCreator);
 
 	final double radius = 0.2;

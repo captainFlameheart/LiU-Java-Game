@@ -22,8 +22,8 @@ public class OffsetBodyPoint
 	return body.getVelAt(offset);
     }
 
-    public Matrix22 getInvMass() {
-	return body.getInvMassAt(offset);
+    public Matrix22 getInvertedMass() {
+	return body.getInvertedMassAt(offset);
     }
 
     public void applyImpulse(final Vector2D impulse) {

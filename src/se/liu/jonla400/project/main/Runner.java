@@ -13,20 +13,26 @@ import java.awt.*;
 
 public class Runner
 {
-    private final static boolean IN_DEV_MODE = false;
+    private final static boolean IN_DEV_MODE = true;
 
     public static void main(String[] args) {
 	final DrawConfiguration drawConfig = createDrawConfig();
 
 	if (IN_DEV_MODE) {
-	    final Object[] options = { "Play", "Create" };
+	    final Object[] options = new Object[2];
+	    final int playOptionIndex = 0;
+	    final int createOptionIndex = 1;
+
+	    options[playOptionIndex] = "Play";
+	    options[createOptionIndex] = "Create";
+
 	    final int chosenOption = JOptionPane.showOptionDialog(
 		    null, "Do you want to play or create?", "Startup choice", JOptionPane.YES_NO_OPTION,
-		    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		    JOptionPane.QUESTION_MESSAGE, null, options, options[playOptionIndex]);
 
 	    switch (chosenOption) {
-		case 0 -> GameRunner.run(drawConfig);
-		case 1 -> CreatorRunner.run(drawConfig);
+		case playOptionIndex -> GameRunner.run(drawConfig);
+		case createOptionIndex -> CreatorRunner.run(drawConfig);
 		default -> System.exit(0);
 	    }
 	} else {
@@ -37,7 +43,11 @@ public class Runner
     public static DrawConfiguration createDrawConfig() {
 	final BallDrawer ballDrawer = BallDrawer.createDefault();
 	final LineSegmentDrawer lineSegmentDrawer = LineSegmentDrawer.createDefault();
-	final Drawer centerOfMassDrawer = CrossDrawer.create(Color.GREEN, 0.1f).setRadius(1);
+
+	final float centerOfMassStrokeWidth = 0.1f;
+	final float centerOfMassRadius = 1;
+	final Drawer centerOfMassDrawer = CrossDrawer.create(Color.GREEN, centerOfMassStrokeWidth).setRadius(centerOfMassRadius);
+
 	return new DrawConfiguration(ballDrawer, lineSegmentDrawer, centerOfMassDrawer);
     }
 }

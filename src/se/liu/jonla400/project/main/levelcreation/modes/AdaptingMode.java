@@ -1,7 +1,6 @@
 package se.liu.jonla400.project.main.levelcreation.modes;
 
 import se.liu.jonla400.project.main.levelcreation.LevelCreator;
-import se.liu.jonla400.project.math.RectangularRegion;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,5 +15,5 @@ public class AdaptingMode implements Mode
 
     @Override public void cursorReleased(final LevelCreator levelCreator) {}
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {}
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {}
 }

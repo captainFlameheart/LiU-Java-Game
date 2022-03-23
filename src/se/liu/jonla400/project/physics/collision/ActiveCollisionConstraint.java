@@ -12,9 +12,6 @@ import se.liu.jonla400.project.physics.constraint.OffsetBodyPointPair;
  */
 public class ActiveCollisionConstraint implements ActiveVelocityConstraint
 {
-    // Can only push the points in contact along the normal, not pull them
-    private final static Interval NORMAL_IMPULSE_RANGE = new Interval(0, Double.POSITIVE_INFINITY);
-
     private OffsetBodyPointPair contactPoints;
 
     private Vector2D normal;
@@ -46,20 +43,20 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
 
     public static ActiveCollisionConstraint createFromCollisionData(
             final CollisionData<?> collisionData, final double deltaTime,
-            final double penetrationTolerence, final double penetrationCorrectionFraction)
+            final double penetrationTolerance, final double penetrationCorrectionFraction)
     {
         final OffsetBodyPointPair contactPoints = collisionData.getContactPoints();
         final Vector2D normal = collisionData.getNormal();
-        final Vector2D tangent = normal.rotate90Degrees(Vector2D.RotationDirection.Y_TO_X); // Temp
+        final Vector2D tangent = normal.rotate90Degrees();
 
         final double targetNormalVel = getTargetNormalVel(
-                contactPoints, normal, collisionData.getPenetration(), penetrationTolerence, penetrationCorrectionFraction,
+                contactPoints, normal, collisionData.getPenetration(), penetrationTolerance, penetrationCorrectionFraction,
                 collisionData.getBounceCoefficient(), deltaTime
         );
 
-        final Matrix22 invMass = contactPoints.getInvMass();
-        final double normalMass = projectMassAlongDirection(invMass, normal);
-        final double tangentMass = projectMassAlongDirection(invMass, tangent);
+        final Matrix22 invertedMass = contactPoints.getInvertedMass();
+        final double normalMass = projectMassAlongDirection(invertedMass, normal);
+        final double tangentMass = projectMassAlongDirection(invertedMass, tangent);
 
         final ActiveImpulse1D normalImpulse = new ActiveImpulse1D();
         final ActiveImpulse1D tangentImpulse = new ActiveImpulse1D();
@@ -71,24 +68,24 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
 
     private static double getTargetNormalVel(
             final OffsetBodyPointPair contactPoints, final Vector2D normal,
-            final double penetration, final double penetrationTolerence, final double penetrationCorrectionFraction,
+            final double penetration, final double penetrationTolerance, final double penetrationCorrectionFraction,
             final double bounceCoefficient, final double deltaTime)
     {
         final double penetrationCorrectionVel =
-                getPenetrationCorrectionVel(penetration, penetrationTolerence, penetrationCorrectionFraction, deltaTime);
+                getPenetrationCorrectionVel(penetration, penetrationTolerance, penetrationCorrectionFraction, deltaTime);
         final double bounceVel = getBounceVel(contactPoints, normal, bounceCoefficient);
         return Math.max(penetrationCorrectionVel, bounceVel);
     }
 
     private static double getPenetrationCorrectionVel(
-            final double penetration, final double penetrationTolerence, final double penetrationCorrectionFraction,
+            final double penetration, final double penetrationTolerance, final double penetrationCorrectionFraction,
             final double deltaTime)
     {
-        final double untoleratedPenetration = penetration - penetrationTolerence;
-        if (untoleratedPenetration <= 0) {
+        final double penetrationError = penetration - penetrationTolerance;
+        if (penetrationError <= 0) {
             return 0;
         }
-        final double penetrationCorrection = penetrationCorrectionFraction * untoleratedPenetration;
+        final double penetrationCorrection = penetrationCorrectionFraction * penetrationError;
         return penetrationCorrection / deltaTime;
     }
 
@@ -100,7 +97,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
         return -bounceCoefficient * initNormalVel;
     }
 
-    private static double projectMassAlongDirection(final Matrix22 invMass, final Vector2D dir) {
+    private static double projectMassAlongDirection(final Matrix22 invertedMass, final Vector2D dir) {
         // See derivation in report
         final double dirX = dir.getX();
         final double dirY = dir.getY();
@@ -110,8 +107,8 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
                 commonWeight, dirY * dirY
         );
 
-        final double invProjectedMass = invMass.getWeightedSum(weights);
-        return 1 / invProjectedMass;
+        final double invertedProjectedMass = invertedMass.getWeightedSum(weights);
+        return 1 / invertedProjectedMass;
     }
 
     /**
@@ -124,8 +121,10 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     }
 
     private void updateNormalImpulse() {
+        final Interval normalImpulseRange = new Interval(0, Double.POSITIVE_INFINITY);
+
         final double targetDeltaNormalVel = targetNormalVel - getVelAlong(normal);
-        final double deltaNormalImpulse = normalImpulse.update(targetDeltaNormalVel, normalMass, NORMAL_IMPULSE_RANGE);
+        final double deltaNormalImpulse = normalImpulse.update(targetDeltaNormalVel, normalMass, normalImpulseRange);
         applyImpulse(normal, deltaNormalImpulse);
     }
 

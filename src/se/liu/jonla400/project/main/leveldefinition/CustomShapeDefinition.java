@@ -32,11 +32,11 @@ public class CustomShapeDefinition implements Iterable<LineSegmentDefinition>
     }
 
     public boolean isInvalid() {
-        return lineSegmentDefinitions == null || lineSegmentDefinitions.stream().anyMatch(this::lineSegmentDefIsInvalid);
+        return lineSegmentDefinitions == null || lineSegmentDefinitions.stream().anyMatch(this::isLineSegmentDefinitionInvalid);
     }
 
-    private boolean lineSegmentDefIsInvalid(final LineSegmentDefinition segmentDef) {
-        return segmentDef == null || segmentDef.isInvalid();
+    private boolean isLineSegmentDefinitionInvalid(final LineSegmentDefinition segmentDefinition) {
+        return segmentDefinition == null || segmentDefinition.isInvalid();
     }
 
     @NotNull @Override public Iterator<LineSegmentDefinition> iterator() {

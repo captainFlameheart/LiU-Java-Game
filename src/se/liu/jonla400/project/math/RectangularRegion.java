@@ -53,7 +53,7 @@ public class RectangularRegion
     }
 
     public static RectangularRegion createFromCenter(final Vector2D center, final Vector2D size) {
-        final Vector2D cornerPos = center.subtract(size.divide(2));
+        final Vector2D cornerPos = center.subtract(size.getHalf());
         return createFromCornerAndSize(cornerPos, size);
     }
 
@@ -94,7 +94,7 @@ public class RectangularRegion
     }
 
     public Vector2D getCenter() {
-        return bottomLeft.add(size.divide(2));
+        return bottomLeft.add(size.getHalf());
     }
 
     public void move(final Vector2D deltaPos) {

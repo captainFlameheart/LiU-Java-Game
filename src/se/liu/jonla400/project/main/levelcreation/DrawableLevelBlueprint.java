@@ -30,7 +30,7 @@ public class DrawableLevelBlueprint
         drawFullLineSegments(g);
         drawBall(g);
         drawCenterOfMass(g);
-        drawLevelCamera(g);
+        drawCamera(g);
     }
 
     private void drawBackground(final Graphics2D g, final RectangularRegion drawRegion) {
@@ -62,8 +62,9 @@ public class DrawableLevelBlueprint
         );
     }
 
-    private void drawLevelCamera(final Graphics2D g) {
-        final CameraDrawer cameraDrawer = CameraDrawer.createDashed(blueprint.getCamera(), Color.BLACK, 0.1f);
+    private void drawCamera(final Graphics2D g) {
+        final float strokeWidth = 0.1f;
+        final CameraDrawer cameraDrawer = CameraDrawer.createDashed(blueprint.getCamera(), Color.BLACK, strokeWidth);
         cameraDrawer.draw(g);
     }
 

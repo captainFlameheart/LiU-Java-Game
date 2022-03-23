@@ -14,52 +14,52 @@ import java.util.Optional;
 
 public class SetCameraMode extends AdaptingMode
 {
-    private Optional<Vector2D> markedStart;
-    private int unmarkStartKeyCode;
+    private Optional<Vector2D> possibleStart;
+    private int deselectStartKeyCode;
 
-    private SetCameraMode(final Optional<Vector2D> markedStart, final int unmarkStartKeyCode) {
-	this.markedStart = markedStart;
-	this.unmarkStartKeyCode = unmarkStartKeyCode;
+    private SetCameraMode(final Optional<Vector2D> possibleStart, final int deselectStartKeyCode) {
+	this.possibleStart = possibleStart;
+	this.deselectStartKeyCode = deselectStartKeyCode;
     }
 
-    public static SetCameraMode createWithDefaultUnmarkKey() {
+    public static SetCameraMode createWithDefaultDeselectKey() {
 	return new SetCameraMode(Optional.empty(), KeyEvent.VK_ESCAPE);
     }
 
     @Override public void cursorPressed(final LevelCreator levelCreator) {
-	if (markedStart.isEmpty()) {
-	    levelCreator.execute(new MarkStartCommand(levelCreator.getCursorPos()));
+	if (possibleStart.isEmpty()) {
+	    levelCreator.execute(new SelectStartCommand(levelCreator.getCursorPos()));
 	}
     }
 
     @Override public void cursorReleased(final LevelCreator levelCreator) {
-	markedStart.ifPresent(start -> {
+	possibleStart.ifPresent(start -> {
 	    final Vector2D cursorPos = levelCreator.getCursorPos();
-	    final Command unmarkStartCommand = getUnmarkStartCommand(start);
+	    final Command deselectStartCommand = createDeselectStartCommand(start);
 	    final Command command;
 	    if (start.equals(cursorPos)) {
-		command = unmarkStartCommand;
+		command = deselectStartCommand;
 	    } else {
 		final RectangularRegion newCamera = RectangularRegion.createFromCorners(start, cursorPos);
 		final Command setCameraCommand = SetCameraCommand.createFromCurrent(levelCreator, newCamera);
-		command = CombinedCommand.create(setCameraCommand, unmarkStartCommand);
+		command = CombinedCommand.create(setCameraCommand, deselectStartCommand);
 	    }
 	    levelCreator.execute(command);
 	});
     }
 
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
-	if (keyEvent.getKeyCode() == unmarkStartKeyCode) {
-	    markedStart.ifPresent(start -> levelCreator.execute(getUnmarkStartCommand(start)));
+	if (keyEvent.getKeyCode() == deselectStartKeyCode) {
+	    possibleStart.ifPresent(start -> levelCreator.execute(createDeselectStartCommand(start)));
 	}
     }
 
-    private Command getUnmarkStartCommand(final Vector2D start) {
-	return new ReversedCommand(new MarkStartCommand(start));
+    private Command createDeselectStartCommand(final Vector2D start) {
+	return new ReversedCommand(new SelectStartCommand(start));
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
-	markedStart.ifPresent(start -> drawUpcomingCamera(g, RectangularRegion.createFromCorners(start, levelCreator.getCursorPos())));
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
+	possibleStart.ifPresent(start -> drawUpcomingCamera(g, RectangularRegion.createFromCorners(start, levelCreator.getCursorPos())));
     }
 
     private void drawUpcomingCamera(final Graphics2D g, final RectangularRegion upcomingCamera) {
@@ -69,20 +69,20 @@ public class SetCameraMode extends AdaptingMode
 	cameraDrawer.draw(g);
     }
 
-    private class MarkStartCommand implements Command
+    private class SelectStartCommand implements Command
     {
 	private Vector2D pos;
 
-	private MarkStartCommand(final Vector2D pos) {
+	private SelectStartCommand(final Vector2D pos) {
 	    this.pos = pos;
 	}
 
 	@Override public void execute(final LevelCreator levelCreator) {
-	    markedStart = Optional.of(pos);
+	    possibleStart = Optional.of(pos);
 	}
 
 	@Override public void undo(final LevelCreator levelCreator) {
-	    markedStart = Optional.empty();
+	    possibleStart = Optional.empty();
 	}
     }
 

@@ -13,32 +13,32 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public class CreateAndPlaytestWorld implements FilmedWorld
+public class CreateAndTestWorld implements FilmedWorld
 {
     private WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera;
     private FilmedWorld currentWorld;
-    private int togglePlaytestingKeyCode;
+    private int toggleTestingKeyCode;
 
-    private CreateAndPlaytestWorld(final WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera, final FilmedWorld currentWorld,
-				   final int togglePlaytestingKeyCode)
+    private CreateAndTestWorld(final WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera, final FilmedWorld currentWorld,
+			       final int toggleTestingKeyCode)
     {
 	this.levelCreatorWithMovableCamera = levelCreatorWithMovableCamera;
 	this.currentWorld = currentWorld;
-	this.togglePlaytestingKeyCode = togglePlaytestingKeyCode;
+	this.toggleTestingKeyCode = toggleTestingKeyCode;
     }
 
-    public static CreateAndPlaytestWorld createFromLevelDef(final LevelDefinition levelDef, final DrawConfiguration drawConfig) {
-	final LevelBlueprint blueprint = LevelBlueprint.createFromDefinition(levelDef);
+    public static CreateAndTestWorld createFromLevelDefinition(final LevelDefinition levelDefinition, final DrawConfiguration drawConfig) {
+	final LevelBlueprint blueprint = LevelBlueprint.createFromDefinition(levelDefinition);
 	final LevelCreator levelCreator = new LevelCreatorBuilder().buildLevelCreator(blueprint, drawConfig);
 
-	final RectangularRegion camera = levelDef.getCamera();
+	final RectangularRegion camera = levelDefinition.getCamera();
 	final WorldWithMovableCamera<LevelCreator> levelCreatorWithMovableCamera = WorldWithMovableCamera.create(levelCreator, camera);
 
-	final int togglePlaytestingMouseButton = KeyEvent.VK_ENTER;
-	return new CreateAndPlaytestWorld(levelCreatorWithMovableCamera, levelCreatorWithMovableCamera, togglePlaytestingMouseButton);
+	final int toggleTestingKeyCode = KeyEvent.VK_ENTER;
+	return new CreateAndTestWorld(levelCreatorWithMovableCamera, levelCreatorWithMovableCamera, toggleTestingKeyCode);
     }
 
-    public LevelDefinition getLevelDef() {
+    public LevelDefinition getLevelDefinition() {
 	final LevelBlueprint levelBlueprint = getLevelCreator().getBlueprint();
 	return LevelDefinition.createFromBlueprint(levelBlueprint);
     }
@@ -65,17 +65,17 @@ public class CreateAndPlaytestWorld implements FilmedWorld
 
     @Override public void keyPressed(final KeyEvent keyEvent) {
 	currentWorld.keyPressed(keyEvent);
-	if (keyEvent.getKeyCode() == togglePlaytestingKeyCode) {
-	    togglePlaytesting();
+	if (keyEvent.getKeyCode() == toggleTestingKeyCode) {
+	    toggleTesting();
 	    currentWorld.keyPressed(keyEvent);
 	}
     }
 
-    private void togglePlaytesting() {
+    private void toggleTesting() {
 	if (currentWorld.equals(levelCreatorWithMovableCamera)) {
-	    final LevelDefinition levelDef = getLevelDef();
-	    final LevelWorld levelWorld = LevelWorld.create(levelDef, getDrawConfig());
-	    final RectangularRegion camera = levelDef.getCamera();
+	    final LevelDefinition levelDefinition = getLevelDefinition();
+	    final LevelWorld levelWorld = LevelWorld.create(levelDefinition, getDrawConfig());
+	    final RectangularRegion camera = levelDefinition.getCamera();
 	    currentWorld = WorldWithMovableCamera.create(levelWorld, camera);
 	} else {
 	    currentWorld = levelCreatorWithMovableCamera;

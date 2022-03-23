@@ -19,15 +19,15 @@ public class CreatorRunner
     public static void run(final DrawConfiguration drawConfig) {
 	final LevelFile levelFile = askUserForLevelFile();
 	final Path path = levelFile.path;
-	final LevelDefinition levelDef = levelFile.levelDef;
+	final LevelDefinition levelDefinition = levelFile.levelDefinition;
 
-	final CreateAndPlaytestWorld createAndPlaytestWorld = CreateAndPlaytestWorld.createFromLevelDef(levelDef, drawConfig);
+	final CreateAndTestWorld createAndPlaytestWorld = CreateAndTestWorld.createFromLevelDefinition(levelDefinition, drawConfig);
 	final WorldGUI gui = WorldGUI.createFor(createAndPlaytestWorld);
 	gui.addKeyListener(new KeyAdapter()
 	{
 	    @Override public void keyPressed(final KeyEvent e) {
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
-		    saveLevelOrMessageError(createAndPlaytestWorld.getLevelDef(), path);
+		    saveLevelOrMessageError(createAndPlaytestWorld.getLevelDefinition(), path);
 		}
 	    }
 	});
@@ -47,21 +47,24 @@ public class CreatorRunner
 		return new LevelFile(path, LevelDefinition.createEmpty());
 	    }
 	    try {
-		LevelDefinition levelDef = LevelIO.loadLevelFromFile(path);
-		return new LevelFile(path, levelDef);
-	    } catch (IOException ignored) {
+		LevelDefinition levelDefinition = LevelIO.loadLevelFromFile(path);
+		return new LevelFile(path, levelDefinition);
+	    } catch (IOException e) {
+		e.printStackTrace();
 		showErrorMessage("The file could not be read!", "File error");
-	    } catch (JsonSyntaxException ignored) {
+	    } catch (JsonSyntaxException e) {
+		e.printStackTrace();
 		showErrorMessage("The file containts invalid syntax!", "Syntax error");
 	    }
 	} while (true);
     }
 
-    private static void saveLevelOrMessageError(final LevelDefinition levelDef, final Path path) {
+    private static void saveLevelOrMessageError(final LevelDefinition levelDefinition, final Path path) {
 	try {
-	    LevelIO.saveLevelToFile(levelDef, path);
+	    LevelIO.saveLevelToFile(levelDefinition, path);
 	    System.out.println("Level saved at " + path);
-	} catch (IOException ignored) {
+	} catch (IOException e) {
+	    e.printStackTrace();
 	    showErrorMessage("Could not save the level at " + path, "Save error");
 	}
     }
@@ -73,11 +76,11 @@ public class CreatorRunner
     private static class LevelFile
     {
 	private Path path;
-	private LevelDefinition levelDef;
+	private LevelDefinition levelDefinition;
 
-	private LevelFile(final Path path, final LevelDefinition levelDef) {
+	private LevelFile(final Path path, final LevelDefinition levelDefinition) {
 	    this.path = path;
-	    this.levelDef = levelDef;
+	    this.levelDefinition = levelDefinition;
 	}
     }
 }

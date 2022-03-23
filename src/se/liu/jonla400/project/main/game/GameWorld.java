@@ -85,7 +85,7 @@ public class GameWorld implements FilmedWorld, LevelListener
 	currentLevelWithMovableCamera.draw(g, region);
     }
 
-    @Override public void levelCompleted() {
+    @Override public void onLevelCompleted() {
 	if (currentLevelIndex == levelDefinitions.size() - 1) {
 	    return;
 	}
@@ -93,14 +93,14 @@ public class GameWorld implements FilmedWorld, LevelListener
 	startCurrentLevel();
     }
 
-    @Override public void levelFailed() {
+    @Override public void onLevelFailed() {
 	startCurrentLevel();
     }
 
     private void startCurrentLevel() {
-	final LevelDefinition currentLevelDef = levelDefinitions.get(currentLevelIndex);
-	final LevelWorld currentLevelWorld = LevelWorld.create(currentLevelDef, drawConfig);
-	final RectangularRegion camera = currentLevelDef.getCamera();
+	final LevelDefinition currentLevelDefinition = levelDefinitions.get(currentLevelIndex);
+	final LevelWorld currentLevelWorld = LevelWorld.create(currentLevelDefinition, drawConfig);
+	final RectangularRegion camera = currentLevelDefinition.getCamera();
 
 	currentLevelWithMovableCamera = WorldWithMovableCamera.create(currentLevelWorld, camera);
 	currentLevelWorld.addListener(this);

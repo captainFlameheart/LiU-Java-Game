@@ -18,6 +18,8 @@ import java.util.Set;
 
 public class LevelBlueprint
 {
+    private final static int VERTICES_PER_SEGMENT = 2;
+
     private List<Vector2D> vertices;
     private List<LineSegmentType> lineSegmentTypes;
     private Vector2D centerOfMass;
@@ -36,19 +38,19 @@ public class LevelBlueprint
         this.camera = camera;
     }
 
-    public static LevelBlueprint createFromDefinition(final LevelDefinition def) {
+    public static LevelBlueprint createFromDefinition(final LevelDefinition definition) {
         final List<Vector2D> vertices = new ArrayList<>();
         final List<LineSegmentType> lineSegmentTypes = new ArrayList<>();
-        for (LineSegmentDefinition segment : def.getShape()) {
+        for (LineSegmentDefinition segment : definition.getShape()) {
             vertices.add(segment.getStart());
             vertices.add(segment.getEnd());
             lineSegmentTypes.add(segment.getType());
         }
 
-        final Vector2D centerOfMass = def.getCenterOfMass();
-        final Vector2D ballPos = def.getBallPos();
-        final double ballRadius = def.getBallRadius();
-        final RectangularRegion camera = def.getCamera();
+        final Vector2D centerOfMass = definition.getCenterOfMass();
+        final Vector2D ballPos = definition.getBallPos();
+        final double ballRadius = definition.getBallRadius();
+        final RectangularRegion camera = definition.getCamera();
         return new LevelBlueprint(vertices, lineSegmentTypes, centerOfMass, ballPos, ballRadius, camera);
     }
 
@@ -84,14 +86,14 @@ public class LevelBlueprint
 
     public void addLineSegment(final IndexedLineSegment segment) {
         final int segmentIndex = segment.getIndex();
-        final int startVertexIndex = 2 * segmentIndex;
+        final int startVertexIndex = VERTICES_PER_SEGMENT * segmentIndex;
         vertices.addAll(startVertexIndex, Arrays.asList(segment.getStart(), segment.getEnd()));
         lineSegmentTypes.add(segmentIndex, segment.getType());
     }
 
     public void removeLineSegment(final int segmentIndex) {
-        final int startVertexIndex = 2 * segmentIndex;
-        vertices.subList(startVertexIndex, startVertexIndex + 2).clear();
+        final int startVertexIndex = VERTICES_PER_SEGMENT * segmentIndex;
+        vertices.subList(startVertexIndex, startVertexIndex + VERTICES_PER_SEGMENT).clear();
         lineSegmentTypes.remove(segmentIndex);
     }
 
@@ -133,7 +135,7 @@ public class LevelBlueprint
 
     public Optional<Vector2D> getIncompleteLineSegmentStart() {
         final int vertexCount = vertices.size();
-        if (vertexCount % 2 == 0) {
+        if (vertexCount % VERTICES_PER_SEGMENT == 0) {
             return Optional.empty();
         }
         return Optional.of(vertices.get(vertexCount - 1).copy());
@@ -145,14 +147,14 @@ public class LevelBlueprint
             private int nextVertexIndex = 0;
 
             @Override public boolean hasNext() {
-                return nextVertexIndex < vertices.size() - 1;
+                return nextVertexIndex <= vertices.size() - VERTICES_PER_SEGMENT;
             }
 
             @Override public IndexedLineSegment next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException("No more line segments");
                 }
-                final int index = nextVertexIndex / 2;
+                final int index = nextVertexIndex / VERTICES_PER_SEGMENT;
                 final Vector2D start = getNextVertex();
                 final Vector2D end = getNextVertex();
                 final LineSegmentType type = lineSegmentTypes.get(index);

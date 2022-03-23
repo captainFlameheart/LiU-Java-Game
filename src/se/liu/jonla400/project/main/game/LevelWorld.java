@@ -46,28 +46,28 @@ public class LevelWorld extends AdaptingWorld
         this.levelEventSender = levelEventSender;
     }
 
-    public static LevelWorld create(final LevelDefinition def, final DrawConfiguration drawConfig) {
-        final Body levelBody = Body.create(def.getCenterOfMass(), 50, 50);
+    public static LevelWorld create(final LevelDefinition definition, final DrawConfiguration drawConfig) {
+        final Body levelBody = createLevelBodyAt(definition.getCenterOfMass());
         final Vector2D shapeTranslation = levelBody.getPos().negate();
-        final CustomShape<LineSegmentType> shape = def.getShape().convertToCollidableShape();
+        final CustomShape<LineSegmentType> shape = definition.getShape().convertToCollidableShape();
         final TranslatedCustomShape<LineSegmentType> translatedShape = new TranslatedCustomShape<>(shapeTranslation, shape);
         final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, translatedShape);
 
-        final Body circleBody = Body.create(def.getBallPos(), 1, 0.01);
-        final double radius = def.getBallRadius();
-        final CircleCollider circleCollider = new CircleCollider(circleBody, radius);
+        final Body ballBody = createBallBodyAt(definition.getBallPos());
+        final double ballRadius = definition.getBallRadius();
+        final CircleCollider ballCollider = new CircleCollider(ballBody, ballRadius);
 
         final VelocityController velController = VelocityController.createWithDefaultConfigFor(levelBody);
         final CenterOfMassController centerOfMassController = CenterOfMassController.createWithDefaultConfigFor(levelCollider);
 
         final CollisionHandler<LineSegmentType> collisionHandler = CollisionHandler.createWithDefaultConfig(
-                CircleVsCustomCollisionDetector.createWithDefaultUniformMaterial(circleCollider, levelCollider)
+                CircleVsCustomCollisionDetector.createWithDefaultUniformMaterial(ballCollider, levelCollider)
         );
         final LevelEventSender levelEventSender = LevelEventSender.createWithoutListeners();
         collisionHandler.addListener(levelEventSender);
 
         final PhysicsEngine physicsEngine = PhysicsEngine.createWithDefaultVelIterations();
-        physicsEngine.add(levelBody, circleBody);
+        physicsEngine.add(levelBody, ballBody);
         physicsEngine.add(velController, collisionHandler);
 
         final DrawerList bodyDrawers = DrawerList.create(
@@ -75,10 +75,22 @@ public class LevelWorld extends AdaptingWorld
                         new CustomShapeDrawer(translatedShape, drawConfig.getLineSegmentDrawer()),
                         drawConfig.getCenterOfMassDrawer()
                 )),
-                new BodyDrawer(circleBody, drawConfig.getBallDrawer(radius))
+                new BodyDrawer(ballBody, drawConfig.getBallDrawer(ballRadius))
         );
 
-        return new LevelWorld(physicsEngine, bodyDrawers, circleBody, centerOfMassController, velController, levelEventSender);
+        return new LevelWorld(physicsEngine, bodyDrawers, ballBody, centerOfMassController, velController, levelEventSender);
+    }
+
+    private static Body createLevelBodyAt(final Vector2D pos) {
+        final double levelMass = 50;
+        final double levelAngularMass = 50;
+        return Body.create(pos, levelMass, levelAngularMass);
+    }
+
+    private static Body createBallBodyAt(final Vector2D pos) {
+        final double ballMass = 1;
+        final double ballAngularMass = 0.01;
+        return Body.create(pos, ballMass, ballAngularMass);
     }
 
     @Override public void updateMousePos(final Vector2D newMousePos) {
@@ -103,8 +115,8 @@ public class LevelWorld extends AdaptingWorld
     }
 
     private void applyGravityToCircle(final double deltaTime) {
-        final Vector2D gravityAcc = Vector2D.createCartesian(0, -9.82);
-        final Vector2D gravityDeltaVel = gravityAcc.multiply(deltaTime);
+        final Vector2D gravityAcceleration = Vector2D.createCartesian(0, -9.82);
+        final Vector2D gravityDeltaVel = gravityAcceleration.multiply(deltaTime);
         circleBody.setVel(circleBody.getVel().add(gravityDeltaVel));
     }
 

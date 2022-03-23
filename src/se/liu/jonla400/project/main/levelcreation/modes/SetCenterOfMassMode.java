@@ -5,7 +5,6 @@ import se.liu.jonla400.project.main.drawing.Transform;
 import se.liu.jonla400.project.main.drawing.TransformedDrawer;
 import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import se.liu.jonla400.project.main.levelcreation.commands.Command;
-import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.drawing.CrossDrawer;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -20,15 +19,17 @@ public class SetCenterOfMassMode extends AdaptingMode
     }
 
     public static SetCenterOfMassMode createWithDefaultDrawing() {
-	final Drawer drawer = CrossDrawer.create(Color.RED, 0.05f).setRadius(0.2f);
-	return new SetCenterOfMassMode(drawer);
+	final float strokeWidth = 0.05f;
+	final double radius = 0.2;
+	final Drawer upcomingCenterOfMassDrawer = CrossDrawer.create(Color.RED, strokeWidth).setRadius(radius);
+	return new SetCenterOfMassMode(upcomingCenterOfMassDrawer);
     }
 
     @Override public void cursorPressed(final LevelCreator levelCreator) {
 	levelCreator.execute(SetCenterOfMassCommand.createFromCurrentToCursor(levelCreator));
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
 	TransformedDrawer.draw(
 		g, Transform.createWithTranslation(levelCreator.getCursorPos()),
 		upcomingCenterOfMassDrawer

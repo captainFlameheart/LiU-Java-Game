@@ -16,6 +16,8 @@ public class Vector2D implements ClosestPointFinder
 
     private Vector2D() {
 	// Used by gson
+	x = 0;
+	y = 0;
     }
 
     private Vector2D(double x, double y) {
@@ -142,65 +144,15 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Set the cartesian coordinates of this vector
+     * Returns the result of setting the magnitude of this vector.
+     * The result is undefined if the vector is a zero vector
      *
-     * @param x The x component
-     * @param y The y component
+     * @param magnitude The magnitude to set
+     * @return The result of setting the magnitude
      */
-    public void setCartesianCoordinates(final double x, final double y) {
-	set(createCartesian(x, y));
-    }
-
-    /**
-     * Set the polar coordinates of this vector
-     *
-     * @param angle The angle
-     * @param magnitude The magnitude
-     */
-    public void setPolarCoordinates(final double angle, final double magnitude) {
-	set(createPolarVector(angle, magnitude));
-    }
-
-    /**
-     * Set the x component of this vector
-     *
-     * @param x The x component
-     */
-    public void setX(final double x) {
-	this.x = x;
-    }
-
-    /**
-     * Set the y component of this vector
-     *
-     * @param y The y component
-     */
-    public void setY(final double y) {
-	this.y = y;
-    }
-
-    /**
-     * Set the angle of this vector
-     *
-     * @param angle The angle
-     */
-    public void setAngle(final double angle) {
-	final double deltaAngle = angle - getAngle();
-	rotateLocally(deltaAngle);
-    }
-
     public Vector2D setMagnitude(final double magnitude) {
 	final double magnitudeRatio = magnitude / getMagnitude();
 	return multiply(magnitudeRatio);
-    }
-
-    /**
-     * Set the magnitude of this vector
-     *
-     * @param angle The angle
-     */
-    public void setMagnitudeLocally(final double magnitude) {
-	set(setMagnitude(magnitude));
     }
 
     /**
@@ -233,15 +185,6 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Changes this vector by subtracting another vector
-     *
-     * @param other The vector to subtract with
-     */
-    public void subtractLocally(final Vector2D other) {
-	set(subtract(other));
-    }
-
-    /**
      * Returns the result of multiplying this vector with a scalar
      *
      * @param scalar The scalar to multiply with
@@ -271,28 +214,22 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Changes this vector by multiplying with the inverse of a scalar
+     * Returns a vector half as big as this one
      *
-     * @param scalar The inverse of the scalar to multiply with
+     * @return The result of halving this vector
      */
-    public void divideLocally(final double scalar) {
-	set(divide(scalar));
+    public Vector2D getHalf() {
+	return divide(2);
     }
 
     /**
-     * Returns the result of normalizing this vector into a unit vector (of length 1)
+     * Returns the result of normalizing this vector into a unit vector (of length 1).
+     * The result is undefined if this vector is a zero vector
      *
      * @return The normalized vector
      */
     public Vector2D normalize() {
 	return divide(getMagnitude());
-    }
-
-    /**
-     * Changes this vector by normalizing it into a unit vector (of length 1)
-     */
-    public void normalizeLocally() {
-	set(normalize());
     }
 
     /**
@@ -302,13 +239,6 @@ public class Vector2D implements ClosestPointFinder
      */
     public Vector2D negate() {
 	return multiply(-1);
-    }
-
-    /**
-     * Changes this vector by negating it
-     */
-    public void negateLocally() {
-	set(negate());
     }
 
     /**
@@ -328,13 +258,6 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Changes this vector by limiting its magnitude
-     */
-    public void limitMagnitudeLocally(final double maxMagnitude) {
-	set(limitMagnitude(maxMagnitude));
-    }
-
-    /**
      * Returns the result of rotating this vector 90 degrees in one of two directions.
      * Whether the rotation direction represents a clockwise or a counter-clockwise
      * direction is dependent on where the x- and y-axes are interpreted to point towards.
@@ -349,14 +272,13 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Changes this vector by rotating it 90 degrees in one of two directions.
-     * Whether the rotation direction represents a clockwise or a counter-clockwise
-     * direction is dependent on where the x- and y-axes are interpreted to point towards.
+     * Returns the result of rotating this vector 90 degrees in an arbitrary direction.
+     * This method is useful when the direction is unimportant
      *
-     * @param direction The direction to rotate in
+     * @return The result of the rotation
      */
-    public void rotate90DegreesLocally(final RotationDirection direction) {
-	set(rotate90Degrees(direction));
+    public Vector2D rotate90Degrees() {
+	return rotate90Degrees(RotationDirection.X_TO_Y);
     }
 
     /**
@@ -424,16 +346,6 @@ public class Vector2D implements ClosestPointFinder
      */
     public double getDistanceSquaredTo(final Vector2D other) {
 	return other.subtract(this).getMagnitudeSquared();
-    }
-
-    /**
-     * Returns the euclidean distance between this point and the other point
-     *
-     * @param other The other point
-     * @return The distance
-     */
-    public double getDistanceTo(final Vector2D other) {
-	return other.subtract(this).getMagnitude();
     }
 
     @Override public boolean equals(final Object o) {

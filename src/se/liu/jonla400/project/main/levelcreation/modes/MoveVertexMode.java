@@ -4,7 +4,6 @@ import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import se.liu.jonla400.project.main.levelcreation.commands.ReversedCommand;
 import se.liu.jonla400.project.main.levelcreation.commands.CombinedCommand;
 import se.liu.jonla400.project.main.levelcreation.commands.Command;
-import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.ClosestPointFinder;
 import se.liu.jonla400.project.math.Vector2D;
 
@@ -17,15 +16,15 @@ import java.util.Set;
 
 public class MoveVertexMode extends AdaptingMode
 {
-    private Optional<Vector2D> possibleMarkedVertex;
-    private int unmarkVertexKeyCode;
+    private Optional<Vector2D> possibleSelectedVertex;
+    private int deselectVertexKeyCode;
 
-    private MoveVertexMode(final Optional<Vector2D> possibleMarkedVertex, final int unmarkVertexKeyCode) {
-	this.possibleMarkedVertex = possibleMarkedVertex;
-	this.unmarkVertexKeyCode = unmarkVertexKeyCode;
+    private MoveVertexMode(final Optional<Vector2D> possibleSelectedVertex, final int deselectVertexKeyCode) {
+	this.possibleSelectedVertex = possibleSelectedVertex;
+	this.deselectVertexKeyCode = deselectVertexKeyCode;
     }
 
-    public static MoveVertexMode createWithDefaultUnmarkKey() {
+    public static MoveVertexMode createWithDefaultDeselectKey() {
 	return new MoveVertexMode(Optional.empty(), KeyEvent.VK_ESCAPE);
     }
 
@@ -34,29 +33,29 @@ public class MoveVertexMode extends AdaptingMode
     }
 
     private Optional<Command> getCursorPressedCommand(final LevelCreator levelCreator) {
-	if (possibleMarkedVertex.isEmpty()) {
-	    return getClosestVertexToCursor(levelCreator).map(MarkVertexCommand::new);
+	if (possibleSelectedVertex.isEmpty()) {
+	    return getClosestVertexToCursor(levelCreator).map(SelectVertexCommand::new);
 	}
-	final Vector2D markedVertex = possibleMarkedVertex.get();
-	final Command moveAndUnmarkVertexCommand = CombinedCommand.create(
-		new MoveVertexCommand(markedVertex, levelCreator.getCursorPos()),
-		getUnmarkVertexCommand(markedVertex)
+	final Vector2D selectedVertex = possibleSelectedVertex.get();
+	final Command moveAndDeselectVertexCommand = CombinedCommand.create(
+		new MoveVertexCommand(selectedVertex, levelCreator.getCursorPos()),
+		createDeselectVertexCommand(selectedVertex)
 	);
-	return Optional.of(moveAndUnmarkVertexCommand);
+	return Optional.of(moveAndDeselectVertexCommand);
     }
 
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
-	if (keyEvent.getKeyCode() == unmarkVertexKeyCode) {
-	    possibleMarkedVertex.ifPresent(markedVertex -> levelCreator.execute(getUnmarkVertexCommand(markedVertex)));
+	if (keyEvent.getKeyCode() == deselectVertexKeyCode) {
+	    possibleSelectedVertex.ifPresent(selectedVertex -> levelCreator.execute(createDeselectVertexCommand(selectedVertex)));
 	}
     }
 
-    private Command getUnmarkVertexCommand(final Vector2D vertex) {
-	return new ReversedCommand(new MarkVertexCommand(vertex));
+    private Command createDeselectVertexCommand(final Vector2D vertex) {
+	return new ReversedCommand(new SelectVertexCommand(vertex));
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
-	if (possibleMarkedVertex.isEmpty()) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
+	if (possibleSelectedVertex.isEmpty()) {
 	    drawClosestVertexToCursorIfExists(levelCreator, g);
 	} else {
 	    g.setColor(new Color(255, 0, 150));
@@ -64,7 +63,7 @@ public class MoveVertexMode extends AdaptingMode
 	    g.setStroke(new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
 					new float[]{dashLength}, 0));
 
-	    final Vector2D markedVertex = possibleMarkedVertex.get();
+	    final Vector2D markedVertex = possibleSelectedVertex.get();
 	    drawVertex(markedVertex, g);
 	    final Set<Vector2D> markedVertexNeighbours = levelCreator.getNeighboursTo(markedVertex);
 	    final Vector2D cursorPos = levelCreator.getCursorPos();
@@ -91,19 +90,19 @@ public class MoveVertexMode extends AdaptingMode
 	return ClosestPointFinder.findClosestObject(levelCreator.getAllVertices(), levelCreator.getCursorPos());
     }
 
-    private class MarkVertexCommand implements Command {
+    private class SelectVertexCommand implements Command {
 	private Vector2D vertex;
 
-	private MarkVertexCommand(final Vector2D vertex) {
+	private SelectVertexCommand(final Vector2D vertex) {
 	    this.vertex = vertex;
 	}
 
 	@Override public void execute(final LevelCreator levelCreator) {
-	    possibleMarkedVertex = Optional.of(vertex);
+	    possibleSelectedVertex = Optional.of(vertex);
 	}
 
 	@Override public void undo(final LevelCreator levelCreator) {
-	    possibleMarkedVertex = Optional.empty();
+	    possibleSelectedVertex = Optional.empty();
 	}
     }
 

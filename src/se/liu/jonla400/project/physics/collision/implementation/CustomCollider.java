@@ -7,9 +7,9 @@ public class CustomCollider<T>
     private Body body;
     private TranslatedCustomShape<T> shape;
 
-    public CustomCollider(final Body body, final TranslatedCustomShape<T> customShape) {
+    public CustomCollider(final Body body, final TranslatedCustomShape<T> shape) {
 	this.body = body;
-	this.shape = customShape;
+	this.shape = shape;
     }
 
     public Body getBody() {

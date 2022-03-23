@@ -2,7 +2,7 @@ package se.liu.jonla400.project.main.game;
 
 public interface LevelListener
 {
-    void levelCompleted();
+    void onLevelCompleted();
 
-    void levelFailed();
+    void onLevelFailed();
 }

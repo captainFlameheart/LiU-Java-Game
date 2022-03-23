@@ -49,21 +49,21 @@ public class VelocityController implements VelocityConstrainer
                 KeyEvent.VK_S, MovementDirection.DOWN
         );
         final double speed = 10;
-        final double maxAcc = 20;
+        final double maxAcceleration = 20;
 
         final Map<Integer, RotationDirection> keyToRotationDir = Map.of(
                 KeyEvent.VK_Q, RotationDirection.LEFT,
                 KeyEvent.VK_E, RotationDirection.RIGHT
         );
         final double angularSpeed = 2;
-        final double maxAngularAcc = 10;
+        final double maxAngularAcceleration = 10;
 
         final Set<MovementDirection> activeMovementDirections = EnumSet.noneOf(MovementDirection.class);
-        final double maxForce = body.getMass() * maxAcc;
+        final double maxForce = body.getMass() * maxAcceleration;
         final VelocitySeeker velSeeker = VelocitySeeker.createStartingAsFriction(body, maxForce);
 
         final Set<RotationDirection> activeRotationDirections = EnumSet.noneOf(RotationDirection.class);
-        final double maxTorque = body.getAngularMass() * maxAngularAcc;
+        final double maxTorque = body.getAngularMass() * maxAngularAcceleration;
         final AngularVelocitySeeker angularVelSeeker = AngularVelocitySeeker.createStartingAsAngularFriction(body, maxTorque);
 
         return new VelocityController(keyToMovementDir, speed, activeMovementDirections, velSeeker,

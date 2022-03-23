@@ -11,15 +11,15 @@ import java.util.List;
 public class CollisionHandler<T> implements VelocityConstrainer
 {
     private CollisionDetector<T> collisionDetector;
-    private double penetrationTolerence;
+    private double penetrationTolerance;
     private double penetrationCorrectionFraction;
     private List<CollisionListener<T>> listeners;
 
-    public CollisionHandler(final CollisionDetector<T> collisionDetector, final double penetrationTolerence,
+    public CollisionHandler(final CollisionDetector<T> collisionDetector, final double penetrationTolerance,
 			    final double penetrationCorrectionFraction, final List<CollisionListener<T>> listeners)
     {
 	this.collisionDetector = collisionDetector;
-	this.penetrationTolerence = penetrationTolerence;
+	this.penetrationTolerance = penetrationTolerance;
 	this.penetrationCorrectionFraction = penetrationCorrectionFraction;
 	this.listeners = listeners;
     }
@@ -36,7 +36,7 @@ public class CollisionHandler<T> implements VelocityConstrainer
 
     private void notifyListeners(final CollisionData<T> collision) {
 	for (CollisionListener<T> listener : listeners) {
-	    listener.collisionOccured(collision);
+	    listener.collisionOccurred(collision);
 	}
     }
 
@@ -50,7 +50,7 @@ public class CollisionHandler<T> implements VelocityConstrainer
 	for (CollisionData<T> collision : collisionDetector.detectCollisions()) {
 	    notifyListeners(collision);
 	    subConstraints.add(ActiveCollisionConstraint.createFromCollisionData(
-		    collision, deltaTime, penetrationTolerence, penetrationCorrectionFraction));
+		    collision, deltaTime, penetrationTolerance, penetrationCorrectionFraction));
 	}
 	return subConstraints;
     }

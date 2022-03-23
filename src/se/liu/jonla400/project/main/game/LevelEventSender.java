@@ -24,8 +24,8 @@ public class LevelEventSender implements CollisionListener<LineSegmentType>
 
     public static LevelEventSender createWithoutListeners() {
         Map<LineSegmentType, Consumer<LevelListener>> segmentTypeToListenerAction = Map.of(
-                LineSegmentType.LOOSE, LevelListener::levelFailed,
-                LineSegmentType.WIN, LevelListener::levelCompleted
+                LineSegmentType.LOOSE, LevelListener::onLevelFailed,
+                LineSegmentType.WIN, LevelListener::onLevelCompleted
         );
         return new LevelEventSender(new ArrayList<>(), segmentTypeToListenerAction);
     }
@@ -34,7 +34,7 @@ public class LevelEventSender implements CollisionListener<LineSegmentType>
         listeners.add(listener);
     }
 
-    @Override public void collisionOccured(final CollisionData<LineSegmentType> collision) {
+    @Override public void collisionOccurred(final CollisionData<LineSegmentType> collision) {
         getListenerActionOf(collision).ifPresent(listeners::forEach);
     }
 

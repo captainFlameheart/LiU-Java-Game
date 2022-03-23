@@ -18,9 +18,9 @@ public class CameraDrawer implements Drawer
     }
 
     public static CameraDrawer createDashed(final RectangularRegion camera, final Color color, final float strokeWidth) {
-	final float[] dash = {1};
+	final float dashLength = 1;
 	final BasicStroke stroke = new BasicStroke(
-		strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash, 0);
+		strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{dashLength}, 0);
 	return new CameraDrawer(camera, color, stroke);
     }
 

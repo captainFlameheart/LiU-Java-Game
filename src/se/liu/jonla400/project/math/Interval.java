@@ -35,6 +35,7 @@ public class Interval
      * @return The end value
      */
     public double getEnd() {
+	// It's likely this method will be used in the future
 	return end;
     }
 

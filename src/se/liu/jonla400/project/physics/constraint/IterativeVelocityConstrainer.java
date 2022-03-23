@@ -30,10 +30,6 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
 	this.subConstrainers = new ArrayList<>(Arrays.asList(subConstrainers));
     }
 
-    public IterativeVelocityConstrainer(final VelocityConstrainer... subConstrainers) {
-	this(1, subConstrainers);
-    }
-
     /**
      * Adds a sub velocity constrainer
      *
@@ -41,15 +37,6 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
      */
     public void add(final VelocityConstrainer... subConstrainer) {
 	subConstrainers.addAll(Arrays.asList(subConstrainer));
-    }
-
-    /**
-     * Removes a sub velocity constrainer, if it exists
-     *
-     * @param subConstrainer The sub velocity constrainer to remove
-     */
-    public void remove(final VelocityConstrainer subConstrainer) {
-	subConstrainers.remove(subConstrainer);
     }
 
     /**
@@ -65,7 +52,7 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
 
 	// Return an active velocity constraint that, when its solution is updated,
 	// iterates over and solves each sub constraint separately
-	return ActiveVelocityConstraintList.create(subConstraints, iterations);//new ActiveVelocityConstraintList(iterations, subConstraints);
+	return ActiveVelocityConstraintList.create(subConstraints, iterations);
     }
 
     private List<ActiveVelocityConstraint> generateSubConstraints(final double deltaTime) {

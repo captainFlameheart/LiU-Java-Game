@@ -3,7 +3,6 @@ package se.liu.jonla400.project.main.levelcreation.modes;
 import se.liu.jonla400.project.main.levelcreation.IndexedLineSegment;
 import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import se.liu.jonla400.project.main.levelcreation.commands.Command;
-import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
@@ -17,7 +16,7 @@ public class RemoveLineSegmentMode extends AdaptingMode
         lineSegmentToRemove.ifPresent(segment -> levelCreator.execute(new RemoveCommand(segment)));
     }
 
-    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g, final RectangularRegion region) {
+    @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
         levelCreator.getClosestLineSegmentToCursor().ifPresent(segment -> {
             final Vector2D start = segment.getStart();
             final Vector2D end = segment.getEnd();

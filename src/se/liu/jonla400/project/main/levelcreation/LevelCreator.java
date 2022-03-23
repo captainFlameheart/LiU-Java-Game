@@ -23,10 +23,10 @@ public class LevelCreator extends AdaptingWorld
     private int cursorActionButton;
     private Mode currentMode;
     private Vector2D cursorPos;
-    private KeyListener keyListener;
+    private CreatorKeyListener keyListener;
 
     public LevelCreator(final DrawableLevelBlueprint blueprint, final CommandTimeLine commandTimeLine, final int cursorActionButton,
-			final Mode currentMode, final Vector2D cursorPos, final KeyListener keyListener)
+			final Mode currentMode, final Vector2D cursorPos, final CreatorKeyListener keyListener)
     {
 	this.blueprint = blueprint;
 	this.commandTimeLine = commandTimeLine;
@@ -88,7 +88,7 @@ public class LevelCreator extends AdaptingWorld
 
     @Override public void draw(final Graphics2D g, final RectangularRegion region) {
 	blueprint.draw(g, region);
-	currentMode.draw(this, g, region);
+	currentMode.draw(this, g);
     }
 
     public LevelBlueprint getBlueprint() {
@@ -123,10 +123,6 @@ public class LevelCreator extends AdaptingWorld
 	blueprint.moveVertex(vertex, newPos);
     }
 
-    public LineSegmentType getType(final int lineSegmentIndex) {
-	return blueprint.getType(lineSegmentIndex);
-    }
-
     public void setType(final int lineSegmentIndex, final LineSegmentType type) {
 	blueprint.setType(lineSegmentIndex, type);
     }
@@ -153,10 +149,6 @@ public class LevelCreator extends AdaptingWorld
 
     public Optional<Vector2D> getIncompleteLineSegmentStart() {
 	return blueprint.getIncompleteLineSegmentStart();
-    }
-
-    public Iterator<IndexedLineSegment> getLineSegmentIterator() {
-	return blueprint.getLineSegmentIterator();
     }
 
     public Set<Vector2D> getNeighboursTo(final Vector2D vertex) {
