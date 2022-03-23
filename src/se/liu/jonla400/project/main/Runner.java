@@ -13,7 +13,7 @@ import java.awt.*;
 
 public class Runner
 {
-    private final static boolean IN_DEV_MODE = true;
+    private final static boolean IN_DEV_MODE = false;
 
     public static void main(String[] args) {
 	final DrawConfiguration drawConfig = createDrawConfig();

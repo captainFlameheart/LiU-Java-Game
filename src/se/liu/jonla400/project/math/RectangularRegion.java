@@ -61,6 +61,10 @@ public class RectangularRegion
         return createFromCoordinateRanges(new Interval(start.getX(), end.getX()), new Interval(start.getY(), end.getY()));
     }
 
+    public boolean isInvalid() {
+        return bottomLeft == null || size == null || size.getX() < 0 || size.getY() < 0;
+    }
+
     public double getLeftX() {
         return bottomLeft.getX();
     }

@@ -64,6 +64,13 @@ public class LevelDefinition
 	return new LevelDefinition(shape, centerOfMass, ballPos, ballRadius, camera);
     }
 
+    public boolean isInvalid() {
+	final boolean shapeIsInvalid = shape == null || shape.isInvalid();
+	final boolean ballIsInvalid = ballPos == null || ballRadius < 0;
+	final boolean cameraIsInvalid = camera == null || camera.isInvalid() || camera.getSize().isZero();
+	return shapeIsInvalid || centerOfMass == null || ballIsInvalid || cameraIsInvalid;
+    }
+
     public CustomShapeDefinition getShape() {
 	return shape;
     }

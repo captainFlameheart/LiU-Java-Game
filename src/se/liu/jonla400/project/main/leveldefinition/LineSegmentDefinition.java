@@ -31,6 +31,10 @@ public class LineSegmentDefinition implements ClosestPointFinder
 	return new LineSegmentDefinition(collidableSegment.getStart(), collidableSegment.getEnd(), collidableSegment.getUserData());
     }
 
+    public boolean isInvalid() {
+	return start == null || end == null || type == null;
+    }
+
     public Vector2D getStart() {
 	return start.copy();
     }

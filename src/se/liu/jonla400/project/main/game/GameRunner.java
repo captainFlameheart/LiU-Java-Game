@@ -11,12 +11,22 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GameRunner
 {
+    private final static String[] LEVEL_RESOURCE_NAMES;
+
+    static {
+	final String[] levelNames = {
+		"level0", "level1", "level2", "level3", "level4", "level5", "level6", "level7", "level8", "level9"
+	};
+	LEVEL_RESOURCE_NAMES = new String[levelNames.length];
+	for (int i = 0; i < levelNames.length; i++) {
+	    LEVEL_RESOURCE_NAMES[i] = "levels/" + levelNames[i] + ".json";
+	}
+    }
+
     public static void run(final DrawConfiguration drawConfig) {
 	final List<LevelDefinition> levelDefinitions = getAtleastOneLevelOrElseQuit();
 	final GameWorld gameWorld = GameWorld.createAndStartWithFirstLevel(drawConfig, levelDefinitions);
@@ -38,28 +48,20 @@ public class GameRunner
     private static List<LevelDefinition> getLevelsOrElseQuit(final Path levelListPath) {
 	final List<LevelDefinition> levels = new ArrayList<>();
 
-	final List<Path> paths = getLevelPaths();
-
-	for (Path path : paths) {
+	for (String levelResourceName : LEVEL_RESOURCE_NAMES) {
 	    boolean levelLoaded = false;
 	    while (!levelLoaded) {
 		try {
-		    levels.add(LevelIO.loadLevel(path));
+		    levels.add(LevelIO.loadLevelFromResource(levelResourceName));
 		    levelLoaded = true;
 		} catch (IOException ignored) {
-		    verifyWishToRetryOrElseQuit("The level file " + path + " could not be read!", "Failed to read level");
+		    verifyWishToRetryOrElseQuit("The level " + levelResourceName + " could not be read!", "Failed to read level");
 		} catch (JsonSyntaxException ignored) {
-		    verifyWishToRetryOrElseQuit("The level file " + path + " contains invalid syntax!", "Invalid syntax");
+		    verifyWishToRetryOrElseQuit("The level " + levelResourceName + " contains invalid syntax!", "Invalid syntax");
 		}
 	    }
 	}
 	return levels;
-    }
-
-    private static List<Path> getLevelPaths() {
-	final String[] names = {"foo.txt", "level1.txt", "level2.txt", "level3.txt", "level4.txt", "level5.txt", "level6.txt", "level7.txt", "level8.txt", "level9.txt"};
-	final String homeDir = System.getProperty("user.home");
-	return Arrays.stream(names).map(name -> Paths.get(homeDir, name)).collect(Collectors.toList());
     }
 
     private static void verifyWishToRetryOrElseQuit(final String message, final String title) {

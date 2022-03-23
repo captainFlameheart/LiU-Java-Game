@@ -42,12 +42,12 @@ public class CreatorRunner
 		System.exit(0);
 	    }
 
-	    final Path path = Paths.get(System.getProperty("user.home"), pathString);
+	    final Path path = Paths.get(pathString);
 	    if (Files.notExists(path)) {
 		return new LevelFile(path, LevelDefinition.createEmpty());
 	    }
 	    try {
-		LevelDefinition levelDef = LevelIO.loadLevel(path);
+		LevelDefinition levelDef = LevelIO.loadLevelFromFile(path);
 		return new LevelFile(path, levelDef);
 	    } catch (IOException ignored) {
 		showErrorMessage("The file could not be read!", "File error");
@@ -59,7 +59,7 @@ public class CreatorRunner
 
     private static void saveLevelOrMessageError(final LevelDefinition levelDef, final Path path) {
 	try {
-	    LevelIO.saveLevel(levelDef, path);
+	    LevelIO.saveLevelToFile(levelDef, path);
 	    System.out.println("Level saved at " + path);
 	} catch (IOException ignored) {
 	    showErrorMessage("Could not save the level at " + path, "Save error");
