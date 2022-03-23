@@ -1,4 +1,7 @@
-package se.liu.jonla400.project.main.levelcreation;
+package se.liu.jonla400.project.main.levelcreation.commands;
+
+import se.liu.jonla400.project.main.levelcreation.LevelCreator;
+import se.liu.jonla400.project.main.levelcreation.modes.Mode;
 
 public class SetModeCommand implements Command
 {

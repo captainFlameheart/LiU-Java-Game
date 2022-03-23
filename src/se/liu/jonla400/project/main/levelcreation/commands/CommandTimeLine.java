@@ -1,4 +1,6 @@
-package se.liu.jonla400.project.main.levelcreation;
+package se.liu.jonla400.project.main.levelcreation.commands;
+
+import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,7 @@ public class CommandTimeLine
 	if (currentCommandIndex == -1) {
 	    return;
 	}
-	commands.get(currentCommandIndex).undo(levelCreator);
+	getCurrentCommand().undo(levelCreator);
 	currentCommandIndex--;
     }
 
@@ -41,6 +43,10 @@ public class CommandTimeLine
 	    return;
 	}
 	currentCommandIndex++;
-	commands.get(currentCommandIndex).execute(levelCreator);
+	getCurrentCommand().execute(levelCreator);
+    }
+
+    private Command getCurrentCommand() {
+	return commands.get(currentCommandIndex);
     }
 }

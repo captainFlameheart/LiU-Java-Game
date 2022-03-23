@@ -1,4 +1,6 @@
-package se.liu.jonla400.project.main.levelcreation;
+package se.liu.jonla400.project.main.levelcreation.commands;
+
+import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 
 import java.util.Arrays;
 import java.util.Collection;

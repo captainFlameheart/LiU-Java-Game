@@ -1,5 +1,7 @@
-package se.liu.jonla400.project.main.levelcreation;
+package se.liu.jonla400.project.main.levelcreation.modes;
 
+import se.liu.jonla400.project.main.levelcreation.KeyListener;
+import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import se.liu.jonla400.project.math.RectangularRegion;
 
 import java.awt.*;

@@ -1,8 +1,10 @@
-package se.liu.jonla400.project.main.levelcreation;
+package se.liu.jonla400.project.main.levelcreation.modes;
 
 import se.liu.jonla400.project.main.drawing.Drawer;
 import se.liu.jonla400.project.main.drawing.Transform;
 import se.liu.jonla400.project.main.drawing.TransformedDrawer;
+import se.liu.jonla400.project.main.levelcreation.LevelCreator;
+import se.liu.jonla400.project.main.levelcreation.commands.Command;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.drawing.CrossDrawer;
 import se.liu.jonla400.project.math.Vector2D;

@@ -13,17 +13,24 @@ import java.awt.*;
 
 public class Runner
 {
+    private final static boolean IN_DEV_MODE = true;
+
     public static void main(String[] args) {
 	final DrawConfiguration drawConfig = createDrawConfig();
 
-	final Object[] options = {"Play", "Create"};
-	final int chosenOption = JOptionPane.showOptionDialog(
-		null, "Do you want to play or create?", "Startup choice",
-		JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-	switch (chosenOption) {
-	    case 0 -> GameRunner.run(drawConfig);
-	    case 1 -> CreatorRunner.run(drawConfig);
-	    default -> System.exit(0);
+	if (IN_DEV_MODE) {
+	    final Object[] options = { "Play", "Create" };
+	    final int chosenOption = JOptionPane.showOptionDialog(
+		    null, "Do you want to play or create?", "Startup choice", JOptionPane.YES_NO_OPTION,
+		    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+	    switch (chosenOption) {
+		case 0 -> GameRunner.run(drawConfig);
+		case 1 -> CreatorRunner.run(drawConfig);
+		default -> System.exit(0);
+	    }
+	} else {
+	    GameRunner.run(drawConfig);
 	}
     }
 

@@ -1,6 +1,9 @@
 package se.liu.jonla400.project.main.levelcreation;
 
 import se.liu.jonla400.project.main.drawing.DrawConfiguration;
+import se.liu.jonla400.project.main.levelcreation.commands.Command;
+import se.liu.jonla400.project.main.levelcreation.commands.CommandTimeLine;
+import se.liu.jonla400.project.main.levelcreation.modes.Mode;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.world.AdaptingWorld;

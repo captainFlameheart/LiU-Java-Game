@@ -72,7 +72,7 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
     private void tick(final double deltaTime) {
 	handleEvents();
-	getMousePositionInWorldSpace().ifPresent(filmedWorld::updateMousePos);
+	getMousePosInWorldSpace().ifPresent(filmedWorld::updateMousePos);
 	filmedWorld.tick(deltaTime);
 	repaint();
     }
@@ -83,23 +83,23 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 	}
     }
 
-    private Optional<Vector2D> getMousePositionInWorldSpace() {
-	final Point mousePoint = getMousePosition();
-	if (mousePoint == null) {
+    private Optional<Vector2D> getMousePosInWorldSpace() {
+	final Point mousePos = getMousePosition();
+	if (mousePos == null) {
 	    return Optional.empty();
 	}
 
-	final RectangularRegion drawRegion = encloseCameraWithCurrentAspectRatio();
+	final RectangularRegion visibleRegion = encloseCameraWithCurrentAspectRatio();
 
 	final Interval xInterval = new Interval(0, getWidth());
-	final Interval xIntervalMappedTo = new Interval(drawRegion.getLeftX(), drawRegion.getRightX());
+	final Interval xIntervalMappedTo = new Interval(visibleRegion.getLeftX(), visibleRegion.getRightX());
 
 	final Interval yInterval = new Interval(0, getHeight());
-	final Interval yIntervalMappedTo = new Interval(drawRegion.getTopY(), drawRegion.getBottomY());
+	final Interval yIntervalMappedTo = new Interval(visibleRegion.getTopY(), visibleRegion.getBottomY());
 
 	return Optional.of(Vector2D.createCartesian(
-		xInterval.mapValueToOtherInterval(mousePoint.x, xIntervalMappedTo),
-		yInterval.mapValueToOtherInterval(mousePoint.y, yIntervalMappedTo)
+		xInterval.mapValueToOtherInterval(mousePos.x, xIntervalMappedTo),
+		yInterval.mapValueToOtherInterval(mousePos.y, yIntervalMappedTo)
 	));
     }
 
