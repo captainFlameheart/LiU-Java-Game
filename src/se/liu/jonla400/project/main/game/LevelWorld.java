@@ -65,7 +65,7 @@ public class LevelWorld extends AdaptingWorld
         final Body levelBody = createLevelBodyAt(definition.getCenterOfMass());
         final Vector2D shapeTranslation = levelBody.getPos().negate();
         final CustomShape<LineSegmentType> shape = definition.getShape().convertToCollidableShape();
-        final TranslatedCustomShape<LineSegmentType> translatedShape = new TranslatedCustomShape<>(shapeTranslation, shape);
+        final TranslatedCustomShape<LineSegmentType> translatedShape = TranslatedCustomShape.copyTranslation(shapeTranslation, shape);
         final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, translatedShape);
 
         final Body ballBody = createBallBodyAt(definition.getBallPos());

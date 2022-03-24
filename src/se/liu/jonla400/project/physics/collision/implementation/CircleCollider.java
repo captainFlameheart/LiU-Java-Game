@@ -2,6 +2,10 @@ package se.liu.jonla400.project.physics.collision.implementation;
 
 import se.liu.jonla400.project.physics.main.Body;
 
+/**
+ * Represents a body with an attached circle with a given radius. This is used by {@link CircleVsCustomCollisionDetector}
+ * to detect collisions.
+ */
 public class CircleCollider
 {
     private Body body;

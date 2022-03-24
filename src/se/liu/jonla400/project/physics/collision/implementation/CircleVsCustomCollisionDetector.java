@@ -11,6 +11,13 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Represents a {@link CollisionDetector} that detects collisions between a {@link CircleCollider} and
+ * a {@link CustomCollider}. Each line segment in the custom collider has custom user data, and collisions
+ * detected will contain that user data, see {@link CollisionData}.
+ *
+ * @param <T> The type of user data bound to line segments
+ */
 public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 {
     private CircleCollider circleCollider;
@@ -25,6 +32,16 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	this.materialProvider = materialProvider;
     }
 
+    /**
+     * Creates a CircleVsCustomCollisionDetector with a uniform {@link Material} for collisions with all
+     * line segments.
+     *
+     * @param circleCollider The circle collider
+     * @param customCollider The custom collider
+     * @param material The uniform material across all line segments
+     * @param <T> The type of user data associated with each line segment
+     * @return The created CircleVsCustomCollisionDetector
+     */
     public static <T> CircleVsCustomCollisionDetector<T> createWithUniformMaterial(
 	    final CircleCollider circleCollider, final CustomCollider<T> customCollider, final Material material)
     {
@@ -32,6 +49,15 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return new CircleVsCustomCollisionDetector<>(circleCollider, customCollider, materialProvider);
     }
 
+    /**
+     * Creates a CircleVsCustomCollisionDetector with a uniform default {@link Material} for
+     * collisions with all line segments.
+     *
+     * @param circleCollider The circle collider
+     * @param customCollider The custom collider
+     * @param <T> The type of user data associated with each line segment
+     * @return The created CircleVsCustomCollisionDetector
+     */
     public static <T> CircleVsCustomCollisionDetector<T> createWithDefaultUniformMaterial(
 	    final CircleCollider circleCollider, final CustomCollider<T> customCollider)
     {
@@ -39,6 +65,12 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return createWithUniformMaterial(circleCollider, customCollider, material);
     }
 
+    /**
+     * Detects the collisions between the circle and the line segments. Each generated
+     * collision data contains the user data of the line segment collided with.
+     *
+     * @return The collection of {@link CollisionData}
+     */
     @Override public Collection<CollisionData<T>> detectCollisions() {
 	final Collection<CollisionData<T>> collisions = new ArrayList<>();
 

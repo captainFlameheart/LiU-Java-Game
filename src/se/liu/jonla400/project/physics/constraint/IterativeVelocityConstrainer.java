@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents a collection of velocity constrainers that tries to find a collective
+ * Represents a list of velocity constrainers that tries to find a collective
  * global solution. This attempt is done through iterating over and updating the
  * solution to each velocity constraint for multiple iterations. This will hopefully
  * result in an approximation of a global solution through convergence. However, if
@@ -31,21 +31,21 @@ public class IterativeVelocityConstrainer implements VelocityConstrainer
     }
 
     /**
-     * Adds a sub velocity constrainer
+     * Adds sub velocity constrainers
      *
-     * @param subConstrainer The velocity constrainer to be added
+     * @param subConstrainer The velocity constrainers to be added
      */
     public void add(final VelocityConstrainer... subConstrainer) {
 	subConstrainers.addAll(Arrays.asList(subConstrainer));
     }
 
     /**
-     * Initializes a new ActiveVelocityConstraint that, each time its solution is
+     * Generates a new {@link ActiveVelocityConstraint} that, each time its solution is
      * updated, solves the collection of velocity constraints one-by-one for the
      * given number of iterations.
      *
-     * @param deltaTime The size of the upcoming time step
-     * @return The new ActiveVelocityConstraint
+     * @param deltaTime The size of the time step after the constraints have been solved
+     * @return The generated {@link ActiveVelocityConstraint}
      */
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
 	final List<ActiveVelocityConstraint> subConstraints = generateSubConstraints(deltaTime);

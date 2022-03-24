@@ -3,6 +3,13 @@ package se.liu.jonla400.project.physics.main;
 import se.liu.jonla400.project.math.Matrix22;
 import se.liu.jonla400.project.math.Vector2D;
 
+/**
+ * Represents a physical entity with a position, velocity, mass and their angular equivalents
+ * (angle, angular velocity and angular mass). Impulses can be applied to the body and can also
+ * be offset from the body's position which causes a change in both the velocity and the angular
+ * velocity. A body can perform a time step of a given size, which moves the position along the
+ * velocity (the same goes for the angle).
+ */
 public class Body
 {
     private Vector2D pos;
@@ -24,6 +31,15 @@ public class Body
 	this.angularMass = angularMass;
     }
 
+    /**
+     * Creates a still body at the given position with the given mass and angular mass. The
+     * angle is set to 0. No reference is kept to the position vector.
+     *
+     * @param pos The position
+     * @param mass The mass
+     * @param angularMass The angular mass
+     * @return The created body
+     */
     public static Body create(final Vector2D pos, final double mass, final double angularMass) {
 	return new Body(pos.copy(), Vector2D.createZero(), mass, 0, 0, angularMass);
     }
@@ -122,14 +138,13 @@ public class Body
     }
 
     /**
-     * Converts a point in the local space of this point mass into an offset
-     * from the point mass's position.
+     * Converts a vector in the local space of this point mass into a vector in global space.
      *
      * The local space of a point mass has its origin at the point mass's position
      * and has the same angle as the point mass.
      *
-     * @param localVector The point in local space
-     * @return The offset from the position of this point mass
+     * @param localVector The vector in local space
+     * @return The vector in global space
      */
     public Vector2D convertLocalToGlobalVector(final Vector2D localVector) {
 	return localVector.rotate(angle);
@@ -170,14 +185,13 @@ public class Body
     }
 
     /**
-     * Converts an offset from the position of this point mass into a point in
-     * this point mass's local space.
+     * Converts a vector in global space into a vector in this point mass's local space.
      *
      * The local space of a point mass has its origin at the point mass's position
      * and has the same angle as the point mass.
      *
-     * @param globalVector The offset from the position of this point mass
-     * @return The point in local space
+     * @param globalVector The vector in global space
+     * @return The vector in local space
      */
     public Vector2D convertGlobalToLocalVector(final Vector2D globalVector) {
 	return globalVector.rotate(-angle);

@@ -8,7 +8,11 @@ import se.liu.jonla400.project.physics.constraint.ActiveVelocityConstraint;
 import se.liu.jonla400.project.physics.constraint.OffsetBodyPointPair;
 
 /**
- * Represents an active velocity constraint between two colliding bodies.
+ * Represents an active velocity constraint between two colliding bodies. An impulse is applied
+ * along the normal direction of the collision to avoid further penetration and to make the
+ * bodies bounce according to the collision's bounce factor. An impulse is also applied in the
+ * tangent direction of the collision to simulate friction, and its scale is limited by the
+ * collision's friction coefficient.
  */
 public class ActiveCollisionConstraint implements ActiveVelocityConstraint
 {
@@ -41,6 +45,20 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
         this.tangentImpulse = tangentImpulse;
     }
 
+    /**
+     * Creates an ActiveCollisionConstraint based on the {@link CollisionData}. If
+     * the penetration is greater than the given penetration tolerence, the normal impulse
+     * will be extra strong to make the bodies seperate. The given correction fraction determines
+     * how much of the penetration should have been corrected after the upcoming time step, but since
+     * the velocity of bodies remains between time steps this value should not be too large
+     * (otherwise some extra bounce will occur).
+     *
+     * @param collisionData The collision data
+     * @param deltaTime The size of the time step after solving this velocity constraint
+     * @param penetrationTolerance How much of the penetration that is tolerated
+     * @param penetrationCorrectionFraction How much to fix of the penetration error, between 0 and 1
+     * @return The created ActiveCollisionConstraint
+     */
     public static ActiveCollisionConstraint createFromCollisionData(
             final CollisionData<?> collisionData, final double deltaTime,
             final double penetrationTolerance, final double penetrationCorrectionFraction)
@@ -86,12 +104,13 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
             return 0;
         }
         final double penetrationCorrection = penetrationCorrectionFraction * penetrationError;
-        return penetrationCorrection / deltaTime;
+        return penetrationCorrection / deltaTime; // The bigger the time step the smaller the velocity has to be to correct the penetration
     }
 
     private static double getBounceVel(final OffsetBodyPointPair contactPoints, final Vector2D normal, final double bounceCoefficient) {
         final double initNormalVel = getVelAlong(normal, contactPoints);
         if (initNormalVel >= 0) {
+            // The contact points are moving away from each other
             return 0;
         }
         return -bounceCoefficient * initNormalVel;
