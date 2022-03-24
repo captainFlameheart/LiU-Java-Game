@@ -23,6 +23,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * Represents an active level world without knowledge about a camera. A level world
+ * consists of a ball and a collidable level. The level can be moved and rotated
+ * with the keyboard, and the center of mass of the world (and also the point of rotation)
+ * can be controlled by the mouse. The level world uses a {@link PhysicsEngine} to handle motion
+ * and collisions
+ */
 public class LevelWorld extends AdaptingWorld
 {
     private PhysicsEngine physicsEngine;
@@ -46,6 +53,14 @@ public class LevelWorld extends AdaptingWorld
         this.levelEventSender = levelEventSender;
     }
 
+    /**
+     * Creates a level world based on the {@link LevelDefinition}, and uses the {@link DrawConfiguration}
+     * to display the ball, line segments and center of mass.
+     *
+     * @param definition The definition of the level
+     * @param drawConfig Specifies how to draw the ball, line segments and center of mass
+     * @return The created level world
+     */
     public static LevelWorld create(final LevelDefinition definition, final DrawConfiguration drawConfig) {
         final Body levelBody = createLevelBodyAt(definition.getCenterOfMass());
         final Vector2D shapeTranslation = levelBody.getPos().negate();
@@ -93,22 +108,48 @@ public class LevelWorld extends AdaptingWorld
         return Body.create(pos, ballMass, ballAngularMass);
     }
 
+    /**
+     * Updates the considered mouse position to know where to set the center of mass when the correct
+     * mouse button is pressed
+     *
+     * @param newMousePos The new mouse position
+     */
     @Override public void updateMousePos(final Vector2D newMousePos) {
         centerOfMassController.updateMousePos(newMousePos);
     }
 
+    /**
+     * Sets the center of mass at the mouse if the correct mouse button is pressed
+     *
+     * @param mouseEvent The mouse event containing the pressed button
+     */
     @Override public void mousePressed(final MouseEvent mouseEvent) {
         centerOfMassController.mousePressed(mouseEvent);
     }
 
+    /**
+     * Potentially starts moving/rotating based on the key that was pressed
+     *
+     * @param keyEvent The key event containing the pressed key
+     */
     @Override public void keyPressed(final KeyEvent keyEvent) {
         velController.keyPressed(keyEvent);
     }
 
+    /**
+     * Potentially stops moving/rotating based on the key that was released
+     *
+     * @param keyEvent The key event containng the released key
+     */
     @Override public void keyReleased(final KeyEvent keyEvent) {
         velController.keyReleased(keyEvent);
     }
 
+    /**
+     * Ticks time forward
+     *
+     * @param deltaTime The amount of time to tick forward
+     */
     @Override public void tick(final double deltaTime) {
         applyGravityToCircle(deltaTime);
         physicsEngine.tick(deltaTime);
@@ -120,8 +161,15 @@ public class LevelWorld extends AdaptingWorld
         circleBody.setVel(circleBody.getVel().add(gravityDeltaVel));
     }
 
-    @Override public void draw(final Graphics2D g, final RectangularRegion rectangularRegion) {
-        drawBackground(g, rectangularRegion);
+    /**
+     * Draws this level world onto the {@link Graphics2D} object at the region. This method does not
+     * guarantee that nothing outside the region will be drawn.
+     *
+     * @param g The graphics object to draw to
+     * @param region The region required to draw to, but not limited by
+     */
+    @Override public void draw(final Graphics2D g, final RectangularRegion region) {
+        drawBackground(g, region);
         bodyDrawers.draw(g);
     }
 
@@ -130,6 +178,11 @@ public class LevelWorld extends AdaptingWorld
         g.fill(new Rectangle2D.Double(region.getLeftX(), region.getBottomY(), region.getWidth(), region.getHeight()));
     }
 
+    /**
+     * Adds a listener for when this level is failed or completed
+     *
+     * @param listener The listener to add
+     */
     public void addListener(final LevelListener listener) {
         levelEventSender.addListener(listener);
     }

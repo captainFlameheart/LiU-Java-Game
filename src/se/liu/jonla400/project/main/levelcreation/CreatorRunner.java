@@ -14,6 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Represents the procedure used to start creating a level. This is done by first asking the
+ * user what level file to load from and to save to. If the level file doesn't exist, a new level
+ * is created. When the user presses CTRL+S the level is saved to the file.
+ */
 public class CreatorRunner
 {
     public static void run(final DrawConfiguration drawConfig) {
@@ -21,16 +26,9 @@ public class CreatorRunner
 	final Path path = levelFile.path;
 	final LevelDefinition levelDefinition = levelFile.levelDefinition;
 
-	final CreateAndTestWorld createAndPlaytestWorld = CreateAndTestWorld.createFromLevelDefinition(levelDefinition, drawConfig);
-	final WorldGUI gui = WorldGUI.createFor(createAndPlaytestWorld);
-	gui.addKeyListener(new KeyAdapter()
-	{
-	    @Override public void keyPressed(final KeyEvent e) {
-		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
-		    saveLevelOrMessageError(createAndPlaytestWorld.getLevelDefinition(), path);
-		}
-	    }
-	});
+	final CreateAndTestWorld createAndTestWorld = CreateAndTestWorld.createFromLevelDefinition(levelDefinition, drawConfig);
+	final WorldGUI gui = WorldGUI.createFor(createAndTestWorld);
+	enableSaving(gui, createAndTestWorld, path); // CTRL+S to save to the path
 	gui.start();
     }
 
@@ -39,15 +37,17 @@ public class CreatorRunner
 	do {
 	    pathString = JOptionPane.showInputDialog("Please enter the path to the level file (new path = new level)", pathString);
 	    if (pathString == null) {
+		// The user selected the close option, exit the program
 		System.exit(0);
 	    }
 
 	    final Path path = Paths.get(pathString);
 	    if (Files.notExists(path)) {
+		// Since the file does not exist it implicitly defines an empty level
 		return new LevelFile(path, LevelDefinition.createEmpty());
 	    }
 	    try {
-		LevelDefinition levelDefinition = LevelIO.loadLevelFromFile(path);
+		final LevelDefinition levelDefinition = LevelIO.loadLevelFromFile(path);
 		return new LevelFile(path, levelDefinition);
 	    } catch (IOException e) {
 		e.printStackTrace();
@@ -56,7 +56,18 @@ public class CreatorRunner
 		e.printStackTrace();
 		showErrorMessage("The file containts invalid syntax!", "Syntax error");
 	    }
-	} while (true);
+	} while (true); // Retry until loading the file is successful, or the user quits the program
+    }
+
+    private static void enableSaving(final WorldGUI gui, final CreateAndTestWorld createAndTestWorld, final Path path) {
+	gui.addKeyListener(new KeyAdapter()
+	{
+	    @Override public void keyPressed(final KeyEvent e) {
+		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+		    saveLevelOrMessageError(createAndTestWorld.getLevelDefinition(), path);
+		}
+	    }
+	});
     }
 
     private static void saveLevelOrMessageError(final LevelDefinition levelDefinition, final Path path) {

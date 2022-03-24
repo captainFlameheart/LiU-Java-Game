@@ -17,10 +17,18 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
+/**
+ * Timesteps, draws and notifies a {@link FilmedWorld} about user input. Uses the camera of
+ * the filmed world to determine how to transform the graphics so that the camera region is
+ * atleast shown. Since the aspect ratio of this component and the camera are likely to be
+ * different, the gui is likely to show more on one axis than what the camera requires.
+ *
+ * This gui also tells the filmed world about where the mouse position is in world space.
+ */
 public class WorldGUI extends JComponent implements MouseListener, MouseWheelListener, KeyListener
 {
     private FilmedWorld filmedWorld;
-    private Queue<Runnable> eventHandlingQueue;
+    private Queue<Runnable> eventHandlingQueue; // Gives us controll of when to handle the input events
 
     private boolean hasStarted;
 
@@ -30,10 +38,19 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 	this.hasStarted = hasStarted;
     }
 
+    /**
+     * Creates a WorldGUI for the given world
+     *
+     * @param filmedWorld The world to mantain graphics-, input and time-wise
+     * @return The created WorldGUI
+     */
     public static WorldGUI createFor(final FilmedWorld filmedWorld) {
 	return new WorldGUI(filmedWorld, new LinkedList<>(), false);
     }
 
+    /**
+     * Starts this gui by putting it in a frame and start advancing time
+     */
     public void start() {
 	if (hasStarted) {
 	    throw new IllegalStateException("Has already started!");
@@ -91,9 +108,11 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
 	final RectangularRegion visibleRegion = encloseCameraWithCurrentAspectRatio();
 
+	// screenX -> worldX: 0 -> left of visible region, width -> right of visible region
 	final Interval xInterval = new Interval(0, getWidth());
 	final Interval xIntervalMappedTo = new Interval(visibleRegion.getLeftX(), visibleRegion.getRightX());
 
+	// screenY -> worldY: 0 -> top of visible region, height -> bottom of visible region
 	final Interval yInterval = new Interval(0, getHeight());
 	final Interval yIntervalMappedTo = new Interval(visibleRegion.getTopY(), visibleRegion.getBottomY());
 
@@ -125,6 +144,8 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
     private void flipGraphics(final Graphics2D g) {
 	g.scale(1, -1);
 	g.translate(0, -getHeight());
+	// (0, 0) in graphics space is now at the bottom left of the screen
+	// and increasing y-coordinates means higher up on the screen
     }
 
     private RectangularRegion encloseCameraWithCurrentAspectRatio() {
@@ -138,10 +159,14 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 	final double enclosingWidth;
 	final double enclosingHeight;
 	if (cameraWidthToHeightRatio > targetWidthToHeightRatio) {
+	    // Let the enclosing width be the camera width
 	    enclosingWidth = cameraWidth;
+	    // Then compute the enclosing height that maintain the screen's width to height ratio
 	    enclosingHeight = enclosingWidth / targetWidthToHeightRatio;
 	} else {
+	    // Let the enclosing height be the camera height
 	    enclosingHeight = cameraHeight;
+	    // Then compute the enclosing width that maintain the screen's width to height ratio
 	    enclosingWidth = enclosingHeight * targetWidthToHeightRatio;
 	}
 

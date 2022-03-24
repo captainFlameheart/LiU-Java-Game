@@ -11,6 +11,11 @@ import se.liu.jonla400.project.main.levelcreation.CreatorRunner;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Represents the main runner of the program. If dev mode is turned on, a choise
+ * between starting the level creator or actual game is displayed. Otherwise the
+ * game is started automatically.
+ */
 public class Runner
 {
     private final static boolean IN_DEV_MODE = true;
@@ -40,13 +45,13 @@ public class Runner
 	}
     }
 
-    public static DrawConfiguration createDrawConfig() {
+    private static DrawConfiguration createDrawConfig() {
 	final BallDrawer ballDrawer = BallDrawer.createDefault();
 	final LineSegmentDrawer lineSegmentDrawer = LineSegmentDrawer.createDefault();
 
 	final float centerOfMassStrokeWidth = 0.1f;
 	final float centerOfMassRadius = 1;
-	final Drawer centerOfMassDrawer = CrossDrawer.create(Color.GREEN, centerOfMassStrokeWidth).setRadius(centerOfMassRadius);
+	final Drawer centerOfMassDrawer = CrossDrawer.create(Color.MAGENTA, centerOfMassStrokeWidth).setRadius(centerOfMassRadius);
 
 	return new DrawConfiguration(ballDrawer, lineSegmentDrawer, centerOfMassDrawer);
     }

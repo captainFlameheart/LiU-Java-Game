@@ -8,6 +8,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+/**
+ * Represents a {@link World} that provides empty implementations for each inherited method to simplify
+ * the creation of worlds
+ */
 public class AdaptingWorld implements World
 {
     @Override public void updateMousePos(final Vector2D newMousePos) {}

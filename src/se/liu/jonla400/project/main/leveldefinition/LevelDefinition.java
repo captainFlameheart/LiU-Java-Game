@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 public class LevelDefinition
 {
-    private CustomShapeDefinition shape;
+    private LevelShapeDefinition shape;
     private Vector2D centerOfMass;
     private Vector2D ballPos;
     private double ballRadius;
@@ -27,7 +27,7 @@ public class LevelDefinition
 	camera = null;
     }
 
-    private LevelDefinition(final CustomShapeDefinition shape, final Vector2D centerOfMass, final Vector2D ballPos,
+    private LevelDefinition(final LevelShapeDefinition shape, final Vector2D centerOfMass, final Vector2D ballPos,
 			    final double ballRadius, final RectangularRegion camera)
     {
 	this.shape = shape;
@@ -38,7 +38,7 @@ public class LevelDefinition
     }
 
     public static LevelDefinition createEmpty() {
-	final CustomShapeDefinition levelShape = CustomShapeDefinition.createEmpty();
+	final LevelShapeDefinition levelShape = LevelShapeDefinition.createEmpty();
 	final Vector2D levelCenterOfMass = Vector2D.createZero();
 	final Vector2D ballPos = Vector2D.createZero();
 	final double ballRadius = 0.5;
@@ -55,7 +55,7 @@ public class LevelDefinition
 	while (indexedSegmentIterator.hasNext()) {
 	    segments.add(indexedSegmentIterator.next().removeIndex());
 	}
-	final CustomShapeDefinition shape = CustomShapeDefinition.copyFrom(segments);
+	final LevelShapeDefinition shape = LevelShapeDefinition.copyFrom(segments);
 
 	final Vector2D centerOfMass = blueprint.getCenterOfMass();
 	final Vector2D ballPos = blueprint.getBallPos();
@@ -71,7 +71,7 @@ public class LevelDefinition
 	return shapeIsInvalid || centerOfMass == null || ballIsInvalid || cameraIsInvalid;
     }
 
-    public CustomShapeDefinition getShape() {
+    public LevelShapeDefinition getShape() {
 	return shape;
     }
 

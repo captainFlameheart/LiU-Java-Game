@@ -5,6 +5,9 @@ import se.liu.jonla400.project.main.levelcreation.LevelCreator;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+/**
+ * An empty implementation of {@link Mode} to simplify the creation of level creator modes
+ */
 public class AdaptingMode implements Mode
 {
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {}

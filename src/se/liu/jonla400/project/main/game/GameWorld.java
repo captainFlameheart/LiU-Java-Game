@@ -14,6 +14,13 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the game world, including the camera (from which the
+ * {@link se.liu.jonla400.project.main.world.WorldGUI} determines what to show of the world).
+ * The game world has a list of levels and a currently active level. It also has a button
+ * for restarting the current level. The game world resets the current level if the player loses,
+ * and moves onto the next level if the player wins.
+ */
 public class GameWorld implements FilmedWorld, LevelListener
 {
     private DrawConfiguration drawConfig;
@@ -22,7 +29,7 @@ public class GameWorld implements FilmedWorld, LevelListener
     private WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera;
     private int restartKeyCode;
 
-    public GameWorld(final DrawConfiguration drawConfig, final List<LevelDefinition> levelDefinitions, final int currentLevelIndex,
+    private GameWorld(final DrawConfiguration drawConfig, final List<LevelDefinition> levelDefinitions, final int currentLevelIndex,
 		     final WorldWithMovableCamera<LevelWorld> currentLevelWithMovableCamera, final int restartKeyCode)
     {
 	this.drawConfig = drawConfig;
@@ -32,6 +39,13 @@ public class GameWorld implements FilmedWorld, LevelListener
 	this.restartKeyCode = restartKeyCode;
     }
 
+    /**
+     * Creates a new GameWorld that starts on the first level. The restart key is set to enter.
+     *
+     * @param drawConfig A specification of how the ball, line segments and the level's center of mass is to be drawn
+     * @param levelDefinitions The list of levels, must be non-empty
+     * @return The created game world that has started the first level
+     */
     public static GameWorld createAndStartWithFirstLevel(final DrawConfiguration drawConfig, final List<LevelDefinition> levelDefinitions) {
 	if (levelDefinitions.isEmpty()) {
 	    throw new IllegalArgumentException("No levels");
@@ -45,26 +59,55 @@ public class GameWorld implements FilmedWorld, LevelListener
 	return gameWorld;
     }
 
+    /**
+     * @return The camera of the current level
+     */
     @Override public RectangularRegion getCamera() {
 	return currentLevelWithMovableCamera.getCamera();
     }
 
+    /**
+     * Updates the considered mouse position for the current level
+     *
+     * @param newMousePos The new mouse position
+     */
     @Override public void updateMousePos(final Vector2D newMousePos) {
 	currentLevelWithMovableCamera.updateMousePos(newMousePos);
     }
 
+    /**
+     * Lets the current level handle the mouse press
+     *
+     * @param mouseEvent The mouse event of the press
+     */
     @Override public void mousePressed(final MouseEvent mouseEvent) {
 	currentLevelWithMovableCamera.mousePressed(mouseEvent);
     }
 
+    /**
+     * Lets the current level handle the mouse release
+     *
+     * @param mouseEvent The mouse event of the release
+     */
     @Override public void mouseReleased(final MouseEvent mouseEvent) {
 	currentLevelWithMovableCamera.mouseReleased(mouseEvent);
     }
 
+    /**
+     * Lets the current level handle the movement of the mouse wheel
+     *
+     * @param mouseWheelEvent The mouse wheel event
+     */
     @Override public void mouseWheelMoved(final MouseWheelEvent mouseWheelEvent) {
 	currentLevelWithMovableCamera.mouseWheelMoved(mouseWheelEvent);
     }
 
+    /**
+     * Restarts the level if the correct key is pressed.
+     * Otherwise lets the current level handle the key press
+     *
+     * @param keyEvent The key event of the press
+     */
     @Override public void keyPressed(final KeyEvent keyEvent) {
 	if (keyEvent.getKeyCode() == restartKeyCode) {
 	    startCurrentLevel();
@@ -73,18 +116,37 @@ public class GameWorld implements FilmedWorld, LevelListener
 	}
     }
 
+    /**
+     * Lets the current level handle the key release
+     *
+     * @param keyEvent The key event of the release
+     */
     @Override public void keyReleased(final KeyEvent keyEvent) {
 	currentLevelWithMovableCamera.keyReleased(keyEvent);
     }
 
+    /**
+     * Ticks time forward
+     *
+     * @param deltaTime The amount of time to tick forward
+     */
     @Override public void tick(final double deltaTime) {
 	currentLevelWithMovableCamera.tick(deltaTime);
     }
 
+    /**
+     * Draws the current level
+     *
+     * @param g The graphics to draw to
+     * @param region The region required to draw to, but not limited by
+     */
     @Override public void draw(final Graphics2D g, final RectangularRegion region) {
 	currentLevelWithMovableCamera.draw(g, region);
     }
 
+    /**
+     * Advances to the next level if one exists
+     */
     @Override public void onLevelCompleted() {
 	if (currentLevelIndex == levelDefinitions.size() - 1) {
 	    return;
@@ -93,6 +155,9 @@ public class GameWorld implements FilmedWorld, LevelListener
 	startCurrentLevel();
     }
 
+    /**
+     * Restarts the current level
+     */
     @Override public void onLevelFailed() {
 	startCurrentLevel();
     }
@@ -103,6 +168,6 @@ public class GameWorld implements FilmedWorld, LevelListener
 	final RectangularRegion camera = currentLevelDefinition.getCamera();
 
 	currentLevelWithMovableCamera = WorldWithMovableCamera.create(currentLevelWorld, camera);
-	currentLevelWorld.addListener(this);
+	currentLevelWorld.addListener(this); // We want to be notified when the level is failed or completed
     }
 }

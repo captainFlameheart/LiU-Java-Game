@@ -154,7 +154,7 @@ public class Body
      * @param localPoint The point in local space
      * @return The point in global space
      */
-    public Vector2D convertLocalPointToGlobalPoint(final Vector2D localPoint) {
+    public Vector2D convertLocalToGlobalPoint(final Vector2D localPoint) {
 	final Vector2D offset = convertLocalToGlobalVector(localPoint);
 	return convertOffsetToGlobalPoint(offset);
     }

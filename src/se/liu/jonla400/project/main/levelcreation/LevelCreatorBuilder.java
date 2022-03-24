@@ -16,14 +16,37 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Map;
 
+/**
+ * Is responsible for building a {@link LevelCreator}. Not only does this entail initializing the level creator,
+ * but also to initialize all the modes of the level creator and bind keys to the modes.
+ */
 public class LevelCreatorBuilder
 {
+    /**
+     * Builds a level creator that starts with the given {@link LevelBlueprint}
+     * and draws itself according to the given {@link DrawConfiguration}.
+     *
+     * Controls:
+     * CTRL+Z -> undo
+     * CTRL+Y -> redo
+     * 1 -> {@link AddVertexMode}
+     * 2 -> {@link MoveVertexMode}
+     * 3 -> {@link RemoveLineSegmentMode}
+     * 4 -> {@link ChangeTypeMode}
+     * 5 -> {@link SetCenterOfMassMode}
+     * 6 -> {@link SetCameraMode}
+     *
+     * @param blueprint The blueprint to start with
+     * @param drawConfig How the level creator should be drawn
+     * @return The created LevelCreator
+     */
     public LevelCreator buildLevelCreator(final LevelBlueprint blueprint, final DrawConfiguration drawConfig) {
         final DrawableLevelBlueprint drawableBlueprint = new DrawableLevelBlueprint(blueprint, drawConfig);
         final CommandTimeLine commandTimeLine = CommandTimeLine.createEmpty();
 
-        final int cursorActionButton = MouseEvent.BUTTON1;
+        final int cursorActionButton = MouseEvent.BUTTON1; // Each mode will respond to this button
 
+        // Create modes
         final AddVertexMode addVertexMode = AddVertexMode.createWithDefaultConfigAndKeys();
         final MoveVertexMode moveVertexMode = MoveVertexMode.createWithDefaultDeselectKey();
         final RemoveLineSegmentMode removeLineSegmentMode = new RemoveLineSegmentMode();
@@ -31,9 +54,9 @@ public class LevelCreatorBuilder
         final SetCenterOfMassMode setCenterOfMassMode = SetCenterOfMassMode.createWithDefaultDrawing();
         final SetCameraMode setCameraMode = SetCameraMode.createWithDefaultDeselectKey();
 
-        final Mode currentMode = addVertexMode;
+        final Mode currentMode = addVertexMode; // Start with adding vertices
 
-        final Vector2D cursorPos = Vector2D.createZero();
+        final Vector2D cursorPos = Vector2D.createZero(); // Initialize the considered cursor position to (0, 0)
 
         final CreatorKeyListener keyListener = DefaultCreatorKeyListener.create(
                 addVertexMode, moveVertexMode, removeLineSegmentMode, changeTypeMode, setCenterOfMassMode, setCameraMode);
@@ -71,6 +94,8 @@ public class LevelCreatorBuilder
         }
 
         private void possiblyUndoOrRedo(final LevelCreator levelCreator, final KeyEvent keyEvent) {
+            // CTRL+Z -> undo
+            // CTRL+Y -> redo
             final int keyCode = keyEvent.getKeyCode();
             if (keyEvent.isControlDown()) {
                 if (keyCode == KeyEvent.VK_Z) {

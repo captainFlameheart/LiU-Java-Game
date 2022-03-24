@@ -14,6 +14,10 @@ import java.awt.geom.Line2D;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Represents a {@link Mode} that moves vertices. There exists a button to deselect a vertex
+ * which is about to be moved.
+ */
 public class MoveVertexMode extends AdaptingMode
 {
     private Optional<Vector2D> possibleSelectedVertex;
@@ -24,10 +28,20 @@ public class MoveVertexMode extends AdaptingMode
 	this.deselectVertexKeyCode = deselectVertexKeyCode;
     }
 
+    /**
+     * Creates a new MoveVertexMode with the key escape used to deselect a vertex about to move
+     *
+     * @return The created MoveVertexMode
+     */
     public static MoveVertexMode createWithDefaultDeselectKey() {
 	return new MoveVertexMode(Optional.empty(), KeyEvent.VK_ESCAPE);
     }
 
+    /**
+     * Selects or moves a vertex. If no vertex exists, does nothing.
+     *
+     * @param levelCreator The considered level creator
+     */
     @Override public void cursorPressed(final LevelCreator levelCreator) {
 	getCursorPressedCommand(levelCreator).ifPresent(levelCreator::execute);
     }
@@ -44,6 +58,12 @@ public class MoveVertexMode extends AdaptingMode
 	return Optional.of(moveAndDeselectVertexCommand);
     }
 
+    /**
+     * If the correct key is pressed, deselects the vertex about to move (if any)
+     *
+     * @param levelCreator The considered level creator
+     * @param keyEvent The key event containing the pressed key
+     */
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
 	if (keyEvent.getKeyCode() == deselectVertexKeyCode) {
 	    possibleSelectedVertex.ifPresent(selectedVertex -> levelCreator.execute(createDeselectVertexCommand(selectedVertex)));
@@ -54,6 +74,13 @@ public class MoveVertexMode extends AdaptingMode
 	return new ReversedCommand(new SelectVertexCommand(vertex));
     }
 
+    /**
+     * Highlights the vertex to be selected, or if one already is selected highlights how the line segments
+     * containing that vertex will change.
+     *
+     * @param levelCreator The considered level creator
+     * @param g The graphics object to draw to
+     */
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
 	if (possibleSelectedVertex.isEmpty()) {
 	    drawClosestVertexToCursorIfExists(levelCreator, g);
@@ -63,11 +90,12 @@ public class MoveVertexMode extends AdaptingMode
 	    g.setStroke(new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
 					new float[]{dashLength}, 0));
 
-	    final Vector2D markedVertex = possibleSelectedVertex.get();
-	    drawVertex(markedVertex, g);
-	    final Set<Vector2D> markedVertexNeighbours = levelCreator.getNeighboursTo(markedVertex);
+	    final Vector2D selectedVertex = possibleSelectedVertex.get();
+	    drawVertex(selectedVertex, g);
+	    // Highlight how the segments containing the selected vertex will change
+	    final Set<Vector2D> selectedVertexNeighbours = levelCreator.getNeighboursTo(selectedVertex);
 	    final Vector2D cursorPos = levelCreator.getCursorPos();
-	    for (Vector2D neighbour : markedVertexNeighbours) {
+	    for (Vector2D neighbour : selectedVertexNeighbours) {
 		g.draw(new Line2D.Double(neighbour.getX(), neighbour.getY(), cursorPos.getX(), cursorPos.getY()));
 	    }
 	}

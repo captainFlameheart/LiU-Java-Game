@@ -14,6 +14,12 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * A {@link Mode} that adds vertices. By pressing a key, this mode can "magnetize" towards
+ * the closest vertices, making it easier to create line segments that go from or to vertices
+ * that already exist. From key input the user can also toggle whether ending a line segment
+ * immediately begins another. A third key enables removing a line segment in progress.
+ */
 public class AddVertexMode extends AdaptingMode
 {
     private boolean chainsLineSegments;
@@ -34,6 +40,13 @@ public class AddVertexMode extends AdaptingMode
 	this.removeIncompleteKeyCode = removeIncompleteKeyCode;
     }
 
+    /**
+     * Creates a new AddVertexMode with line segment chaining set to true and magnetized
+     * set to false. The key C is used to toggle line segment chaining, the shift key is used
+     * to toggle the magnetize feature and the escape key is used to remove incomplete line segments.
+     *
+     * @return The created AddVertexMode
+     */
     public static AddVertexMode createWithDefaultConfigAndKeys() {
 	final boolean chainsLineSegments = true;
 	final int chainsLineSegmentsKeyCode = KeyEvent.VK_C;
@@ -43,15 +56,30 @@ public class AddVertexMode extends AdaptingMode
 	return new AddVertexMode(chainsLineSegments, chainsLineSegmentsKeyCode, magnetized, magnetizedKeyCode, removeIncompleteKeyCode);
     }
 
+    /**
+     * Adds a new vertex. If the line segment is completed and line segment chaining is turned on,
+     * a new line segment is started.
+     *
+     * @param levelCreator The level creator to add vertices to
+     */
     @Override public void cursorPressed(final LevelCreator levelCreator) {
 	final Vector2D newVertex = getUpcomingVertex(levelCreator);
 	final AddVertexCommand addVertexCommand = new AddVertexCommand(newVertex);
 	levelCreator.execute(addVertexCommand);
 	if (chainsLineSegments && !levelCreator.hasIncompleteLineSegment()) {
-	    levelCreator.execute(addVertexCommand);
+	    levelCreator.execute(addVertexCommand); // Add it twice to start a new line segment
 	}
     }
 
+    /**
+     * Depending on the key does one or none of the following:
+     * - Toggles line segment chaining
+     * - Sets magnetizing to true
+     * - Removes the incomplete line segment, if it exists
+     *
+     * @param levelCreator The level creator to potentially change the state of
+     * @param keyEvent The key event of the pressed key
+     */
     @Override public void keyPressed(final LevelCreator levelCreator, final KeyEvent keyEvent) {
 	final int keyCode = keyEvent.getKeyCode();
 	if (keyCode == chainsLineSegmentsKeyCode) {
@@ -72,13 +100,20 @@ public class AddVertexMode extends AdaptingMode
 	}
     }
 
+    /**
+     * If the correct key is released, the magnetize feature is turned off
+     *
+     * @param levelCreator ignored
+     * @param keyEvent The key event containing the released key
+     */
     @Override public void keyReleased(final LevelCreator levelCreator, final KeyEvent keyEvent) {
 	if (keyEvent.getKeyCode() == magnetizedKeyCode) {
 	    magnetized = false;
 	}
     }
 
-    public void removeIncompleteLineSegment(final LevelCreator levelCreator) {
+    private void removeIncompleteLineSegment(final LevelCreator levelCreator) {
+	// Remove it only if it exists
 	levelCreator.getIncompleteLineSegmentStart().ifPresent(start -> {
 	    final Command removeStartCommand = new ReversedCommand(new AddVertexCommand(start));
 	    levelCreator.execute(removeStartCommand);
@@ -88,14 +123,15 @@ public class AddVertexMode extends AdaptingMode
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
 	final Vector2D upcomingVertex = getUpcomingVertex(levelCreator);
 
+	// Draw the upcoming vertex
 	final double radius = 0.2;
 	final double diameter = 2 * radius;
 	g.setColor(Color.BLACK);
 	g.setStroke(new BasicStroke(0.1f));
 	g.draw(new Ellipse2D.Double(upcomingVertex.getX() - radius, upcomingVertex.getY() - radius, diameter, diameter));
 
-	final Optional<Vector2D> startOfNewLineSegment = levelCreator.getIncompleteLineSegmentStart();
-	startOfNewLineSegment.ifPresent(start -> {
+	// Draw the upcoming line segment, if it exists
+	levelCreator.getIncompleteLineSegmentStart().ifPresent(start -> {
 	    g.setColor(Color.GREEN);
 	    g.setStroke(new BasicStroke(0.1f));
 	    g.draw(new Line2D.Double(start.getX(), start.getY(), upcomingVertex.getX(), upcomingVertex.getY()));
@@ -117,7 +153,9 @@ public class AddVertexMode extends AdaptingMode
 
 	final Set<Vector2D> magneticVertices = levelCreator.getAllVertices();
 	levelCreator.getIncompleteLineSegmentStart().ifPresent(newLineSegmentStart -> {
+	    // Don't magnetize towards the start of the line segment...
 	    magneticVertices.remove(newLineSegmentStart);
+	    // nor to any of its neighbours
 	    magneticVertices.removeAll(levelCreator.getNeighboursTo(newLineSegmentStart));
 	});
 	return magneticVertices;

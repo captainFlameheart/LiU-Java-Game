@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Messages a set of {@link LevelListener} when a level is failed or completed based on line segments
+ * collided with
+ */
 public class LevelEventSender implements CollisionListener<LineSegmentType>
 {
     private Collection<LevelListener> listeners;
@@ -22,6 +26,11 @@ public class LevelEventSender implements CollisionListener<LineSegmentType>
         this.segmentTypeToListenerAction = segmentTypeToListenerAction;
     }
 
+    /**
+     * Creates a new LevelEventSender initially without listeners.
+     *
+     * @return The createt LevelEventSender
+     */
     public static LevelEventSender createWithoutListeners() {
         Map<LineSegmentType, Consumer<LevelListener>> segmentTypeToListenerAction = Map.of(
                 LineSegmentType.LOOSE, LevelListener::onLevelFailed,
@@ -30,10 +39,21 @@ public class LevelEventSender implements CollisionListener<LineSegmentType>
         return new LevelEventSender(new ArrayList<>(), segmentTypeToListenerAction);
     }
 
+    /**
+     * Adds a listener
+     *
+     * @param listener The listener to add
+     */
     public void addListener(final LevelListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Potentially notifies listeners about a level event, depending on the type of line segment
+     * collided with
+     *
+     * @param collision The collision that occured
+     */
     @Override public void collisionOccurred(final CollisionData<LineSegmentType> collision) {
         getListenerActionOf(collision).ifPresent(listeners::forEach);
     }

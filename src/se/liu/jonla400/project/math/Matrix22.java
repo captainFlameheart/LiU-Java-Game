@@ -2,6 +2,10 @@ package se.liu.jonla400.project.math;
 
 import java.util.Arrays;
 
+/**
+ * Represents a 2-by-2 matrix of values in double-precision. Contains methods for adding
+ * to matricies and computing the weighted sum of a matrix.
+ */
 public class Matrix22
 {
     private final static int DIMENSION = 2;
@@ -12,6 +16,14 @@ public class Matrix22
 	this.values = values;
     }
 
+    /**
+     * Creates a Matrix22 with the given values
+     * @param row0Col0 The value at the first row and first column
+     * @param row0Col1 The value at the first row and second column
+     * @param row1Col0 The value at the second row and first column
+     * @param row1Col1 The value at the second row and second column
+     * @return The created Matrix22
+     */
     public static Matrix22 create(
 	    final double row0Col0, final double row0Col1,
 	    final double row1Col0, final double row1Col1)

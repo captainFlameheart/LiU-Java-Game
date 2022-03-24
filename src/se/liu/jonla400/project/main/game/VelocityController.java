@@ -14,6 +14,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Controlls the velocity and angular velocity of a {@link Body} based on keys that are
+ * being pressed. To avoid quick velocity changes that are unrealistic from a physical stand-point,
+ * a maximum force and torque are put in place.
+ */
 public class VelocityController implements VelocityConstrainer
 {
     private Map<Integer, MovementDirection> keyToMovementDir;
@@ -41,6 +46,19 @@ public class VelocityController implements VelocityConstrainer
         this.angularVelSeeker = angularVelSeeker;
     }
 
+    /**
+     * Creates a VelocityController with default controlls and speeds. The controlls are
+     * as follows:
+     * A -> move left
+     * D -> move right
+     * W -> move up
+     * S -> move down
+     * Q -> rotate left
+     * E -> rotate right
+     *
+     * @param body The body to steer
+     * @return The create VelocityController
+     */
     public static VelocityController createWithDefaultConfigFor(final Body body) {
         final Map<Integer, MovementDirection> keyToMovementDir = Map.of(
                 KeyEvent.VK_A, MovementDirection.LEFT,
@@ -70,11 +88,21 @@ public class VelocityController implements VelocityConstrainer
                                       keyToRotationDir, angularSpeed, activeRotationDirections, angularVelSeeker);
     }
 
+    /**
+     * Potentially starts moving or rotating based on the pressed key
+     *
+     * @param keyEvent The key event containing the pressed key
+     */
     public void keyPressed(final KeyEvent keyEvent) {
         getMovementDirectionOfKey(keyEvent).ifPresent(this::startMovementInDirection);
         getRotationDirectionOfKey(keyEvent).ifPresent(this::startRotationInDirection);
     }
 
+    /**
+     * Potentially stops moving or rotating in a direction based on the released key
+     *
+     * @param keyEvent The event containing the released key
+     */
     public void keyReleased(final KeyEvent keyEvent) {
         getMovementDirectionOfKey(keyEvent).ifPresent(this::endMovementInDirection);
         getRotationDirectionOfKey(keyEvent).ifPresent(this::endRotationInDirection);
@@ -88,7 +116,7 @@ public class VelocityController implements VelocityConstrainer
         return Optional.ofNullable(keyToRotationDir.get(keyEvent.getKeyCode()));
     }
 
-    public void startMovementInDirection(final MovementDirection direction) {
+    private void startMovementInDirection(final MovementDirection direction) {
         if (activeMovementDirections.contains(direction)) {
             return;
         }
@@ -96,7 +124,7 @@ public class VelocityController implements VelocityConstrainer
         updateTargetVel();
     }
 
-    public void endMovementInDirection(final MovementDirection direction) {
+    private void endMovementInDirection(final MovementDirection direction) {
         if (!activeMovementDirections.contains(direction)) {
             return;
         }
@@ -105,15 +133,17 @@ public class VelocityController implements VelocityConstrainer
     }
 
     private void updateTargetVel() {
+        // Sum all direction vectors
         final Vector2D dirSum = Vector2D.createZero();
         for (MovementDirection activeMovementDir : activeMovementDirections) {
             dirSum.addLocally(activeMovementDir.getDirVector());
         }
+        // The sum of the vectors has the correct angle, but its magnitude must be set to the target speed
         velSeeker.setTargetVel(dirSum.isZero() ? Vector2D.createZero() :
                                dirSum.setMagnitude(speed));
     }
 
-    public void startRotationInDirection(final RotationDirection direction) {
+    private void startRotationInDirection(final RotationDirection direction) {
         if (activeRotationDirections.contains(direction)) {
             return;
         }
@@ -121,7 +151,7 @@ public class VelocityController implements VelocityConstrainer
         updateTargetAngularVel();
     }
 
-    public void endRotationInDirection(final RotationDirection direction) {
+    private void endRotationInDirection(final RotationDirection direction) {
         if (!activeRotationDirections.contains(direction)) {
             return;
         }
@@ -130,6 +160,7 @@ public class VelocityController implements VelocityConstrainer
     }
 
     private void updateTargetAngularVel() {
+        // {} -> 0, {left} -> 1, {right} -> -1, {left, right} -> 0
         double dirSign = 0;
         for (RotationDirection activeRotationDir : activeRotationDirections) {
             dirSign += activeRotationDir.getSign();
@@ -137,7 +168,15 @@ public class VelocityController implements VelocityConstrainer
         angularVelSeeker.setTargetAngularVel(dirSign * angularSpeed);
     }
 
+    /**
+     * Generates a velocity constraint that tries to set the desired velocity and angular velocity,
+     * but is limited by the maximum force and torque
+     *
+     * @param deltaTime The size of the upcoming time step
+     * @return The generated velocity constraint
+     */
     @Override public ActiveVelocityConstraint generateConstraint(final double deltaTime) {
+        // Combine the velocity and the angular velocity constraints
         return ActiveVelocityConstraintList.createWithSingleIteration(
                 velSeeker.generateConstraint(deltaTime),
                 angularVelSeeker.generateConstraint(deltaTime)

@@ -12,8 +12,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents a {@link Mode} that scrolls through the available {@link LineSegmentType} values
+ * when clicking on a line segment
+ */
 public class ChangeTypeMode extends AdaptingMode
 {
+    /**
+     * Changes the type of the line segment closest to the cursor (if none exists, does nothing)
+     * Multiple presses might be needed before the right type is set.
+     *
+     * @param levelCreator The considered level creator
+     */
     @Override public void cursorPressed(final LevelCreator levelCreator) {
         final Optional<IndexedLineSegment> lineSegmentToChange = levelCreator.getClosestLineSegmentToCursor();
         lineSegmentToChange.ifPresent(segment -> {
@@ -31,8 +41,15 @@ public class ChangeTypeMode extends AdaptingMode
         return orderedTypes.get(newIndex);
     }
 
+    /**
+     * Highlights the line segment to change the type of
+     *
+     * @param levelCreator The level creator containing the line segments
+     * @param g The graphics to draw to
+     */
     @Override public void draw(final LevelCreator levelCreator, final Graphics2D g) {
         levelCreator.getClosestLineSegmentToCursor().ifPresent(segment -> {
+            // Draw circles around the vertices of the closest line segment
             final Vector2D start = segment.getStart();
             final Vector2D end = segment.getEnd();
             final double radius = 0.3;

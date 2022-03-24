@@ -1,5 +1,8 @@
 package se.liu.jonla400.project.math;
 
+/**
+ * Represents a rectangular region without any rotation. The region can be scaled and moved.
+ */
 public class RectangularRegion
 {
     private Vector2D bottomLeft;
@@ -16,6 +19,13 @@ public class RectangularRegion
         this.size = size;
     }
 
+    /**
+     * Creates a RectangularRegion starting at a corner and extending with a size
+     *
+     * @param cornerPos A corner
+     * @param size The size (can have negative components)
+     * @return The created RectangularRegion
+     */
     public static RectangularRegion createFromCornerAndSize(final Vector2D cornerPos, final Vector2D size) {
         final PosAndDimensionPair leftXAndPositiveWidth = requirePositiveDimension(cornerPos.getX(), size.getX());
         final PosAndDimensionPair bottomYAndPositiveHeight = requirePositiveDimension(cornerPos.getY(), size.getY());
@@ -46,61 +56,117 @@ public class RectangularRegion
         }
     }
 
+    /**
+     * Creates a RectangularRegion with the given coordinate ranges
+     *
+     * @param startToEndX The start and end x
+     * @param startToEndY The start and end y
+     * @return The created RectangularRegion
+     */
     public static RectangularRegion createFromCoordinateRanges(final Interval startToEndX, final Interval startToEndY) {
         final Vector2D startPos = Vector2D.createCartesian(startToEndX.getStart(), startToEndY.getStart());
         final Vector2D size = Vector2D.createCartesian(startToEndX.getStartToEndDisplacement(), startToEndY.getStartToEndDisplacement());
         return createFromCornerAndSize(startPos, size);
     }
 
+    /**
+     * Creates a RectangularRegion with the given center and size
+     *
+     * @param center The center
+     * @param size The size (can have negative components)
+     * @return The created RectangularRegion
+     */
     public static RectangularRegion createFromCenter(final Vector2D center, final Vector2D size) {
         final Vector2D cornerPos = center.subtract(size.getHalf());
         return createFromCornerAndSize(cornerPos, size);
     }
 
+    /**
+     * Creates a RectangularRegion with the given start and end corners
+     *
+     * @param start The start corner
+     * @param end The end corner
+     * @return The created RectangularRegion
+     */
     public static RectangularRegion createFromCorners(final Vector2D start, final Vector2D end) {
         return createFromCoordinateRanges(new Interval(start.getX(), end.getX()), new Interval(start.getY(), end.getY()));
     }
 
+    /**
+     * @return Whether this region is considered to be invalid
+     */
     public boolean isInvalid() {
         return bottomLeft == null || size == null || size.getX() < 0 || size.getY() < 0;
     }
 
+    /**
+     * @return The left-most x coordinate
+     */
     public double getLeftX() {
         return bottomLeft.getX();
     }
 
+    /**
+     * @return The right-most x coordinate
+     */
     public double getRightX() {
         return bottomLeft.getX() + size.getX();
     }
 
+    /**
+     * @return The lower y-coordinate
+     */
     public double getBottomY() {
         return bottomLeft.getY();
     }
 
+    /**
+     * @return The upper y-coordinate
+     */
     public double getTopY() {
         return bottomLeft.getY() + size.getY();
     }
 
+    /**
+     * @return The positive width
+     */
     public double getWidth() {
         return size.getX();
     }
 
+    /**
+     * @return The positive height
+     */
     public double getHeight() {
         return size.getY();
     }
 
+    /**
+     * @return A read-only view of the positive size
+     */
     public Vector2D getSize() {
         return size.copy();
     }
 
+    /**
+     * @return A read-only view of the center
+     */
     public Vector2D getCenter() {
         return bottomLeft.add(size.getHalf());
     }
 
+    /**
+     * @param deltaPos The change in position to apply
+     */
     public void move(final Vector2D deltaPos) {
         bottomLeft.addLocally(deltaPos);
     }
 
+    /**
+     * Scales this region and retains its center position
+     *
+     * @param scale How much to scale
+     */
     public void scale(final double scale) {
         set(createFromCenter(getCenter(), size.multiply(scale)));
     }
@@ -110,6 +176,9 @@ public class RectangularRegion
         size.set(other.size);
     }
 
+    /**
+     * @return A copy of this region
+     */
     public RectangularRegion copy() {
         return new RectangularRegion(bottomLeft.copy(), size.copy());
     }

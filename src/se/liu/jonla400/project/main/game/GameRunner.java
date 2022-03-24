@@ -11,8 +11,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the procedure that starts the main game with a sequence of levels for the
+ * player to complete
+ */
 public class GameRunner
 {
+    /**
+     * Starts the game
+     *
+     * @param drawConfig Defines how the ball, line segments and the level's center of mass are to be drawn
+     */
     public static void run(final DrawConfiguration drawConfig) {
 	final List<LevelDefinition> levelDefinitions = getLevelsOrElseQuit();
 	final GameWorld gameWorld = GameWorld.createAndStartWithFirstLevel(drawConfig, levelDefinitions);
@@ -20,6 +29,11 @@ public class GameRunner
 	gui.start();
     }
 
+    /**
+     * Tries to fetch the levels of the game, but if unsuccessful quits the program
+     *
+     * @return The list of {@link LevelDefinition} for the game
+     */
     private static List<LevelDefinition> getLevelsOrElseQuit() {
 	final List<LevelDefinition> levels = new ArrayList<>();
 
@@ -42,9 +56,11 @@ public class GameRunner
     }
 
     private static String[] getLevelResourceNames() {
+	// Declare each level and their order by identifiying them with their names
 	final String[] levelNames = {
 		"level0", "level1", "level2", "level3", "level4", "level5", "level6", "level7", "level8", "level9"
 	};
+	// Convert the level names to full resource names
 	final String[] levelResourceNames = new String[levelNames.length];
 	for (int i = 0; i < levelNames.length; i++) {
 	    levelResourceNames[i] = "levels/" + levelNames[i] + ".json";
