@@ -147,15 +147,6 @@ public class DrawableLevelBlueprint
     }
 
     /**
-     * Gets the type of the line segment at the given index
-     *
-     * @param lineSegmentIndex The index of the line segment to get the type of
-     */
-    public LineSegmentType getLineSegmentType(final int lineSegmentIndex) {
-        return blueprint.getLineSegmentType(lineSegmentIndex);
-    }
-
-    /**
      * Sets the type of the line segment at the given index
      *
      * @param lineSegmentIndex The index of the line segment to set the type of

@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * Defines a level by containing the level's shape and initial center of mass
+ * the ball's position and radius as well as the level's initial camera.
+ */
 public class LevelDefinition
 {
     private LevelShapeDefinition shape;
@@ -37,6 +41,12 @@ public class LevelDefinition
 	this.camera = camera;
     }
 
+    /**
+     * Creates a LevelDefinition without a level shape and a default center of mass,
+     * ball position, ball radius and camera.
+     *
+     * @return The created LevelDefinition
+     */
     public static LevelDefinition createEmpty() {
 	final LevelShapeDefinition levelShape = LevelShapeDefinition.createEmpty();
 	final Vector2D levelCenterOfMass = Vector2D.createZero();
@@ -49,6 +59,13 @@ public class LevelDefinition
 	return new LevelDefinition(levelShape, levelCenterOfMass, ballPos, ballRadius, camera);
     }
 
+    /**
+     * Creates a LevelDefinition from the given {@link LevelBlueprint}. If the blueprint contains
+     * an inomplete line segment it is ignored.
+     *
+     * @param blueprint The blueprint to convert
+     * @return The created LevelDefinition
+     */
     public static LevelDefinition createFromBlueprint(final LevelBlueprint blueprint) {
 	final Collection<LineSegmentDefinition> segments = new ArrayList<>();
 	final Iterator<IndexedLineSegment> indexedSegmentIterator = blueprint.getLineSegmentIterator();
@@ -64,6 +81,9 @@ public class LevelDefinition
 	return new LevelDefinition(shape, centerOfMass, ballPos, ballRadius, camera);
     }
 
+    /**
+     * @return Whether this level definition is considered invalid
+     */
     public boolean isInvalid() {
 	final boolean shapeIsInvalid = shape == null || shape.isInvalid();
 	final boolean ballIsInvalid = ballPos == null || ballRadius < 0;
@@ -75,10 +95,16 @@ public class LevelDefinition
 	return shape;
     }
 
+    /**
+     * @return A read-only view of the level's initial center of mass
+     */
     public Vector2D getCenterOfMass() {
 	return centerOfMass.copy();
     }
 
+    /**
+     * @return A read-only view of the ball's spawn position
+     */
     public Vector2D getBallPos() {
 	return ballPos.copy();
     }
@@ -87,6 +113,9 @@ public class LevelDefinition
 	return ballRadius;
     }
 
+    /**
+     * @return A read-only view of the level's initial camera
+     */
     public RectangularRegion getCamera() {
 	return camera.copy();
     }

@@ -1,7 +1,5 @@
 package se.liu.jonla400.project.main.drawing;
 
-import se.liu.jonla400.project.physics.main.Body;
-
 import java.awt.*;
 import java.awt.geom.Line2D;
 
