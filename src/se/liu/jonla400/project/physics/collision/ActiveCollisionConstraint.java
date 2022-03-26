@@ -117,7 +117,7 @@ public class ActiveCollisionConstraint implements ActiveVelocityConstraint
     }
 
     private static double projectMassAlongDirection(final Matrix22 invertedMass, final Vector2D dir) {
-        // See derivation in report
+        // See derivation at doc/math/projectedInvertedMassDerivation
         final double dirX = dir.getX();
         final double dirY = dir.getY();
         final double commonWeight = dirX * dirY;
