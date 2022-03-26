@@ -44,7 +44,7 @@ public class CollisionData<T>
      * @param contactPointOffsetB bodyB's contact point described as an offset from the body's position
      * @param normal The direction A's contact point should bounce in relative to B's contact point, should be a unit vector
      * @param penetration The penetration of the contact points along the normal
-     * @param material The bounce factor and friction coefficient
+     * @param material The bounce and friction coefficients
      * @param userData The user data
      * @param <T> The type of user data
      * @return The created collision data

@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 
 /**
  * Represents the procedure used to start creating a level. This is done by first asking the
- * user what level file to load from and to save to. If the level file doesn't exist, a new level
+ * user what level file to load from and save to. If the level file doesn't exist, a new level
  * is created. When the user presses CTRL+S the level is saved to the file.
  */
 public class CreatorRunner

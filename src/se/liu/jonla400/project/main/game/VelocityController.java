@@ -47,7 +47,7 @@ public class VelocityController implements VelocityConstrainer
     }
 
     /**
-     * Creates a VelocityController with default controlls and speeds. The controlls are
+     * Creates a VelocityController with default controls and speeds. The controls are
      * as follows:
      * A -> move left
      * D -> move right

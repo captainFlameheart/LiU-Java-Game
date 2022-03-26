@@ -259,7 +259,7 @@ public class Body
      * @return The inverse of the mass at the offset
      */
     public Matrix22 getInvertedMassAt(final Vector2D offset) {
-	// See derivation in report
+	// See derivation at doc/math/invertedMassDerivation.jpg
 	final double invertedMass = 1 / mass;
 	final double invertedAngularMass = 1 / angularMass;
 

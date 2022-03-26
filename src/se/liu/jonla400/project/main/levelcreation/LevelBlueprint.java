@@ -87,7 +87,7 @@ public class LevelBlueprint
     }
 
     /**
-     * Removes the last added vertex
+     * Removes the last added vertex. If no vertex exists throws an {@link IndexOutOfBoundsException}
      */
     public void removeVertex() {
         vertices.remove(vertices.size() - 1);

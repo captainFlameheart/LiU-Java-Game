@@ -33,6 +33,7 @@ public class OffsetBodyPointPair
      * @return The inverted mass, specifying the relation between an arbitrary impulse and the change in velocity
      */
     public Matrix22 getInvertedMass() {
+	// See derivation at doc/math/pairInvertedMassDerivation.jpg
 	return bodyPointA.getInvertedMass().add(bodyPointB.getInvertedMass());
     }
 
