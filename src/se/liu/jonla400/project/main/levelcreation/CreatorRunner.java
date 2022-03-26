@@ -11,8 +11,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents the procedure used to start creating a level. This is done by first asking the
@@ -21,6 +24,8 @@ import java.nio.file.Paths;
  */
 public class CreatorRunner
 {
+    private final static Logger LOGGER = Logger.getLogger(CreatorRunner.class.getName());
+
     public static void run(final DrawConfiguration drawConfig) {
 	final LevelFile levelFile = askUserForLevelFile();
 	final Path path = levelFile.path;
@@ -37,24 +42,27 @@ public class CreatorRunner
 	do {
 	    pathString = JOptionPane.showInputDialog("Please enter the path to the level file (new path = new level)", pathString);
 	    if (pathString == null) {
-		// The user selected the close option, exit the program
-		System.exit(0);
+		System.exit(0); // The user selected the close option, exit the program
 	    }
 
-	    final Path path = Paths.get(pathString);
+	    Path path;
+	    try {
+		path = Paths.get(pathString);
+	    } catch (InvalidPathException e) {
+		logAndShowErrorMessage(Level.WARNING, "\"" + pathString +"\" is not a valid path!", "Invalid path", e);
+		continue;
+	    }
 	    if (Files.notExists(path)) {
 		// Since the file does not exist it implicitly defines an empty level
 		return new LevelFile(path, LevelDefinition.createEmpty());
 	    }
 	    try {
-		final LevelDefinition levelDefinition = LevelIO.loadLevelFromFile(path);
-		return new LevelFile(path, levelDefinition);
+		return new LevelFile(path, LevelIO.loadLevelFromFile(path));
 	    } catch (IOException e) {
-		e.printStackTrace();
-		showErrorMessage("The file could not be read!", "File error");
+		logAndShowErrorMessage(Level.SEVERE, "The file \"" + pathString + "\" could not be read!", "File error", e);
 	    } catch (JsonSyntaxException e) {
-		e.printStackTrace();
-		showErrorMessage("The file containts invalid syntax!", "Syntax error");
+		logAndShowErrorMessage(Level.WARNING, "The file \"" + pathString + "\" contains invalid syntax!",
+				       "Syntax error", e);
 	    }
 	} while (true); // Retry until loading the file is successful, or the user quits the program
     }
@@ -73,11 +81,15 @@ public class CreatorRunner
     private static void saveLevelOrMessageError(final LevelDefinition levelDefinition, final Path path) {
 	try {
 	    LevelIO.saveLevelToFile(levelDefinition, path);
-	    System.out.println("Level saved at " + path);
+	    LOGGER.info("Level was saved at " + path);
 	} catch (IOException e) {
-	    e.printStackTrace();
-	    showErrorMessage("Could not save the level at " + path, "Save error");
+	    logAndShowErrorMessage(Level.SEVERE, "Could not save the level at \"" + path + "\"!", "Save error", e);
 	}
+    }
+
+    private static void logAndShowErrorMessage(final Level level, final String message, final String title, final Throwable thrown) {
+	LOGGER.log(level, message, thrown);
+	showErrorMessage(message, title);
     }
 
     private static void showErrorMessage(final String message, final String title) {

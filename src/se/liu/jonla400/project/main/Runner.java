@@ -10,6 +10,12 @@ import se.liu.jonla400.project.main.levelcreation.CreatorRunner;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * Represents the main runner of the program. If dev mode is turned on, a choise
@@ -21,6 +27,7 @@ public class Runner
     private final static boolean IN_DEV_MODE = true;
 
     public static void main(String[] args) {
+	tryToConfigureLogging();
 	final DrawConfiguration drawConfig = createDrawConfig();
 
 	if (IN_DEV_MODE) {
@@ -42,6 +49,20 @@ public class Runner
 	    }
 	} else {
 	    GameRunner.run(drawConfig);
+	}
+    }
+
+    private static void tryToConfigureLogging() {
+	final Logger logger = Logger.getLogger(Runner.class.getName());
+	final URL logConfig = ClassLoader.getSystemResource("mylogging.properties");
+	if (logConfig == null) {
+	    logger.severe("Unable to access the logging configuration!");
+	    return;
+	}
+	try (final InputStream logConfigStream = logConfig.openStream()) {
+	    LogManager.getLogManager().readConfiguration(logConfigStream);
+	} catch (IOException e) {
+	    logger.log(Level.SEVERE, "Could not read from the logging configuration!", e);
 	}
     }
 

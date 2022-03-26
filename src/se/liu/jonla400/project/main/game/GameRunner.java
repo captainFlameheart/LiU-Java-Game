@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents the procedure that starts the main game with a sequence of levels for the
@@ -17,6 +19,8 @@ import java.util.List;
  */
 public class GameRunner
 {
+    private final static Logger LOGGER = Logger.getLogger(GameRunner.class.getName());
+
     /**
      * Starts the game
      *
@@ -44,11 +48,11 @@ public class GameRunner
 		    levels.add(LevelIO.loadLevelFromResource(levelResourceName));
 		    levelLoaded = true;
 		} catch (IOException e) {
-		    e.printStackTrace();
-		    verifyWishToRetryOrElseQuit("The level " + levelResourceName + " could not be read!", "Failed to read level");
+		    reportErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" could not be read!",
+					       "Failed to read level", e);
 		} catch (JsonSyntaxException e) {
-		    e.printStackTrace();
-		    verifyWishToRetryOrElseQuit("The level " + levelResourceName + " contains invalid syntax!", "Invalid syntax");
+		    reportErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" contains invalid syntax!",
+					       "Invalid syntax", e);
 		}
 	    }
 	}
@@ -68,7 +72,8 @@ public class GameRunner
 	return levelResourceNames;
     }
 
-    private static void verifyWishToRetryOrElseQuit(final String message, final String title) {
+    private static void reportErrorAndPossiblyQuit(final String message, final String title, final Throwable thrown) {
+	LOGGER.log(Level.SEVERE, message, thrown);
 	final Object[] options = {"Retry"};
 	final int chosenOption = JOptionPane.showOptionDialog(
 		null, message, title, JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
