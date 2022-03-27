@@ -69,7 +69,7 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
     }
 
     private void putInFrame() {
-	final JFrame frame = new JFrame("Test!");
+	final JFrame frame = new JFrame("Become the Level!");
 	frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	frame.setContentPane(this);
 	frame.setSize(400, 400);
