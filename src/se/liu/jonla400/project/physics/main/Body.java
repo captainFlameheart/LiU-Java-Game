@@ -104,7 +104,7 @@ public class Body
      * @param angle The angle
      */
     public void setAngle(final double angle) {
-	// This method is likely used in the future
+	// This method is general-purpose and likely used in the future
 	this.angle = angle;
     }
 
@@ -124,7 +124,7 @@ public class Body
      * @param angularVel The angular velocity
      */
     public void setAngularVel(final double angularVel) {
-	// This method is likely used in the future
+	// This method is general-purpose and likely used in the future
 	this.angularVel = angularVel;
     }
 

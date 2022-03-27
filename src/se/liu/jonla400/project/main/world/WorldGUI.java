@@ -28,7 +28,7 @@ import java.util.Queue;
 public class WorldGUI extends JComponent implements MouseListener, MouseWheelListener, KeyListener
 {
     private FilmedWorld filmedWorld;
-    private Queue<Runnable> eventHandlingQueue; // Gives us controll of when to handle the input events
+    private Queue<Runnable> eventHandlingQueue;
 
     private boolean hasStarted;
 
@@ -142,11 +142,15 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 	g.setTransform(oldTransform);
     }
 
+    /**
+     * (0, 0) in graphics space will become the bottom left of the screen
+     * and increasing y-coordinates means higher up on the screen
+     *
+     * @param g
+     */
     private void flipGraphics(final Graphics2D g) {
 	g.scale(1, -1);
 	g.translate(0, -getHeight());
-	// (0, 0) in graphics space is now at the bottom left of the screen
-	// and increasing y-coordinates means higher up on the screen
     }
 
     private RectangularRegion encloseCameraWithCurrentAspectRatio() {
