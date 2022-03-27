@@ -119,7 +119,7 @@ public class RectangularRegion
     /**
      * @return An interval starting at the upper and ending at the lower y coordinate
      */
-    public Interval getTopToButtomY() {
+    public Interval getTopToBottomY() {
         final double bottomY = bottomLeft.getY();
         return new Interval(bottomY + size.getY(), bottomY);
     }

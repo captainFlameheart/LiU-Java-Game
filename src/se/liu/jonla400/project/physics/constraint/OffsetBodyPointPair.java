@@ -11,6 +11,9 @@ import se.liu.jonla400.project.math.Vector2D;
  * law of motion. This body point pair also has an inverted mass matrix M such that
  * M * λ = Δv where λ is an arbitrary impulse applied to the pair and Δv is the pair's change in
  * velocity that the impulse causes.
+ *
+ * In summary: this class enables two {@link OffsetBodyPoint}s to be seen as one (notice that this class
+ * has the same methods as an OffsetBodyPoint).
  */
 public class OffsetBodyPointPair
 {
@@ -23,7 +26,7 @@ public class OffsetBodyPointPair
     }
 
     /**
-     * @return The first point's velocity relative to the second point's velocity
+     * @return The velocity of this pair, which is defined to be the first point's velocity relative to the second point's velocity
      */
     public Vector2D getVel() {
 	return bodyPointA.getVel().subtract(bodyPointB.getVel());
