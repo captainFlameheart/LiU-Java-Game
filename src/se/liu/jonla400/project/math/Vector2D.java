@@ -46,19 +46,6 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Creates a new vector from polar coordinates
-     *
-     * @param angle The angle of the vector
-     * @param magnitude The magnitude of the vector
-     * @return The created vector
-     */
-    public static Vector2D createPolarVector(final double angle, final double magnitude) {
-	Vector2D result = createUnitVector(angle);
-	result.multiplyLocally(magnitude);
-	return result;
-    }
-
-    /**
      * Creates a new unit vector (magnitude == 1) from an angle
      *
      * @param angle The angle of the vector
@@ -298,15 +285,6 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Changes this vector by rotating it by an arbitrary angle
-     *
-     * @param deltaAngle The angle to rotate with
-     */
-    public void rotateLocally(final double deltaAngle) {
-	set(rotate(deltaAngle));
-    }
-
-    /**
      * Returns the dot product between this vector and another vector.
      * Given two vectors v = (x1, y1) and w = (x2, y2) the dot product is
      * defined as (x1 * x2) + (y1 * y2). Another equivalent definition is
@@ -383,6 +361,7 @@ public class Vector2D implements ClosestPointFinder
 
 	/**
 	 * The y-axis becomes the x-axis
+	 * (Code inspection comment: this field is likely used in the future)
 	 */
 	Y_TO_X(-1);
 

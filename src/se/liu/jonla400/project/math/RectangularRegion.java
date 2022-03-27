@@ -1,5 +1,7 @@
 package se.liu.jonla400.project.math;
 
+import java.awt.geom.Rectangle2D;
+
 /**
  * Represents a rectangular region without any rotation. The region can be scaled and moved.
  */
@@ -100,45 +102,33 @@ public class RectangularRegion
     }
 
     /**
-     * @return The left-most x coordinate
+     * @return A corresponding rectangle that can be drawn by a {@link java.awt.Graphics2D} object
      */
-    public double getLeftX() {
-        return bottomLeft.getX();
+    public Rectangle2D convertToDrawableRect() {
+        return new Rectangle2D.Double(bottomLeft.getX(), bottomLeft.getY(), size.getX(), size.getY());
     }
 
     /**
-     * @return The right-most x coordinate
+     * @return An interval starting at the left-most and ending at the right-most x coordinate
      */
-    public double getRightX() {
-        return bottomLeft.getX() + size.getX();
+    public Interval getLeftToRightX() {
+        final double leftX = bottomLeft.getX();
+        return new Interval(leftX, leftX + size.getX());
     }
 
     /**
-     * @return The lower y-coordinate
+     * @return An interval starting at the upper and ending at the lower y coordinate
      */
-    public double getBottomY() {
-        return bottomLeft.getY();
+    public Interval getTopToButtomY() {
+        final double bottomY = bottomLeft.getY();
+        return new Interval(bottomY + size.getY(), bottomY);
     }
 
     /**
-     * @return The upper y-coordinate
+     * @return A read-only view of the bottom left position
      */
-    public double getTopY() {
-        return bottomLeft.getY() + size.getY();
-    }
-
-    /**
-     * @return The positive width
-     */
-    public double getWidth() {
-        return size.getX();
-    }
-
-    /**
-     * @return The positive height
-     */
-    public double getHeight() {
-        return size.getY();
+    public Vector2D getBottomLeft() {
+        return bottomLeft.copy();
     }
 
     /**

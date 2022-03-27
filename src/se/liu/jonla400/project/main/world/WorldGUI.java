@@ -110,11 +110,11 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
 	// screenX -> worldX: 0 -> left of visible region, width -> right of visible region
 	final Interval xInterval = new Interval(0, getWidth());
-	final Interval xIntervalMappedTo = new Interval(visibleRegion.getLeftX(), visibleRegion.getRightX());
+	final Interval xIntervalMappedTo = visibleRegion.getLeftToRightX();//new Interval(visibleRegion.getLeftX(), visibleRegion.getRightX());
 
 	// screenY -> worldY: 0 -> top of visible region, height -> bottom of visible region
 	final Interval yInterval = new Interval(0, getHeight());
-	final Interval yIntervalMappedTo = new Interval(visibleRegion.getTopY(), visibleRegion.getBottomY());
+	final Interval yIntervalMappedTo = visibleRegion.getTopToButtomY();//new Interval(visibleRegion.getTopY(), visibleRegion.getBottomY());
 
 	return Optional.of(Vector2D.createCartesian(
 		xInterval.mapValueToOtherInterval(mousePos.x, xIntervalMappedTo),
@@ -133,9 +133,10 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
 	flipGraphics(g);
 	final RectangularRegion drawRegion = encloseCameraWithCurrentAspectRatio();
-	final double scale = getWidth() / drawRegion.getWidth();
+	final double scale = getWidth() / drawRegion.getSize().getX();
 	g.scale(scale, scale);
-	g.translate(-drawRegion.getLeftX(), -drawRegion.getBottomY());
+	final Vector2D bottomLeft = drawRegion.getBottomLeft();
+	g.translate(-bottomLeft.getX(), -bottomLeft.getY());
 	filmedWorld.draw(g, drawRegion);
 
 	g.setTransform(oldTransform);
@@ -150,8 +151,9 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
     private RectangularRegion encloseCameraWithCurrentAspectRatio() {
 	final RectangularRegion camera = filmedWorld.getCamera();
-	final double cameraWidth = camera.getWidth();
-	final double cameraHeight = camera.getHeight();
+	final Vector2D cameraSize = camera.getSize();
+	final double cameraWidth = cameraSize.getX();
+	final double cameraHeight = cameraSize.getY();
 
 	final double cameraWidthToHeightRatio = cameraWidth / cameraHeight;
 	final double targetWidthToHeightRatio = (double) getWidth() / getHeight();
@@ -161,12 +163,12 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 	if (cameraWidthToHeightRatio > targetWidthToHeightRatio) {
 	    // Let the enclosing width be the camera width
 	    enclosingWidth = cameraWidth;
-	    // Then compute the enclosing height that maintain the screen's width to height ratio
+	    // Then compute the enclosing height that maintains the screen's width to height ratio
 	    enclosingHeight = enclosingWidth / targetWidthToHeightRatio;
 	} else {
 	    // Let the enclosing height be the camera height
 	    enclosingHeight = cameraHeight;
-	    // Then compute the enclosing width that maintain the screen's width to height ratio
+	    // Then compute the enclosing width that maintains the screen's width to height ratio
 	    enclosingWidth = enclosingHeight * targetWidthToHeightRatio;
 	}
 
