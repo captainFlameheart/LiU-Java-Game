@@ -36,6 +36,9 @@ public class LineSegmentDefinition implements ClosestPointFinder
      * @return The created LineSegmentDefinition
      */
     public static LineSegmentDefinition copyEndPoints(final Vector2D start, final Vector2D end, final LineSegmentType type) {
+	if (start.equals(end)) {
+	    throw new IllegalArgumentException("The start and end points are the same: " + start);
+	}
 	return new LineSegmentDefinition(start.copy(), end.copy(), type);
     }
 
@@ -53,7 +56,7 @@ public class LineSegmentDefinition implements ClosestPointFinder
      * @return Whether this definition is considered invalid
      */
     public boolean isInvalid() {
-	return start == null || end == null || type == null;
+	return start == null || end == null || type == null || start.equals(end);
     }
 
     /**
