@@ -96,8 +96,8 @@ public class LevelCreatorBuilder
         private void possiblyUndoOrRedo(final LevelCreator levelCreator, final KeyEvent keyEvent) {
             // CTRL+Z -> undo
             // CTRL+Y -> redo
-            final int keyCode = keyEvent.getKeyCode();
             if (keyEvent.isControlDown()) {
+                final int keyCode = keyEvent.getKeyCode();
                 if (keyCode == KeyEvent.VK_Z) {
                     levelCreator.undo();
                 } else if (keyCode == KeyEvent.VK_Y) {

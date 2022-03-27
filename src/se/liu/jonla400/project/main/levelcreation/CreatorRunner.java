@@ -50,7 +50,7 @@ public class CreatorRunner
 		path = Paths.get(pathString);
 	    } catch (InvalidPathException e) {
 		logAndShowErrorMessage(Level.WARNING, "\"" + pathString +"\" is not a valid path!", "Invalid path", e);
-		continue;
+		continue; // Ask the user for a new path
 	    }
 	    if (Files.notExists(path)) {
 		// Since the file does not exist it implicitly defines an empty level
@@ -64,7 +64,7 @@ public class CreatorRunner
 		logAndShowErrorMessage(Level.WARNING, "The file \"" + pathString + "\" contains invalid syntax!",
 				       "Syntax error", e);
 	    }
-	} while (true); // Retry until loading the file is successful, or the user quits the program
+	} while (true); // Retry until loading a file is successful, or the user quits the program
     }
 
     private static void enableSaving(final WorldGUI gui, final CreateAndTestWorld createAndTestWorld, final Path path) {
@@ -89,10 +89,6 @@ public class CreatorRunner
 
     private static void logAndShowErrorMessage(final Level level, final String message, final String title, final Throwable thrown) {
 	LOGGER.log(level, message, thrown);
-	showErrorMessage(message, title);
-    }
-
-    private static void showErrorMessage(final String message, final String title) {
 	JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
