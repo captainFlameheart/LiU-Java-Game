@@ -2,7 +2,10 @@ package se.liu.jonla400.project.main.game;
 
 import se.liu.jonla400.project.main.drawing.BodyDrawer;
 import se.liu.jonla400.project.main.drawing.DrawConfiguration;
+import se.liu.jonla400.project.main.drawing.Drawer;
 import se.liu.jonla400.project.main.drawing.DrawerList;
+import se.liu.jonla400.project.main.drawing.LineSegmentDrawer;
+import se.liu.jonla400.project.main.leveldefinition.LevelShapeDefinition;
 import se.liu.jonla400.project.main.leveldefinition.LineSegmentType;
 import se.liu.jonla400.project.math.RectangularRegion;
 import se.liu.jonla400.project.main.drawing.CustomShapeDrawer;
@@ -63,11 +66,10 @@ public class LevelWorld extends AdaptingWorld
      * @return The created level world
      */
     public static LevelWorld create(final LevelDefinition definition, final DrawConfiguration drawConfig) {
-        final Body levelBody = createLevelBodyAt(definition.getCenterOfMass());
-        final Vector2D shapeTranslation = levelBody.getPos().negate();
-        final CustomShape<LineSegmentType> shape = definition.getShape().convertToCollidableShape();
-        final TranslatedCustomShape<LineSegmentType> translatedShape = TranslatedCustomShape.copyTranslation(shapeTranslation, shape);
-        final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, translatedShape);
+        final Vector2D centerOfMass = definition.getCenterOfMass();
+        final Body levelBody = createLevelBodyAt(centerOfMass);
+        final TranslatedCustomShape<LineSegmentType> levelShape = createLevelShape(centerOfMass, definition.getShape());
+        final CustomCollider<LineSegmentType> levelCollider = new CustomCollider<>(levelBody, levelShape);
 
         final Body ballBody = createBallBodyAt(definition.getBallPos());
         final double ballRadius = definition.getBallRadius();
@@ -87,10 +89,7 @@ public class LevelWorld extends AdaptingWorld
         physicsEngine.add(velController, collisionHandler);
 
         final DrawerList bodyDrawers = DrawerList.create(
-                new BodyDrawer(levelBody, DrawerList.create(
-                        new CustomShapeDrawer(translatedShape, drawConfig.getLineSegmentDrawer()),
-                        drawConfig.getCenterOfMassDrawer()
-                )),
+                createLevelDrawer(levelBody, levelShape, drawConfig.getLineSegmentDrawer(), drawConfig.getCenterOfMassDrawer()),
                 new BodyDrawer(ballBody, drawConfig.getBallDrawer(ballRadius))
         );
 
@@ -104,10 +103,28 @@ public class LevelWorld extends AdaptingWorld
         return Body.create(pos, levelMass, levelAngularMass);
     }
 
+    private static TranslatedCustomShape<LineSegmentType> createLevelShape(
+            final Vector2D centerOfMass, final LevelShapeDefinition levelShapeDefinition)
+    {
+        final Vector2D translation = centerOfMass.negate();
+        final CustomShape<LineSegmentType> shape = levelShapeDefinition.convertToCollidableShape();
+        return TranslatedCustomShape.copyTranslation(translation, shape);
+    }
+
     private static Body createBallBodyAt(final Vector2D pos) {
         final double ballMass = 1;
         final double ballAngularMass = 0.01;
         return Body.create(pos, ballMass, ballAngularMass);
+    }
+
+    private static BodyDrawer createLevelDrawer(
+            final Body levelBody, final TranslatedCustomShape<LineSegmentType> levelShape,
+            final LineSegmentDrawer lineSegmentDrawer, final Drawer centerOfMassDrawer)
+    {
+        return new BodyDrawer(levelBody, DrawerList.create(
+                new CustomShapeDrawer(levelShape, lineSegmentDrawer),
+                centerOfMassDrawer
+        ));
     }
 
     /**
