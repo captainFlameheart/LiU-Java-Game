@@ -46,6 +46,6 @@ public class CameraDrawer implements Drawer
     @Override public void draw(final Graphics2D g) {
 	g.setColor(color);
 	g.setStroke(stroke);
-	g.draw(camera.convertToDrawableRect());//new Rectangle2D.Double(camera.getLeftX(), camera.getBottomY(), camera.getWidth(), camera.getHeight()));
+	g.draw(camera.convertToDrawableRect());
     }
 }

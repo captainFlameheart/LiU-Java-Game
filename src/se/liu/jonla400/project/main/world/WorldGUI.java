@@ -110,11 +110,11 @@ public class WorldGUI extends JComponent implements MouseListener, MouseWheelLis
 
 	// screenX -> worldX: 0 -> left of visible region, width -> right of visible region
 	final Interval xInterval = new Interval(0, getWidth());
-	final Interval xIntervalMappedTo = visibleRegion.getLeftToRightX();//new Interval(visibleRegion.getLeftX(), visibleRegion.getRightX());
+	final Interval xIntervalMappedTo = visibleRegion.getLeftToRightX();
 
 	// screenY -> worldY: 0 -> top of visible region, height -> bottom of visible region
 	final Interval yInterval = new Interval(0, getHeight());
-	final Interval yIntervalMappedTo = visibleRegion.getTopToButtomY();//new Interval(visibleRegion.getTopY(), visibleRegion.getBottomY());
+	final Interval yIntervalMappedTo = visibleRegion.getTopToButtomY();
 
 	return Optional.of(Vector2D.createCartesian(
 		xInterval.mapValueToOtherInterval(mousePos.x, xIntervalMappedTo),

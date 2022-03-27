@@ -175,7 +175,7 @@ public class LevelWorld extends AdaptingWorld
 
     private void drawBackground(final Graphics2D g, final RectangularRegion region) {
         g.setColor(Color.WHITE);
-        g.fill(region.convertToDrawableRect());//new Rectangle2D.Double(region.getLeftX(), region.getBottomY(), region.getWidth(), region.getHeight()));
+        g.fill(region.convertToDrawableRect());
     }
 
     /**
