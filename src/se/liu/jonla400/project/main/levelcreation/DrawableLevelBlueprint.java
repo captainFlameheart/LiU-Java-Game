@@ -50,7 +50,7 @@ public class DrawableLevelBlueprint
     }
 
     private void drawBackground(final Graphics2D g, final RectangularRegion region) {
-        g.setColor(Color.WHITE);
+        g.setColor(drawConfig.getBackgroundColor());
         g.fill(region.convertToDrawableRect());
     }
 

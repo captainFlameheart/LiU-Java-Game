@@ -63,6 +63,8 @@ public class Runner
     }
 
     private static DrawConfiguration createDrawConfig() {
+	final Color backgroundColor = Color.WHITE;
+
 	final BallDrawer ballDrawer = BallDrawer.createDefault();
 	final LineSegmentDrawer lineSegmentDrawer = LineSegmentDrawer.createDefault();
 
@@ -70,6 +72,6 @@ public class Runner
 	final float centerOfMassRadius = 1;
 	final Drawer centerOfMassDrawer = CrossDrawer.create(Color.MAGENTA, centerOfMassStrokeWidth).setRadius(centerOfMassRadius);
 
-	return new DrawConfiguration(ballDrawer, lineSegmentDrawer, centerOfMassDrawer);
+	return new DrawConfiguration(backgroundColor, ballDrawer, lineSegmentDrawer, centerOfMassDrawer);
     }
 }

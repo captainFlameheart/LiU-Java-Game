@@ -32,6 +32,7 @@ import java.awt.event.MouseEvent;
 public class LevelWorld extends AdaptingWorld
 {
     private PhysicsEngine physicsEngine;
+    private Color backgroundColor;
     private DrawerList bodyDrawers;
     private Body circleBody;
 
@@ -40,11 +41,12 @@ public class LevelWorld extends AdaptingWorld
 
     private LevelEventSender levelEventSender;
 
-    private LevelWorld(final PhysicsEngine physicsEngine, final DrawerList bodyDrawers, final Body circleBody,
+    private LevelWorld(final PhysicsEngine physicsEngine, final Color backgroundColor, final DrawerList bodyDrawers, final Body circleBody,
                       final CenterOfMassController centerOfMassController, final VelocityController velController,
                       final LevelEventSender levelEventSender)
     {
         this.physicsEngine = physicsEngine;
+        this.backgroundColor = backgroundColor;
         this.bodyDrawers = bodyDrawers;
         this.circleBody = circleBody;
         this.centerOfMassController = centerOfMassController;
@@ -92,7 +94,8 @@ public class LevelWorld extends AdaptingWorld
                 new BodyDrawer(ballBody, drawConfig.getBallDrawer(ballRadius))
         );
 
-        return new LevelWorld(physicsEngine, bodyDrawers, ballBody, centerOfMassController, velController, levelEventSender);
+        return new LevelWorld(physicsEngine, drawConfig.getBackgroundColor(), bodyDrawers, ballBody, centerOfMassController, velController,
+                              levelEventSender);
     }
 
     private static Body createLevelBodyAt(final Vector2D pos) {
@@ -173,7 +176,7 @@ public class LevelWorld extends AdaptingWorld
     }
 
     private void drawBackground(final Graphics2D g, final RectangularRegion region) {
-        g.setColor(Color.WHITE);
+        g.setColor(backgroundColor);
         g.fill(region.convertToDrawableRect());
     }
 

@@ -1,5 +1,7 @@
 package se.liu.jonla400.project.main.drawing;
 
+import java.awt.*;
+
 /**
  * Specifies how graphical entities shared between a {@link se.liu.jonla400.project.main.game.LevelWorld}
  * and a {@link se.liu.jonla400.project.main.levelcreation.LevelCreator} are to be drawn. This makes
@@ -7,6 +9,7 @@ package se.liu.jonla400.project.main.drawing;
  */
 public class DrawConfiguration
 {
+    private Color backgroundColor;
     private BallDrawer ballDrawer;
     private LineSegmentDrawer lineSegmentDrawer;
     private Drawer centerOfMassDrawer;
@@ -15,14 +18,25 @@ public class DrawConfiguration
      * Creates a DrawConfiguration that specifies how the ball of the game, each line segment and
      * the center of mass of the level are to be drawn
      *
+     * @param backgroundColor The background color of a world
      * @param ballDrawer How the ball is to be drawn, independent of the position and angle
      * @param lineSegmentDrawer How an arbitrary line segment is to be drawn
      * @param centerOfMassDrawer How the center of mass of a level is to be drawn, independent of its positon and angle
      */
-    public DrawConfiguration(final BallDrawer ballDrawer, final LineSegmentDrawer lineSegmentDrawer, final Drawer centerOfMassDrawer) {
+    public DrawConfiguration(final Color backgroundColor, final BallDrawer ballDrawer, final LineSegmentDrawer lineSegmentDrawer,
+			     final Drawer centerOfMassDrawer)
+    {
+	this.backgroundColor = backgroundColor;
 	this.ballDrawer = ballDrawer;
 	this.lineSegmentDrawer = lineSegmentDrawer;
 	this.centerOfMassDrawer = centerOfMassDrawer;
+    }
+
+    /**
+     * @return The background color of a world
+     */
+    public Color getBackgroundColor() {
+	return backgroundColor;
     }
 
     /**
