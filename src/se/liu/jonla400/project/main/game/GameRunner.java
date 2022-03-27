@@ -62,14 +62,12 @@ public class GameRunner
     }
 
     private static String[] getLevelResourceNames() {
-	// Declare each level and their order by identifiying them with their names
-	final String[] levelNames = {
-		"level0", "level1", "level2", "level3", "level4", "level5", "level6", "level7", "level8", "level9"
-	};
-	// Convert the level names to full resource names
-	final String[] levelResourceNames = new String[levelNames.length];
-	for (int i = 0; i < levelNames.length; i++) {
-	    levelResourceNames[i] = "levels/" + levelNames[i] + ".json"; // (Is a resource URL)
+	// This implementation assumes that each level resource URL is "levels/levelX.json"
+	final int lastLevelIndex = 11; // Change this value when adding a level
+
+	final String[] levelResourceNames = new String[lastLevelIndex + 1];
+	for (int levelIndex = 0; levelIndex <= lastLevelIndex; levelIndex++) {
+	    levelResourceNames[levelIndex] = "levels/level" + levelIndex + ".json"; // (Is a resource URL)
 	}
 	return levelResourceNames;
     }
