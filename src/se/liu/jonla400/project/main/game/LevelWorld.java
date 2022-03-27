@@ -21,7 +21,6 @@ import se.liu.jonla400.project.main.leveldefinition.LevelDefinition;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Represents an active level world without knowledge about a camera. A level world

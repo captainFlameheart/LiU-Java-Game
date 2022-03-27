@@ -63,12 +63,23 @@ public class AddVertexMode extends AdaptingMode
      * @param levelCreator The level creator to add vertices to
      */
     @Override public void cursorPressed(final LevelCreator levelCreator) {
+	if (cursorAtIncompleteSegmentStart(levelCreator)) {
+	    return; // We do not want a line segment of length 0
+	}
 	final Vector2D newVertex = getUpcomingVertex(levelCreator);
 	final AddVertexCommand addVertexCommand = new AddVertexCommand(newVertex);
 	levelCreator.execute(addVertexCommand);
 	if (chainsLineSegments && !levelCreator.hasIncompleteLineSegment()) {
 	    levelCreator.execute(addVertexCommand); // Add it twice to start a new line segment
 	}
+    }
+
+    private boolean cursorAtIncompleteSegmentStart(final LevelCreator levelCreator) {
+	final Optional<Vector2D> segmentStart = levelCreator.getIncompleteLineSegmentStart();
+	if (segmentStart.isEmpty()) {
+	    return false;
+	}
+	return levelCreator.getCursorPos().equals(segmentStart.get());
     }
 
     /**

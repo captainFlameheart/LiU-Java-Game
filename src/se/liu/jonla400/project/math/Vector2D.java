@@ -46,16 +46,6 @@ public class Vector2D implements ClosestPointFinder
     }
 
     /**
-     * Creates a new unit vector (magnitude == 1) from an angle
-     *
-     * @param angle The angle of the vector
-     * @return The created vector
-     */
-    public static Vector2D createUnitVector(final double angle) {
-	return createCartesian(Math.cos(angle), Math.sin(angle));
-    }
-
-    /**
      * Copies this vector
      *
      * @return A copy of this vector
@@ -179,15 +169,6 @@ public class Vector2D implements ClosestPointFinder
      */
     public Vector2D multiply(final double scalar) {
 	return createCartesian(x * scalar, y * scalar);
-    }
-
-    /**
-     * Changes this vector by multiplying with a scalar
-     *
-     * @param scalar The scalar to multiply with
-     */
-    public void multiplyLocally(final double scalar) {
-	set(multiply(scalar));
     }
 
     /**
@@ -361,7 +342,7 @@ public class Vector2D implements ClosestPointFinder
 
 	/**
 	 * The y-axis becomes the x-axis
-	 * (Code inspection comment: this field is likely used in the future)
+	 * (Code inspection comment: this field is general-purpose and likely used in the future)
 	 */
 	Y_TO_X(-1);
 

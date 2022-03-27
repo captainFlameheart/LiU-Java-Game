@@ -10,7 +10,6 @@ import se.liu.jonla400.project.main.drawing.CameraDrawer;
 import se.liu.jonla400.project.math.Vector2D;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;

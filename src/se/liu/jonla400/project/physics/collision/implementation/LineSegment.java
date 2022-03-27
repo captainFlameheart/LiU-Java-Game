@@ -53,6 +53,7 @@ public class LineSegment<T> implements ClosestPointFinder
 	if (startToEnd.isZero()) {
 	    throw new IllegalArgumentException("The start and end points are the same: " + start);
 	}
+	// We precompute values since they do not change
 	final Vector2D tangent = startToEnd.normalize();
 	final Vector2D normal = tangent.rotate90Degrees();
 
