@@ -75,10 +75,10 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	final Collection<CollisionData<T>> collisions = new ArrayList<>();
 
 	final Vector2D circlePosInCustomShape = getCirclePosInCustomShape();
-	for (LineSegment<T> segment : getCustomShapeWithoutTranslation()) {
+	for (LineSegment<T> segment : getCustomShape()) {
 	    detectCircleVsSegmentCollision(circlePosInCustomShape, circleCollider.getRadius(), segment).ifPresent(c -> {
 		final Vector2D circleContactPointOffset = convertCustomShapeVecToGlobalVec(c.circleContactPointOffset);
-		final Vector2D customContactPointOffset = convertCustomShapePointToGlobalVec(c.segmentContactPoint);
+		final Vector2D customContactPointOffset = convertCustomShapePointToColliderOffset(c.segmentContactPoint);
 		final Vector2D normal = convertCustomShapeVecToGlobalVec(c.normal);
 
 		collisions.add(CollisionData.create(
@@ -89,6 +89,9 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return collisions;
     }
 
+    /**
+     * @return The circle's position in the local space of the custom collider's translated shape
+     */
     private Vector2D getCirclePosInCustomShape() {
 	final Vector2D circlePos = circleCollider.getBody().getPos();
 	final Body customColliderBody = customCollider.getBody();
@@ -98,7 +101,10 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return circlePosInCustomCollider.subtract(customShapeTranslation);
     }
 
-    private CustomShape<T> getCustomShapeWithoutTranslation() {
+    /**
+     * @return The custom collider's shape at the translation (=without the translation)
+     */
+    private CustomShape<T> getCustomShape() {
 	return customCollider.getShape().getShape();
     }
 
@@ -109,7 +115,7 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	final Vector2D circleOffsetFromClosestPoint = circlePos.subtract(closestSegmentPoint);
 	final double dist = circleOffsetFromClosestPoint.getMagnitude();
 	if (dist == 0) {
-	    return Optional.empty();
+	    return Optional.empty(); // We don't want a division with zero
 	}
 	final double penetration = circleRadius - dist;
 	if (penetration < 0) {
@@ -120,12 +126,20 @@ public class CircleVsCustomCollisionDetector<T> implements CollisionDetector<T>
 	return Optional.of(new CircleVsSegmentCollision(circleContactPointOffset, closestSegmentPoint, collisionNormal, penetration));
     }
 
+    /**
+     * @param customShapeVec A vector in the local space of the custom collider's translated shape
+     * @return The vector in global space
+     */
     private Vector2D convertCustomShapeVecToGlobalVec(final Vector2D customShapeVec) {
 	final Body customBody = customCollider.getBody();
 	return customBody.convertLocalToGlobalVector(customShapeVec);
     }
 
-    private Vector2D convertCustomShapePointToGlobalVec(final Vector2D customShapePoint) {
+    /**
+     * @param customShapePoint A point in the local space of the custom collider's translated shape
+     * @return The point's global offset from the custom collider's position
+     */
+    private Vector2D convertCustomShapePointToColliderOffset(final Vector2D customShapePoint) {
 	final Body customBody = customCollider.getBody();
 	final Vector2D customShapeTranslation = customCollider.getShape().getTranslation();
 
