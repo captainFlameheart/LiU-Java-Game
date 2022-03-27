@@ -49,12 +49,12 @@ public class GameRunner
 		    levelLoaded = true;
 		} catch (IOException e) {
 		    // Logging is done in the called method
-		    reportErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" could not be read!",
-					       "Failed to read level", e);
+		    reportLevelErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" could not be read!",
+						    "Failed to read level", e);
 		} catch (JsonSyntaxException e) {
 		    // Logging is done in the called method
-		    reportErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" contains invalid syntax!",
-					       "Invalid syntax", e);
+		    reportLevelErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" contains invalid syntax!",
+						    "Invalid syntax", e);
 		}
 	    }
 	}
@@ -72,7 +72,7 @@ public class GameRunner
 	return levelResourceNames;
     }
 
-    private static void reportErrorAndPossiblyQuit(final String message, final String title, final Throwable thrown) {
+    private static void reportLevelErrorAndPossiblyQuit(final String message, final String title, final Throwable thrown) {
 	LOGGER.log(Level.SEVERE, message, thrown);
 	final Object[] options = {"Retry"};
 	final int chosenOption = JOptionPane.showOptionDialog(
@@ -80,7 +80,9 @@ public class GameRunner
 		null, options, options[0]
 	);
 	if (chosenOption == JOptionPane.CLOSED_OPTION) {
+	    LOGGER.info("The user quits after level error");
 	    System.exit(0);
 	}
+	LOGGER.info("The user retries loading the level");
     }
 }

@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 /**
  * Contains methods for loading {@link LevelDefinition} objects from files on the local file system

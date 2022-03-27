@@ -54,6 +54,7 @@ public class CreatorRunner
 	    }
 	    if (Files.notExists(path)) {
 		// Since the file does not exist it implicitly defines an empty level
+		LOGGER.info("The user entered a file that does not exist");
 		return new LevelFile(path, LevelDefinition.createEmpty());
 	    }
 	    try {

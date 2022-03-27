@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Represents the game world, including the camera (from which the
@@ -23,6 +24,8 @@ import java.util.List;
  */
 public class GameWorld implements FilmedWorld, LevelListener
 {
+    private final static Logger LOGGER = Logger.getLogger(GameWorld.class.getName());
+
     private DrawConfiguration drawConfig;
     private List<LevelDefinition> levelDefinitions;
     private int currentLevelIndex;
@@ -110,6 +113,7 @@ public class GameWorld implements FilmedWorld, LevelListener
      */
     @Override public void keyPressed(final KeyEvent keyEvent) {
 	if (keyEvent.getKeyCode() == restartKeyCode) {
+	    LOGGER.info("Level " + currentLevelIndex + " was restarted");
 	    startCurrentLevel();
 	} else {
 	    currentLevelWithMovableCamera.keyPressed(keyEvent);
@@ -149,8 +153,10 @@ public class GameWorld implements FilmedWorld, LevelListener
      */
     @Override public void onLevelCompleted() {
 	if (currentLevelIndex == levelDefinitions.size() - 1) {
+	    LOGGER.info("The last level was completed");
 	    return;
 	}
+	LOGGER.info("Level " + currentLevelIndex + " was completed");
 	currentLevelIndex++;
 	startCurrentLevel();
     }
@@ -159,6 +165,7 @@ public class GameWorld implements FilmedWorld, LevelListener
      * Restarts the current level
      */
     @Override public void onLevelFailed() {
+	LOGGER.info("Level " + currentLevelIndex + " was failed");
 	startCurrentLevel();
     }
 
