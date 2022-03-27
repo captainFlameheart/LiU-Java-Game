@@ -3,7 +3,6 @@ package se.liu.jonla400.project.main.drawing;
 import se.liu.jonla400.project.math.RectangularRegion;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Draws a camera specified as a {@link RectangularRegion}. This is used by the
