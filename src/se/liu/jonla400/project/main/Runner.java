@@ -59,6 +59,7 @@ public class Runner
 	    LogManager.getLogManager().readConfiguration(logConfigStream);
 	} catch (IOException e) {
 	    logger.log(Level.SEVERE, "Could not read from the logging configuration!", e);
+	    return;
 	}
     }
 
