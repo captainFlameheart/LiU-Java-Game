@@ -63,7 +63,7 @@ public class GameRunner
 
     private static String[] getLevelResourceNames() {
 	// This implementation assumes that each level resource URL is "levels/levelX.json"
-	final int lastLevelIndex = 11; // Change this value when adding a level
+	final int lastLevelIndex = 13; // Change this value when adding a level
 
 	final String[] levelResourceNames = new String[lastLevelIndex + 1];
 	for (int levelIndex = 0; levelIndex <= lastLevelIndex; levelIndex++) {
