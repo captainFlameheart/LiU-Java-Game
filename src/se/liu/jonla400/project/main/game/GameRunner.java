@@ -48,9 +48,11 @@ public class GameRunner
 		    levels.add(LevelIO.loadLevelFromResource(levelResourceName));
 		    levelLoaded = true;
 		} catch (IOException e) {
+		    // Logging is done in the called method
 		    reportErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" could not be read!",
 					       "Failed to read level", e);
 		} catch (JsonSyntaxException e) {
+		    // Logging is done in the called method
 		    reportErrorAndPossiblyQuit("The level \"" + levelResourceName + "\" contains invalid syntax!",
 					       "Invalid syntax", e);
 		}

@@ -31,20 +31,16 @@ public class Runner
 	final DrawConfiguration drawConfig = createDrawConfig();
 
 	if (IN_DEV_MODE) {
-	    final Object[] options = new Object[2];
-	    final int playOptionIndex = 0;
-	    final int createOptionIndex = 1;
-
-	    options[playOptionIndex] = "Play";
-	    options[createOptionIndex] = "Create";
+	    final Object[] options = {"Play", "Create"};
+	    final int defaultOptionIndex = 0;
 
 	    final int chosenOption = JOptionPane.showOptionDialog(
 		    null, "Do you want to play or create?", "Startup choice", JOptionPane.YES_NO_OPTION,
-		    JOptionPane.QUESTION_MESSAGE, null, options, options[playOptionIndex]);
+		    JOptionPane.QUESTION_MESSAGE, null, options, options[defaultOptionIndex]);
 
 	    switch (chosenOption) {
-		case playOptionIndex -> GameRunner.run(drawConfig);
-		case createOptionIndex -> CreatorRunner.run(drawConfig);
+		case JOptionPane.YES_OPTION -> GameRunner.run(drawConfig);
+		case JOptionPane.NO_OPTION -> CreatorRunner.run(drawConfig);
 		default -> System.exit(0);
 	    }
 	} else {

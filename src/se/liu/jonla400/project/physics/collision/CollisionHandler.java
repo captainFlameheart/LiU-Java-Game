@@ -39,9 +39,9 @@ public class CollisionHandler<T> implements VelocityConstrainer
      * @return The created CollisionHandler
      */
     public static <T> CollisionHandler<T> createWithDefaultConfig(final CollisionDetector<T> collisionDetector) {
-	final double penetrationTolerence = 0.05;
+	final double penetrationTolerance = 0.05;
 	final double penetrationCorrectionFraction = 0.1;
-	return new CollisionHandler<>(collisionDetector, penetrationTolerence, penetrationCorrectionFraction, new ArrayList<>());
+	return new CollisionHandler<>(collisionDetector, penetrationTolerance, penetrationCorrectionFraction, new ArrayList<>());
     }
 
     /**

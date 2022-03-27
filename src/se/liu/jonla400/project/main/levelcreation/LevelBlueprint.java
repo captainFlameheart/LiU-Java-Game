@@ -132,15 +132,6 @@ public class LevelBlueprint
     }
 
     /**
-     * Gets the type of the line segment at the given index
-     *
-     * @param lineSegmentIndex The index of the line segment to get the type of
-     */
-    public LineSegmentType getLineSegmentType(final int segmentIndex) {
-        return lineSegmentTypes.get(segmentIndex);
-    }
-
-    /**
      * Sets the type of the line segment at the given index
      *
      * @param lineSegmentIndex The index of the line segment to set the type of
